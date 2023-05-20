@@ -1,0 +1,80 @@
+{
+  "name": "@aiou/vite-template",
+  "version": "0.2.0",
+  "description": "vite react template",
+  "keywords": [
+    "aiou",
+    "vite",
+    "react",
+    "tailwindcss",
+    "stitches",
+    "template",
+    "neo"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/neo-hack/vite-template#readme",
+  "repository": {
+    "url": "git+https://github.com/neo-hack/vite-template.git",
+    "type": "git"
+  },
+  "bugs": {
+    "url": "https://github.com/neo-hack/vite-template/issues"
+  },
+  "author": {
+    "name": "JiangWeixian",
+    "email": "jiangweixian1994@gmail.com"
+  },
+  "scripts": {
+    "test": "echo test",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "ci:publish": "pnpm changeset publish",
+    "ci:version": "pnpm changeset version",
+    "ci:snapshot": "pnpm changeset version --snapshot beta",
+    "ci:prerelease": "pnpm run build && pnpm changeset publish --tag beta",
+    "lint:fix": "eslint . --fix",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "**/**/*.{js,ts,tsx,vue,json}": ["eslint --fix"]
+  },
+  "dependencies": {
+    "@stitches/react": "1.2.8",
+    "@tailwindcss/typography": "0.5.7",
+    "clsx": "1.2.1",
+    "daisyui": "^2.24.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-router": "6.3.0",
+    "react-router-dom": "6.3.0"
+  },
+  "devDependencies": {
+    "@aiou/eslint-config": "^0.10.0",
+    "@changesets/cli": "^2.24.4",
+    "@svgr-rs/svgrs-plugin": "^0.1.0",
+    "@types/node": "^20.1.3",
+    "@types/react": "^18.0.18",
+    "@types/react-dom": "^18.0.6",
+    "@vitejs/plugin-react": "^4.0.0",
+    "autoprefixer": "10.4.8",
+    "cz-emoji": "1.3.2-canary.2",
+    "eslint": "^8.23.0",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
+    "postcss": "8.4.16",
+    "prettier": "^2.7.1",
+    "tailwind-cssgg": "^0.0.1",
+    "tailwindcss": "3.3.2",
+    "typescript": "4.4.4",
+    "vite": "^4.3.8",
+    "vite-plugin-document": "^0.1.1",
+    "vite-plugin-inspect": "^0.7.26",
+    "vite-plugin-pages": "^0.30.1"
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-emoji"
+    }
+  }
+}
