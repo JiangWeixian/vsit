@@ -1,4 +1,9 @@
 import clsx from 'clsx'
+import {
+  Console,
+  Decode,
+  Hook,
+} from 'console-feed'
 import { useRef, useState } from 'react'
 
 const Home = () => {
@@ -6,12 +11,9 @@ const Home = () => {
   const contentRef = useRef<HTMLDivElement>(null)
   const [logState, setLogState] = useState<any[]>([])
   const wrapConsole = () => {
-    const console = window.console
-    const log = console.log
-    console.log = (msg, ...args: any[]) => {
-      setLogState(prev => prev ? [...prev, msg] : [msg])
-      log.apply(console, [msg, ...args])
-    }
+    Hook(window.console, (log) => {
+      setLogState(prev => prev ? [...prev, Decode(log)] : [Decode(log)])
+    })
   }
   const handleClick = () => {
     if (contentRef.current) {
@@ -33,15 +35,17 @@ const Home = () => {
         <a className={clsx('tab', { 'tab-active': type === 'web' })} onClick={() => handleSwitchType('web')}>Web</a>
         <a className={clsx('tab', { 'tab-active': type === 'node' })} onClick={() => handleSwitchType('node')}>Node</a>
       </div>
-      <div contentEditable={true} ref={contentRef} className="code-editor">
+      {/* https://stackoverflow.com/questions/49639144/why-does-react-warn-against-an-contenteditable-component-having-children-managed */}
+      <div ref={contentRef} className="code-editor">
         <p>{'import { uniq } from "https://esm.sh/lodash-es@4.17.21"'}</p>
         <p>{'const a = uniq([1, 2, 3, 3])'}</p>
         <p>{'console.log(a)'}</p>
       </div>
       <button className="btn" onClick={handleClick}>run</button>
-      <pre className="log">
+      <Console logs={logState} variant="dark" />
+      {/* <pre className="log">
         {logState.map((item, index) => <p key={index}>{JSON.stringify(item, null, 2)}</p>)}
-      </pre>
+      </pre> */}
     </div>
   )
 }
