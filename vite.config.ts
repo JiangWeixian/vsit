@@ -2,6 +2,11 @@ import path from 'node:path'
 
 import { svgrs } from '@svgr-rs/svgrs-plugin/vite'
 import react from '@vitejs/plugin-react'
+import {
+  Decode,
+  Encode,
+  Hook,
+} from 'console-feed'
 import { fetch } from 'ofetch'
 import { defineConfig } from 'vite'
 import { VitePluginDocument } from 'vite-plugin-document'
@@ -17,12 +22,14 @@ const HTTP_RE = /https?:\/\/esm\.sh/g
 const content = `
 import { uniq } from "virtual:https://esm.sh/lodash-es@4.17.21"
 const a = uniq([1, 2, 3, 3])
-console.log(a)
-globalThis.__viteDevServer.ws.send({
-  type: 'custom',
-  data: 'hello',
-  event: 'custom',
+globalThis.__hook(console, (log) => {
+  globalThis.__viteDevServer.ws.send({
+    type: 'custom',
+    data: log,
+    event: 'vit:custom',
+  })
 })
+console.log(uniq)
 `
 
 const vit = (): Plugin[] => {
@@ -31,17 +38,15 @@ const vit = (): Plugin[] => {
       name: 'vit',
       configureServer(server) {
         globalThis.__viteDevServer = server
+        globalThis.__encode = Encode
+        globalThis.__decode = Decode
+        globalThis.__hook = Hook
         server.middlewares.use(async (req, res, next) => {
           console.log('request', req.url)
           if (req.url === '/node-container') {
             try {
               await server.ssrLoadModule(ID)
               console.log(globalThis.__viteDevServer?.ws)
-              globalThis.__viteDevServer?.ws.send({
-                type: 'custom',
-                data: 'hello',
-                event: 'custom',
-              })
             } catch (e) {
               console.error(e)
             }
