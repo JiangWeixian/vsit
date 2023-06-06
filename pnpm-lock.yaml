@@ -13,6 +13,7 @@ specifiers:
   autoprefixer: 10.4.8
   clsx: 1.2.1
   console-feed: ^3.5.0
+  consolehook: npm:console@^0.7.2
   cz-emoji: 1.3.2-canary.2
   daisyui: ^2.24.0
   eslint: ^8.23.0
@@ -38,6 +39,7 @@ dependencies:
   '@tailwindcss/typography': 0.5.7_tailwindcss@3.3.2
   clsx: 1.2.1
   console-feed: 3.5.0_biqbaboplfbrettd7655fr4n2y
+  consolehook: /console/0.7.2
   daisyui: 2.51.6_25hquoklqeoqwmt7fwvvcyxm5e
   ofetch: 1.0.1
   react: 18.2.0
@@ -1842,6 +1844,10 @@ packages:
     transitivePeerDependencies:
       - jquery
       - react-dom
+    dev: false
+
+  /console/0.7.2:
+    resolution: {integrity: sha512-+JSDwGunA4MTEgAV/4VBKwUHonP8CzJ/6GIuwPi6acKFqFfHUdSGCm89ZxZ5FfGWdZfkdgAroy5bJ5FSeN/t4g==}
     dev: false
 
   /convert-source-map/1.9.0:

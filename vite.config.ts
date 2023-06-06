@@ -20,16 +20,20 @@ const RESOLVED_ID = `\0${ID}`
 const REMOTE_RE = /^virtual:https:/
 const HTTP_RE = /https?:\/\/esm\.sh/g
 const content = `
+import { consolehook } from "./src/lib/consolehook"
+import { createRequire } from "module"
+const require = createRequire(import.meta.url)
+console.log('consolehook', require.resolve('consolehook'))
 import { uniq } from "virtual:https://esm.sh/lodash-es@4.17.21"
 const a = uniq([1, 2, 3, 3])
-globalThis.__hook(console, (log) => {
+globalThis.__hook(consolehook, (log) => {
   globalThis.__viteDevServer.ws.send({
     type: 'custom',
     data: log,
     event: 'vit:custom',
   })
 })
-console.log(uniq)
+consolehook.log(uniq)
 `
 
 const vit = (): Plugin[] => {
@@ -46,7 +50,8 @@ const vit = (): Plugin[] => {
           if (req.url === '/node-container') {
             try {
               await server.ssrLoadModule(ID)
-              console.log(globalThis.__viteDevServer?.ws)
+              console.log('ssrLoadModule', ID)
+              // console.log(globalThis.__viteDevServer?.ws)
             } catch (e) {
               console.error(e)
             }
@@ -85,15 +90,12 @@ const vit = (): Plugin[] => {
     // },
     {
       name: 'remote-module',
-      moduleParsed(info) {
-        console.log('moduleParsed', info)
-      },
       resolveId(id) {
-        console.log('load', id)
+        // console.log('load', id)
         if (id.includes('esm.sh')) {
           // '\0' tell vite to not resolve this id via internal node resolver algorithm
           const resolvedId = `\0${id.replace('virtual:', '')}`
-          console.log('resolveId', resolvedId)
+          // console.log('resolveId', resolvedId)
           return {
             external: false,
             id: resolvedId,
@@ -101,11 +103,11 @@ const vit = (): Plugin[] => {
         }
       },
       async load(id) {
-        console.log('load', id)
+        // console.log('load', id)
         // vite will remove duplicate slash
         if (id.slice(1).includes('esm.sh')) {
           const url = id.slice(1).replace('https:/', 'https://')
-          console.log('load', url)
+          // console.log('load', url)
           const response = await fetch(url, { method: 'GET' })
           const code = await response.text()
           const resolvedCode = code.replace(HTTP_RE, 'virtual:https://esm.sh')

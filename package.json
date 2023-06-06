@@ -44,6 +44,7 @@
     "@tailwindcss/typography": "0.5.7",
     "clsx": "1.2.1",
     "console-feed": "^3.5.0",
+    "consolehook": "npm:console@^0.7.2",
     "daisyui": "^2.24.0",
     "ofetch": "^1.0.1",
     "react": "18.2.0",
