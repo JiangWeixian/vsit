@@ -21,11 +21,10 @@ const REMOTE_RE = /^virtual:https:/
 const HTTP_RE = /https?:\/\/esm\.sh/g
 const content = `
 import { consolehook } from "./src/lib/consolehook"
-import { createRequire } from "module"
-const require = createRequire(import.meta.url)
-console.log('consolehook', require.resolve('consolehook'))
-import { uniq } from "virtual:https://esm.sh/lodash-es@4.17.21"
+import { uniq } from "esm.sh:lodash-es@4.17.21"
+import stripAnsi from "esm.sh:strip-ansi@7.1.0"
 const a = uniq([1, 2, 3, 3])
+const b = stripAnsi('\u001B[4mUnicorn\u001B[0m');
 globalThis.__hook(consolehook, (log) => {
   globalThis.__viteDevServer.ws.send({
     type: 'custom',
@@ -33,7 +32,7 @@ globalThis.__hook(consolehook, (log) => {
     event: 'vit:custom',
   })
 })
-consolehook.log(uniq)
+consolehook.log(a, b)
 `
 
 const vit = (): Plugin[] => {
@@ -92,9 +91,19 @@ const vit = (): Plugin[] => {
       name: 'remote-module',
       resolveId(id) {
         // console.log('load', id)
-        if (id.includes('esm.sh')) {
+        if (id.startsWith('esm.sh:')) {
           // '\0' tell vite to not resolve this id via internal node resolver algorithm
-          const resolvedId = `\0${id.replace('virtual:', '')}`
+          const resolvedId = `\0${id.replace('esm.sh:', 'https://esm.sh/')}`
+          // console.log('resolveId', resolvedId)
+          return {
+            external: false,
+            id: resolvedId,
+          }
+        }
+        if (id.startsWith('/v124/')) {
+          // '\0' tell vite to not resolve this id via internal node resolver algorithm
+          // some files imported files from /v124/xxx not https://esm.sh/v124/xxx
+          const resolvedId = `\0https://esm.sh${id}`
           // console.log('resolveId', resolvedId)
           return {
             external: false,
@@ -103,15 +112,19 @@ const vit = (): Plugin[] => {
         }
       },
       async load(id) {
-        // console.log('load', id)
-        // vite will remove duplicate slash
-        if (id.slice(1).includes('esm.sh')) {
-          const url = id.slice(1).replace('https:/', 'https://')
-          // console.log('load', url)
+        // vite will remove duplicate slash if id starts with 'https://'
+        const stripId = id.slice(1)
+        if (stripId.startsWith('esm.sh:') || stripId.startsWith('https://esm.sh') || stripId.startsWith('https:/esm.sh')) {
+          // un wrap
+          const url = stripId
+            .replace('https:/', 'https://')
+            .replace('esm.sh:', 'https://esm.sh/')
+          console.log('load', url)
           const response = await fetch(url, { method: 'GET' })
           const code = await response.text()
-          const resolvedCode = code.replace(HTTP_RE, 'virtual:https://esm.sh')
-          // console.log('load code', resolvedCode)
+          // wrap
+          const resolvedCode = code.replace(HTTP_RE, 'esm.sh:')
+          console.log('load code', resolvedCode)
           return {
             code: resolvedCode,
             moduleSideEffects: false,

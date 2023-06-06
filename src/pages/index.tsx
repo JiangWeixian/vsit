@@ -6,6 +6,8 @@ import {
 } from 'console-feed'
 import { useRef, useState } from 'react'
 
+import { unStripEsmsh } from '../lib/strip-esmsh'
+
 let socket
 let setLogStateInCompnent
 const importMetaUrl = new URL(import.meta.url)
@@ -92,7 +94,7 @@ const Home = () => {
       const content = contentRef.current.innerText
       const script = document.createElement('script')
       script.type = 'module'
-      script.innerHTML = content
+      script.innerHTML = unStripEsmsh(content)
       const body = document.querySelector('body')
       body?.appendChild(script)
       wrapConsole()
@@ -109,7 +111,7 @@ const Home = () => {
       </div>
       {/* https://stackoverflow.com/questions/49639144/why-does-react-warn-against-an-contenteditable-component-having-children-managed */}
       <div ref={contentRef} className="code-editor">
-        <p>{'import { uniq } from "https://esm.sh/lodash-es@4.17.21"'}</p>
+        <p>{'import { uniq } from "esm.sh:lodash-es@4.17.21"'}</p>
         <p>{'const a = uniq([1, 2, 3, 3])'}</p>
         <p>{'console.log(a)'}</p>
       </div>
