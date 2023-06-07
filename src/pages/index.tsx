@@ -75,6 +75,7 @@ function setupWebSocket(protocol: string, hostAndPath: string, onCloseWithoutOpe
   return socket
 }
 
+const VIRTUAL_MODULES_ID = 'fake-web-files'
 const Home = () => {
   const [type, setType] = useState<'web' | 'node'>('web')
   const contentRef = useRef<HTMLDivElement>(null)
@@ -82,7 +83,7 @@ const Home = () => {
   setLogStateInCompnent = setLogState
   const wrapConsole = () => {
     Hook(window.console, (log) => {
-      setLogState(prev => prev ? [...prev, Decode(log)] : [Decode(log)])
+      setLogState([Decode(log)])
     })
   }
   const handleClick = () => {
@@ -92,11 +93,25 @@ const Home = () => {
     }
     if (contentRef.current) {
       const content = contentRef.current.innerText
-      const script = document.createElement('script')
-      script.type = 'module'
-      script.innerHTML = unStripEsmsh(content)
-      const body = document.querySelector('body')
-      body?.appendChild(script)
+      let script = document.getElementById(VIRTUAL_MODULES_ID) as HTMLScriptElement
+      if (!script) {
+        script = document.createElement('script')
+        script.type = 'module'
+        script.innerHTML = unStripEsmsh(content)
+        script.id = VIRTUAL_MODULES_ID
+        const body = document.querySelector('body')
+        body?.appendChild(script)
+      } else {
+        script.remove()
+        setLogState([])
+        script = document.createElement('script')
+        script.type = 'module'
+        script.innerHTML = unStripEsmsh(content)
+        script.id = VIRTUAL_MODULES_ID
+        const body = document.querySelector('body')
+        body?.appendChild(script)
+        script.innerHTML = unStripEsmsh(content)
+      }
       wrapConsole()
     }
   }
