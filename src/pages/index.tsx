@@ -1,10 +1,6 @@
 import clsx from 'clsx'
-import {
-  Console,
-  Decode,
-  Hook,
-} from 'console-feed'
-import { useRef, useState } from 'react'
+import { Decode, Hook } from 'console-feed'
+import { createSignal } from 'solid-js'
 
 import { unStripEsmsh } from '../lib/strip-esmsh'
 
@@ -77,9 +73,9 @@ function setupWebSocket(protocol: string, hostAndPath: string, onCloseWithoutOpe
 
 const VIRTUAL_MODULES_ID = 'fake-web-files'
 const Home = () => {
-  const [type, setType] = useState<'web' | 'node'>('web')
-  const contentRef = useRef<HTMLDivElement>(null)
-  const [logState, setLogState] = useState<any[]>([])
+  const [type, setType] = createSignal<'web' | 'node'>('web')
+  let contentRef: HTMLPreElement
+  const [logState, setLogState] = createSignal<any[]>([])
   setLogStateInCompnent = setLogState
   const wrapConsole = () => {
     Hook(window.console, (log) => {
@@ -87,12 +83,12 @@ const Home = () => {
     })
   }
   const handleClick = () => {
-    if (type === 'node') {
+    if (type() === 'node') {
       fetch('/node-container', { method: 'GET' })
       return
     }
-    if (contentRef.current) {
-      const content = contentRef.current.innerText
+    if (contentRef) {
+      const content = contentRef.innerText
       let script = document.getElementById(VIRTUAL_MODULES_ID) as HTMLScriptElement
       if (!script) {
         script = document.createElement('script')
@@ -118,27 +114,26 @@ const Home = () => {
   const handleSwitchType = (type: 'web' | 'node') => {
     setType(type)
   }
+  console.log(logState())
   return (
-    <div className="h-full bg-base-200">
-      <div className="tabs tabs-boxed">
-        <a className={clsx('tab', { 'tab-active': type === 'web' })} onClick={() => handleSwitchType('web')}>Web</a>
-        <a className={clsx('tab', { 'tab-active': type === 'node' })} onClick={() => handleSwitchType('node')}>Node</a>
+    <div class="h-full bg-base-200">
+      <div class="tabs tabs-boxed">
+        <a class={clsx('tab', { 'tab-active': type() === 'web' })} onClick={() => handleSwitchType('web')}>Web</a>
+        <a class={clsx('tab', { 'tab-active': type() === 'node' })} onClick={() => handleSwitchType('node')}>Node</a>
       </div>
       {/* https://stackoverflow.com/questions/49639144/why-does-react-warn-against-an-contenteditable-component-having-children-managed */}
       <pre
         contentEditable={true}
-        ref={contentRef}
-        className="code-editor"
-        dangerouslySetInnerHTML={{
-          __html: `
+        ref={el => contentRef = el}
+        class="code-editor"
+        innerHTML={`
 import { uniq } from "esm.sh:lodash-es@4.17.21"
 const a = uniq([1, 2, 3, 3])
 console.log(a)
-        `,
-        }}
+        `}
       />
-      <button className="btn" onClick={handleClick}>run</button>
-      <Console logs={logState} variant="dark" />
+      <button class="btn" onClick={handleClick}>run</button>
+      {/* <Console logs={logState()} variant="dark" /> */}
       {/* <pre className="log">
         {logState.map((item, index) => <p key={index}>{JSON.stringify(item, null, 2)}</p>)}
       </pre> */}

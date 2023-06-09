@@ -1,21 +1,8 @@
-import React from 'react'
-import { BrowserRouter, useRoutes } from 'react-router-dom'
+/* @refresh granular */
+import Home from './pages/index'
 
-import routes from '~react-pages'
-
-const Routes = () => {
-  const elements = useRoutes(routes)
-  return elements
-}
-
-function App() {
+export default function App() {
   return (
-    <BrowserRouter>
-      <React.Suspense fallback={<div>loading...</div>}>
-        <Routes />
-      </React.Suspense>
-    </BrowserRouter>
+    <Home />
   )
 }
-
-export default App

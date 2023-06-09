@@ -1,7 +1,5 @@
 import path from 'node:path'
 
-import { svgrs } from '@svgr-rs/svgrs-plugin/vite'
-import react from '@vitejs/plugin-react'
 import {
   Decode,
   Encode,
@@ -9,9 +7,8 @@ import {
 } from 'console-feed'
 import { fetch } from 'ofetch'
 import { defineConfig } from 'vite'
-import { VitePluginDocument } from 'vite-plugin-document'
 import inspect from 'vite-plugin-inspect'
-import pages from 'vite-plugin-pages'
+import solid from 'vite-plugin-solid'
 
 import type { Plugin } from 'vite'
 
@@ -139,10 +136,12 @@ const vit = (): Plugin[] => {
 export default defineConfig({
   plugins: [
     vit(),
-    react(),
-    pages(),
-    svgrs(),
-    VitePluginDocument(),
+    solid(),
+    // react(),
+    // Not working in solidjs
+    // pages(),
+    // svgrs(),
+    // VitePluginDocument(),
     !!process.env.VITE_INSPECT && inspect(),
   ],
   ssr: {
