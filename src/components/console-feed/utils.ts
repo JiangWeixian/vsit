@@ -82,26 +82,26 @@ const classNameToken = (name: string): string =>
 type SandpackTheme = any
 export const getSyntaxHighlight = (theme?: SandpackTheme): HighlightStyle =>
   HighlightStyle.define([
+    {
+      tag: [tags.function(tags.variableName), tags.function(tags.propertyName), tags.url, tags.processingInstruction],
+      color: 'hsl(207, 82%, 66%)',
+    },
+    { tag: [tags.tagName, tags.heading], color: '#e06c75' },
+    { tag: [tags.comment, tags.quote], color: '#54636D' },
+    { tag: [tags.propertyName], color: 'hsl(220, 14%, 71%)' },
+    { tag: [tags.atom, tags.number, tags.bool, tags.attributeName], color: 'hsl( 29, 54%, 61%)' },
+    { tag: tags.className, color: 'hsl( 39, 67%, 69%)' },
+    { tag: tags.keyword, color: 'hsl(286, 60%, 67%)' },
+    { tag: [tags.string, tags.regexp, tags.special(tags.propertyName)], color: '#98c379' },
+
     { tag: tags.link, textDecoration: 'underline' },
     { tag: tags.emphasis, fontStyle: 'italic' },
     { tag: tags.strong, fontWeight: 'bold' },
 
     {
-      tag: tags.keyword,
-      class: classNameToken('keyword'),
-    },
-    {
-      tag: [tags.atom, tags.number, tags.bool],
-      class: classNameToken('static'),
-    },
-    {
-      tag: tags.variableName,
-      class: classNameToken('plain'),
-    },
-    {
       // Standard tags, e.g <h1 />
       tag: tags.standard(tags.tagName),
-      class: classNameToken('tag'),
+      color: '#e06c75',
     },
     {
       tag: [
@@ -117,19 +117,13 @@ export const getSyntaxHighlight = (theme?: SandpackTheme): HighlightStyle =>
       class: classNameToken('definition'),
     },
     {
-      tag: tags.propertyName,
-      class: classNameToken('property'),
-    },
-    {
       tag: [tags.literal, tags.inserted],
+      color: 'hsl(207, 82%, 66%)',
       // class: classNameToken(theme.syntax.string ? 'string' : 'static'),
     },
     {
       tag: tags.punctuation,
       class: classNameToken('punctuation'),
-    },
-    {
-      tag: [tags.comment, tags.quote],
-      class: classNameToken('comment'),
+      color: '#54636D',
     },
   ])

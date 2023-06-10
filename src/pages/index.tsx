@@ -1,6 +1,10 @@
 /* eslint-disable react/jsx-key */
 import clsx from 'clsx'
-import { Decode, Hook, Encode } from 'console-feed'
+import {
+  Decode,
+  Encode,
+  Hook,
+} from 'console-feed'
 import { createSignal } from 'solid-js'
 
 import { unStripEsmsh } from '../lib/strip-esmsh'
@@ -156,6 +160,7 @@ consolehook.log(a, uniq)
               initMode="immediate"
               showLineNumbers={false}
               fileType="fake.js"
+              readOnly={true}
             />
           )
         })

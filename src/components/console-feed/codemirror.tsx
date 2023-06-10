@@ -1,29 +1,16 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-// import { closeBrackets, closeBracketsKeymap } from '@codemirror/autocomplete'
-// import {
-//   defaultKeymap,
-//   deleteGroupBackward,
-//   history,
-//   historyKeymap,
-//   indentLess,
-//   indentMore,
-// } from '@codemirror/commands'
-// import { bracketMatching, syntaxHighlighting } from '@codemirror/language'
-// import {
-//   Annotation,
-//   EditorSelection,
-//   EditorState,
-//   StateEffect,
-// } from '@codemirror/state'
+import { closeBrackets } from '@codemirror/autocomplete'
+import { history } from '@codemirror/commands'
+import { bracketMatching, syntaxHighlighting } from '@codemirror/language'
+import { EditorState } from '@codemirror/state'
 import {
   EditorView,
-  // highlightActiveLine,
-  // highlightSpecialChars,
-  // keymap,
-  // lineNumbers,
+  highlightActiveLine,
+  highlightSpecialChars,
 } from '@codemirror/view'
-// import useIntersectionObserver from '@react-hook/intersection-observer'
+import { createSignal, onMount } from 'solid-js'
 
+// import useIntersectionObserver from '@react-hook/intersection-observer'
 // import { useSandpack } from '../../hooks/useSandpack'
 // import { useSandpackTheme } from '../../hooks/useSandpackTheme'
 // import { THEME_PREFIX } from '../../styles'
@@ -41,14 +28,13 @@ import {
 import { useSyntaxHighlight } from './use-syntax-highlight'
 import {
   getCodeMirrorLanguage,
-  // getEditorTheme,
   getLanguageFromFile,
   getSyntaxHighlight,
-  // useCombinedRefs,
 } from './utils'
+
 import type { Extension } from '@codemirror/state'
 import type { KeyBinding } from '@codemirror/view'
-import { Component, createSignal } from 'solid-js'
+import type { Component } from 'solid-js'
 // import type {
 //   CustomLanguage,
 //   EditorState as SandpackEditorState,
@@ -121,7 +107,7 @@ export const CodeMirror: Component<CodeMirrorProps>
     },
   ) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    // let wrapper: HTMLElement
+    let wrapper: HTMLElement
     // const combinedRef = useCombinedRefs(wrapper, ref)
 
     let cmView: EditorView
@@ -181,150 +167,143 @@ export const CodeMirror: Component<CodeMirrorProps>
     //   [decorators],
     // )
 
-    // React.useEffect(() => {
-    //   if (!wrapper.current || !shouldInitEditor) {
-    //     return
-    //   }
+    onMount(() => {
+      if (!wrapper || !shouldInitEditor()) {
+        return
+      }
 
-    //   const customCommandsKeymap: KeyBinding[] = [
-    //     {
-    //       key: 'Tab',
-    //       run: (view): boolean => {
-    //         indentMore(view)
+      // const customCommandsKeymap: KeyBinding[] = [
+      //   {
+      //     key: 'Tab',
+      //     run: (view): boolean => {
+      //       indentMore(view)
 
-    //         const customKey = extensionsKeymap.find(({ key }) => key === 'Tab')
+      //       const customKey = extensionsKeymap.find(({ key }) => key === 'Tab')
 
-    //         return customKey?.run?.(view) ?? true
-    //       },
-    //     },
-    //     {
-    //       key: 'Shift-Tab',
-    //       run: ({ state, dispatch }): boolean => {
-    //         indentLess({ state, dispatch })
+      //       return customKey?.run?.(view) ?? true
+      //     },
+      //   },
+      //   {
+      //     key: 'Shift-Tab',
+      //     run: ({ state, dispatch }): boolean => {
+      //       indentLess({ state, dispatch })
 
-    //         const customKey = extensionsKeymap.find(
-    //           ({ key }) => key === 'Shift-Tab',
-    //         )
+      //       const customKey = extensionsKeymap.find(
+      //         ({ key }) => key === 'Shift-Tab',
+      //       )
 
-    //         return customKey?.run?.(view) ?? true
-    //       },
-    //     },
-    //     {
-    //       key: 'Escape',
-    //       run: (): boolean => {
-    //         if (readOnly) {
-    //           return true
-    //         }
+      //       return customKey?.run?.(view) ?? true
+      //     },
+      //   },
+      //   {
+      //     key: 'Escape',
+      //     run: (): boolean => {
+      //       if (readOnly) {
+      //         return true
+      //       }
 
-    //         if (wrapper.current) {
-    //           wrapper.current.focus()
-    //         }
+      //       if (wrapper.current) {
+      //         wrapper.current.focus()
+      //       }
 
-    //         return true
-    //       },
-    //     },
-    //     {
-    //       key: 'mod-Backspace',
-    //       run: deleteGroupBackward,
-    //     },
-    //   ]
+      //       return true
+      //     },
+      //   },
+      //   {
+      //     key: 'mod-Backspace',
+      //     run: deleteGroupBackward,
+      //   },
+      // ]
 
-    //   const extensionList = [
-    //     highlightSpecialChars(),
-    //     history(),
-    //     closeBrackets(),
+      const extensionList = [
+        highlightSpecialChars(),
+        history(),
+        closeBrackets(),
 
-    //     ...extensions,
+        ...extensions,
 
-    //     keymap.of([
-    //       ...closeBracketsKeymap,
-    //       ...defaultKeymap,
-    //       ...historyKeymap,
-    //       ...customCommandsKeymap,
-    //       ...extensionsKeymap,
-    //     ] as KeyBinding[]),
-    //     langSupport,
+        // keymap.of([
+        //   ...closeBracketsKeymap,
+        //   ...defaultKeymap,
+        //   ...historyKeymap,
+        //   ...customCommandsKeymap,
+        //   ...extensionsKeymap,
+        // ] as KeyBinding[]),
+        langSupport,
 
-    //     getEditorTheme(),
-    //     syntaxHighlighting(highlightTheme),
-    //   ]
+        // getEditorTheme(),
+        syntaxHighlighting(highlightTheme),
+      ]
 
-    //   if (readOnly) {
-    //     extensionList.push(EditorState.readOnly.of(true))
-    //     extensionList.push(EditorView.editable.of(false))
-    //   } else {
-    //     extensionList.push(bracketMatching())
-    //     extensionList.push(highlightActiveLine())
-    //   }
+      if (readOnly) {
+        extensionList.push(EditorState.readOnly.of(true))
+        extensionList.push(EditorView.editable.of(false))
+      } else {
+        extensionList.push(bracketMatching())
+        extensionList.push(highlightActiveLine())
+      }
 
-    //   if (sortedDecorators) {
-    //     extensionList.push(highlightDecorators(sortedDecorators))
-    //   }
+      // if (sortedDecorators) {
+      //   extensionList.push(highlightDecorators(sortedDecorators))
+      // }
 
-    //   if (wrapContent) {
-    //     extensionList.push(EditorView.lineWrapping)
-    //   }
+      // if (wrapContent) {
+      //   extensionList.push(EditorView.lineWrapping)
+      // }
 
-    //   if (showLineNumbers) {
-    //     extensionList.push(lineNumbers())
-    //   }
+      // if (showLineNumbers) {
+      //   extensionList.push(lineNumbers())
+      // }
 
-    //   if (showInlineErrors) {
-    //     extensionList.push(highlightInlineError())
-    //   }
+      // if (showInlineErrors) {
+      //   extensionList.push(highlightInlineError())
+      // }
 
-    //   const parentDiv = wrapper.current
-    //   const existingPlaceholder = parentDiv.querySelector(
-    //     '.sp-pre-placeholder',
-    //   )
-    //   if (existingPlaceholder) {
-    //     parentDiv.removeChild(existingPlaceholder)
-    //   }
+      const parentDiv = wrapper
+      const existingPlaceholder = parentDiv.querySelector(
+        '.pre-placeholder',
+      )
+      if (existingPlaceholder) {
+        parentDiv.removeChild(existingPlaceholder)
+      }
 
-    //   const view = new EditorView({
-    //     doc: code,
-    //     extensions: extensionList,
-    //     parent: parentDiv,
-    //     dispatch: (tr): void => {
-    //       view.update([tr])
+      const view = new EditorView({
+        doc: code,
+        extensions: extensionList,
+        parent: parentDiv,
+        dispatch: (tr): void => {
+          view.update([tr])
 
-    //       if (tr.docChanged) {
-    //         const newCode = tr.newDoc.sliceString(0, tr.newDoc.length)
+          if (tr.docChanged) {
+            const newCode = tr.newDoc.sliceString(0, tr.newDoc.length)
 
-    //         setInternalCode(newCode)
-    //         onCodeUpdate?.(newCode)
-    //       }
-    //     },
-    //   })
+            setInternalCode(newCode)
+            onCodeUpdate?.(newCode)
+          }
+        },
+      })
 
-    //   view.contentDOM.setAttribute('data-gramm', 'false')
-    //   view.contentDOM.setAttribute('data-lt-active', 'false')
-    //   view.contentDOM.setAttribute(
-    //     'aria-label',
-    //     filePath ? `Code Editor for ${getFileName(filePath)}` : 'Code Editor',
-    //   )
+      view.contentDOM.setAttribute('data-gramm', 'false')
+      view.contentDOM.setAttribute('data-lt-active', 'false')
+      // view.contentDOM.setAttribute(
+      //   'aria-label',
+      //   filePath ? `Code Editor for ${getFileName(filePath)}` : 'Code Editor',
+      // )
 
-    //   if (readOnly) {
-    //     view.contentDOM.classList.add('cm-readonly')
-    //   } else {
-    //     view.contentDOM.setAttribute('tabIndex', '-1')
-    //   }
+      if (readOnly) {
+        view.contentDOM.classList.add('cm-readonly')
+      } else {
+        view.contentDOM.setAttribute('tabIndex', '-1')
+      }
 
-    //   cmView.current = view
+      cmView = view
 
-    //   return (): void => {
-    //     cmView.current?.destroy()
-    //   }
+      return (): void => {
+        cmView?.destroy()
+      }
 
-    //   // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [
-    //   shouldInitEditor,
-    //   showLineNumbers,
-    //   wrapContent,
-    //   themeId,
-    //   sortedDecorators,
-    //   readOnly,
-    // ])
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    })
 
     // React.useEffect(
     //   () => {
@@ -365,7 +344,7 @@ export const CodeMirror: Component<CodeMirrorProps>
     //   // eslint-disable-next-line react-hooks/exhaustive-deps
     // }, [])
 
-    // Update editor when code passed as prop from outside sandpack changes
+    // // Update editor when code passed as prop from outside sandpack changes
     // React.useEffect(() => {
     //   if (cmView.current && typeof code === 'string' && code !== internalCode) {
     //     const view = cmView.current
@@ -450,24 +429,27 @@ export const CodeMirror: Component<CodeMirrorProps>
             //   cmClassName,
             //   tokensClassName,
             // ])}
+            ref={el => wrapper = el}
+            class="font-mono"
             translate="no"
           >
             <code
               // className={classNames('pre-placeholder', [placeholderClassName])}
+              class="pre-placeholder"
               // style={{ marginLeft: gutterLineOffset() }}
             >
               {syntaxHighlightRender}
             </code>
           </pre>
 
-          {readOnly && showReadOnly && (
+          {/* {readOnly && showReadOnly && (
             <span
               // className={classNames('read-only', [readOnlyClassName])}
               {...(process.env.TEST_ENV ? { 'data-testId': 'read-only' } : {})}
             >
               Read-only
             </span>
-          )}
+          )} */}
         </>
       )
     }
