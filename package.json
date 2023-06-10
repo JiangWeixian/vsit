@@ -37,13 +37,22 @@
     "prepare": "husky install"
   },
   "lint-staged": {
-    "**/**/*.{js,ts,tsx,vue,json}": ["eslint --fix"]
+    "**/**/*.{js,ts,tsx,vue,json}": [
+      "eslint --fix"
+    ]
   },
   "dependencies": {
+    "@codemirror/lang-css": "^6.2.0",
+    "@codemirror/lang-html": "^6.4.4",
+    "@codemirror/lang-javascript": "^6.1.9",
+    "@codemirror/language": "^6.7.0",
+    "@codemirror/state": "^6.2.1",
+    "@codemirror/view": "^6.13.0",
+    "@lezer/highlight": "^1.1.6",
     "@stitches/react": "1.2.8",
     "@tailwindcss/typography": "0.5.7",
     "clsx": "1.2.1",
-    "console-feed": "^3.5.0",
+    "console-feed": "3.3.0",
     "consolehook": "npm:console@^0.7.2",
     "daisyui": "^2.24.0",
     "ofetch": "^1.0.1",

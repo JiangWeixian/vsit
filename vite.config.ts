@@ -25,11 +25,11 @@ const b = stripAnsi('\u001B[4mUnicorn\u001B[0m');
 globalThis.__hook(consolehook, (log) => {
   globalThis.__viteDevServer.ws.send({
     type: 'custom',
-    data: log,
+    data: globalThis.__encode(log),
     event: 'vit:custom',
   })
 })
-consolehook.log(a, b)
+consolehook.log(a, b, uniq)
 `
 
 const vit = (): Plugin[] => {
@@ -97,7 +97,8 @@ const vit = (): Plugin[] => {
             id: resolvedId,
           }
         }
-        if (id.startsWith('/v124/')) {
+        // esm.sh url will startswith v124 or v125
+        if (id.startsWith('/v124/') || id.startsWith('/v125/')) {
           // '\0' tell vite to not resolve this id via internal node resolver algorithm
           // some files imported files from /v124/xxx not https://esm.sh/v124/xxx
           const resolvedId = `\0https://esm.sh${id}`
