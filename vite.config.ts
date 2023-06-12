@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto'
 import path from 'node:path'
 
+import bodyparser from 'body-parser'
 import {
   Decode,
   Encode,
@@ -19,7 +20,7 @@ const ID = 'fake-node-file'
 const RESOLVED_ID = `\0${ID}`
 const REMOTE_RE = /^virtual:https:/
 const HTTP_RE = /https?:\/\/esm\.sh/g
-const content = `
+let content = `
 import { consolehook } from "./src/lib/consolehook"
 import { uniq } from "esm.sh:lodash-es@4.17.21"
 import stripAnsi from "esm.sh:strip-ansi@7.1.0"
@@ -48,13 +49,34 @@ const vit = (): Plugin[] => {
         globalThis.__encode = Encode
         globalThis.__decode = Decode
         globalThis.__hook = Hook
+        server.middlewares.use(bodyparser.json())
         server.middlewares.use(async (req, res, next) => {
           const url = parseURL(req.url)
-          if (url.pathname === '/fake-node-file') {
+          if (url.pathname === '/update-fake-node-file' && req.method === 'POST') {
+            const body = (req as any).body as { content: string }
+            content = `
+import { consolehook } from "./src/lib/consolehook"
+globalThis.__hook(consolehook, (log) => {
+  console.log(log)
+  globalThis.__viteDevServer.ws.send({
+    type: 'custom',
+    data: globalThis.__encode(log),
+    event: 'vit:custom',
+  })
+})
+${body.content}
+            `
+            res.end('ok')
+            return
+          }
+          if (url.pathname === '/fake-node-file' && req.method === 'GET') {
             try {
               console.log('request', req.url)
               // /fake-node-file?t=<timestamp>
               await server.ssrLoadModule(withoutLeadingSlash(req.url))
+              const module = await server.moduleGraph.getModuleByUrl(withoutLeadingSlash(req.url))
+              module && server.moduleGraph.invalidateModule(module)
+              console.log(module)
               // console.log(globalThis.__viteDevServer?.ws)
             } catch (e) {
               console.error(e)

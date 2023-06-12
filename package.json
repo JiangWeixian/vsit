@@ -52,6 +52,7 @@
     "@stitches/react": "1.2.8",
     "@tailwindcss/typography": "0.5.7",
     "@uiw/codemirror-theme-atomone": "^4.21.2",
+    "body-parser": "^1.20.2",
     "clsx": "1.2.1",
     "console-feed": "3.3.0",
     "consolehook": "npm:console@^0.7.2",

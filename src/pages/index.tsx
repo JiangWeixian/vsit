@@ -97,17 +97,32 @@ const Home = () => {
       // setLogState([Decode(log)])
     })
   }
-  const handleClick = () => {
-    if (type() === 'node') {
-      const timestamp = Date.now()
-      const search = new URLSearchParams({
-        t: `${timestamp}`,
-      })
-      fetch(`/fake-node-file?${search}`, { method: 'GET' })
-      return
-    }
+  const handleClick = async () => {
     if (contentRef) {
       const content = contentRef.innerText
+      if (type() === 'node') {
+        const timestamp = Date.now()
+        let search = new URLSearchParams({
+          t: `${timestamp}`,
+        })
+        let url = `/update-fake-node-file?${search}`
+        await fetch(url, {
+          method: 'POST',
+          body: JSON.stringify({
+            content,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        // Why use timestamp as a query parameter for method get
+        search = new URLSearchParams({
+          t: `${timestamp}`,
+        })
+        url = `/fake-node-file?${search}`
+        fetch(url, { method: 'GET' })
+        return
+      }
       let script = document.getElementById(VIRTUAL_MODULES_ID) as HTMLScriptElement
       if (!script) {
         script = document.createElement('script')
