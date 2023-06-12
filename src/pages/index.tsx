@@ -99,7 +99,11 @@ const Home = () => {
   }
   const handleClick = () => {
     if (type() === 'node') {
-      fetch('/node-container', { method: 'GET' })
+      const timestamp = Date.now()
+      const search = new URLSearchParams({
+        t: `${timestamp}`,
+      })
+      fetch(`/fake-node-file?${search}`, { method: 'GET' })
       return
     }
     if (contentRef) {

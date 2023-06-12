@@ -7,6 +7,7 @@ import {
   Hook,
 } from 'console-feed'
 import { fetch } from 'ofetch'
+import { parseURL, withoutLeadingSlash } from 'ufo'
 import { defineConfig } from 'vite'
 // import { VitePluginDocument } from 'vite-plugin-document'
 import inspect from 'vite-plugin-inspect'
@@ -23,19 +24,17 @@ import { consolehook } from "./src/lib/consolehook"
 import { uniq } from "esm.sh:lodash-es@4.17.21"
 import stripAnsi from "esm.sh:strip-ansi@7.1.0"
 
-export const main = () => {
-  const a = uniq([1, 2, 3, 3])
-  const b = stripAnsi('\u001B[4mUnicorn\u001B[0m');
-  globalThis.__hook(consolehook, (log) => {
-    console.log(log)
-    globalThis.__viteDevServer.ws.send({
-      type: 'custom',
-      data: globalThis.__encode(log),
-      event: 'vit:custom',
-    })
+const a = uniq([1, 2, 3, 3])
+const b = stripAnsi('\u001B[4mUnicorn\u001B[0m');
+globalThis.__hook(consolehook, (log) => {
+  console.log(log)
+  globalThis.__viteDevServer.ws.send({
+    type: 'custom',
+    data: globalThis.__encode(log),
+    event: 'vit:custom',
   })
-  consolehook.log(a, b, uniq)
-}
+})
+consolehook.log(a, b, uniq)
 `
 
 const Cache = new Map()
@@ -50,12 +49,12 @@ const vit = (): Plugin[] => {
         globalThis.__decode = Decode
         globalThis.__hook = Hook
         server.middlewares.use(async (req, res, next) => {
-          console.log('request', req.url)
-          if (req.url === '/node-container') {
+          const url = parseURL(req.url)
+          if (url.pathname === '/fake-node-file') {
             try {
-              const module = await server.ssrLoadModule(ID)
-              console.log('ssrLoadModule', ID, module.main)
-              module.main()
+              console.log('request', req.url)
+              // /fake-node-file?t=<timestamp>
+              await server.ssrLoadModule(withoutLeadingSlash(req.url))
               // console.log(globalThis.__viteDevServer?.ws)
             } catch (e) {
               console.error(e)
