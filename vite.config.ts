@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import path from 'node:path'
 
 import {
@@ -7,6 +8,7 @@ import {
 } from 'console-feed'
 import { fetch } from 'ofetch'
 import { defineConfig } from 'vite'
+// import { VitePluginDocument } from 'vite-plugin-document'
 import inspect from 'vite-plugin-inspect'
 import solid from 'vite-plugin-solid'
 
@@ -20,17 +22,23 @@ const content = `
 import { consolehook } from "./src/lib/consolehook"
 import { uniq } from "esm.sh:lodash-es@4.17.21"
 import stripAnsi from "esm.sh:strip-ansi@7.1.0"
-const a = uniq([1, 2, 3, 3])
-const b = stripAnsi('\u001B[4mUnicorn\u001B[0m');
-globalThis.__hook(consolehook, (log) => {
-  globalThis.__viteDevServer.ws.send({
-    type: 'custom',
-    data: globalThis.__encode(log),
-    event: 'vit:custom',
+
+export const main = () => {
+  const a = uniq([1, 2, 3, 3])
+  const b = stripAnsi('\u001B[4mUnicorn\u001B[0m');
+  globalThis.__hook(consolehook, (log) => {
+    console.log(log)
+    globalThis.__viteDevServer.ws.send({
+      type: 'custom',
+      data: globalThis.__encode(log),
+      event: 'vit:custom',
+    })
   })
-})
-consolehook.log(a, b, uniq)
+  consolehook.log(a, b, uniq)
+}
 `
+
+const Cache = new Map()
 
 const vit = (): Plugin[] => {
   return [
@@ -45,8 +53,9 @@ const vit = (): Plugin[] => {
           console.log('request', req.url)
           if (req.url === '/node-container') {
             try {
-              await server.ssrLoadModule(ID)
-              console.log('ssrLoadModule', ID)
+              const module = await server.ssrLoadModule(ID)
+              console.log('ssrLoadModule', ID, module.main)
+              module.main()
               // console.log(globalThis.__viteDevServer?.ws)
             } catch (e) {
               console.error(e)
@@ -87,7 +96,7 @@ const vit = (): Plugin[] => {
     {
       name: 'remote-module',
       resolveId(id) {
-        // console.log('load', id)
+        console.log('resolveId', id)
         if (id.startsWith('esm.sh:')) {
           // '\0' tell vite to not resolve this id via internal node resolver algorithm
           const resolvedId = `\0${id.replace('esm.sh:', 'https://esm.sh/')}`
@@ -117,12 +126,20 @@ const vit = (): Plugin[] => {
           const url = stripId
             .replace('https:/', 'https://')
             .replace('esm.sh:', 'https://esm.sh/')
-          console.log('load', url)
+          const hash = createHash('sha256').update(url).digest('hex')
+          if (Cache.get(hash)) {
+            console.log('load cache', url)
+            return {
+              code: Cache.get(hash),
+              moduleSideEffects: false,
+            }
+          }
           const response = await fetch(url, { method: 'GET' })
           const code = await response.text()
           // wrap
           const resolvedCode = code.replace(HTTP_RE, 'esm.sh:')
           console.log('load code', resolvedCode)
+          Cache.set(hash, resolvedCode)
           return {
             code: resolvedCode,
             moduleSideEffects: false,
@@ -142,7 +159,7 @@ export default defineConfig({
     // Not working in solidjs
     // pages(),
     // svgrs(),
-    // VitePluginDocument(),
+    // VitePluginDocument({ solidjs: true }),
     !!process.env.VITE_INSPECT && inspect(),
   ],
   ssr: {
