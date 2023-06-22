@@ -1,6 +1,4 @@
-import { createHash } from 'node:crypto'
 import path from 'node:path'
-import { performance } from 'node:perf_hooks'
 
 import bodyparser from 'body-parser'
 import {
@@ -8,7 +6,6 @@ import {
   Encode,
   Hook,
 } from 'console-feed'
-import { fetch } from 'ofetch'
 import { parseURL, withoutLeadingSlash } from 'ufo'
 import { defineConfig } from 'vite'
 // import { VitePluginDocument } from 'vite-plugin-document'
@@ -16,10 +13,16 @@ import inspect from 'vite-plugin-inspect'
 import solid from 'vite-plugin-solid'
 
 import { isEsmSh } from './src/lib/resolver/is'
-import { unWrapId, wrapId } from './src/lib/resolver/normalize'
+import {
+  unWrapId,
+  wrapCode,
+  wrapId,
+} from './src/lib/resolver/normalize'
+import { createStore } from './src/lib/store'
 
 import type { Plugin } from 'vite'
 
+const store = createStore()
 const ID = 'fake-node-file'
 const RESOLVED_ID = `\0${ID}`
 const REMOTE_RE = /^virtual:https:/
@@ -41,8 +44,6 @@ globalThis.__hook(consolehook, (log) => {
 })
 consolehook.log(a, b, uniq)
 `
-
-const Cache = new Map()
 
 const vit = (): Plugin[] => {
   return [
@@ -136,21 +137,8 @@ ${body.content}
         if (isEsmSh(id)) {
           // un wrap
           const url = unWrapId(id)
-          console.log('load url', performance.now(), url)
-          const hash = createHash('sha256').update(url).digest('hex')
-          if (Cache.get(hash)) {
-            console.log('load cache', url)
-            return {
-              code: Cache.get(hash),
-              moduleSideEffects: false,
-            }
-          }
-          const response = await fetch(url, { method: 'GET' })
-          const code = await response.text()
-          // wrap
-          const resolvedCode = code.replace(HTTP_RE, 'esm.sh:')
-          // console.log('load code', resolvedCode)
-          Cache.set(hash, resolvedCode)
+          const code = await store.fetch(url)
+          const resolvedCode = wrapCode(code)
           return {
             code: resolvedCode,
             moduleSideEffects: false,
