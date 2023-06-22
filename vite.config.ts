@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto'
 import path from 'node:path'
+import { performance } from 'node:perf_hooks'
 
 import bodyparser from 'body-parser'
 import {
@@ -13,6 +14,9 @@ import { defineConfig } from 'vite'
 // import { VitePluginDocument } from 'vite-plugin-document'
 import inspect from 'vite-plugin-inspect'
 import solid from 'vite-plugin-solid'
+
+import { isEsmSh } from './src/lib/resolver/is'
+import { unWrapId, wrapId } from './src/lib/resolver/normalize'
 
 import type { Plugin } from 'vite'
 
@@ -71,12 +75,12 @@ ${body.content}
           }
           if (url.pathname === '/fake-node-file' && req.method === 'GET') {
             try {
-              console.log('request', req.url)
+              // console.log('request', req.url)
               // /fake-node-file?t=<timestamp>
               await server.ssrLoadModule(withoutLeadingSlash(req.url))
               const module = await server.moduleGraph.getModuleByUrl(withoutLeadingSlash(req.url))
               module && server.moduleGraph.invalidateModule(module)
-              console.log(module)
+              // console.log(module)
               // console.log(globalThis.__viteDevServer?.ws)
             } catch (e) {
               console.error(e)
@@ -117,21 +121,9 @@ ${body.content}
     {
       name: 'remote-module',
       resolveId(id) {
-        console.log('resolveId', id)
-        if (id.startsWith('esm.sh:')) {
-          // '\0' tell vite to not resolve this id via internal node resolver algorithm
-          const resolvedId = `\0${id.replace('esm.sh:', 'https://esm.sh/')}`
-          // console.log('resolveId', resolvedId)
-          return {
-            external: false,
-            id: resolvedId,
-          }
-        }
-        // esm.sh url will startswith v124 or v125
-        if (id.startsWith('/v124/') || id.startsWith('/v125/')) {
-          // '\0' tell vite to not resolve this id via internal node resolver algorithm
-          // some files imported files from /v124/xxx not https://esm.sh/v124/xxx
-          const resolvedId = `\0https://esm.sh${id}`
+        // console.log('resolveId', id)
+        if (isEsmSh(id)) {
+          const resolvedId = wrapId(id)
           // console.log('resolveId', resolvedId)
           return {
             external: false,
@@ -141,12 +133,10 @@ ${body.content}
       },
       async load(id) {
         // vite will remove duplicate slash if id starts with 'https://'
-        const stripId = id.slice(1)
-        if (stripId.startsWith('esm.sh:') || stripId.startsWith('https://esm.sh') || stripId.startsWith('https:/esm.sh')) {
+        if (isEsmSh(id)) {
           // un wrap
-          const url = stripId
-            .replace('https:/', 'https://')
-            .replace('esm.sh:', 'https://esm.sh/')
+          const url = unWrapId(id)
+          console.log('load url', performance.now(), url)
           const hash = createHash('sha256').update(url).digest('hex')
           if (Cache.get(hash)) {
             console.log('load cache', url)
@@ -159,7 +149,7 @@ ${body.content}
           const code = await response.text()
           // wrap
           const resolvedCode = code.replace(HTTP_RE, 'esm.sh:')
-          console.log('load code', resolvedCode)
+          // console.log('load code', resolvedCode)
           Cache.set(hash, resolvedCode)
           return {
             code: resolvedCode,

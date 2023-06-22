@@ -25,7 +25,7 @@
     "email": "jiangweixian1994@gmail.com"
   },
   "scripts": {
-    "test": "echo test",
+    "test": "vitest",
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
@@ -57,6 +57,7 @@
     "console-feed": "3.3.0",
     "consolehook": "npm:console@^0.7.2",
     "daisyui": "^2.24.0",
+    "es-module-lexer": "^1.3.0",
     "ofetch": "^1.0.1",
     "pathe": "^1.1.1",
     "react": "18.2.0",
@@ -89,7 +90,8 @@
     "vite-plugin-document": "^0.1.1",
     "vite-plugin-inspect": "^0.7.26",
     "vite-plugin-pages": "^0.30.1",
-    "vite-plugin-solid": "^2.7.0"
+    "vite-plugin-solid": "^2.7.0",
+    "vitest": "^0.32.2"
   },
   "config": {
     "commitizen": {

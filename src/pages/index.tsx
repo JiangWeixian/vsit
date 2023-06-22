@@ -162,8 +162,9 @@ const Home = () => {
         class="code-editor"
         innerHTML={`
 import { uniq } from "esm.sh:lodash-es@4.17.21"
+import stripAnsi from "esm.sh:strip-ansi@7.1.0"
 const a = uniq([1, 2, 3, 3])
-consolehook.log(a, uniq)
+consolehook.log(a, uniq, stripAnsi)
         `}
       />
       <button class="btn" onClick={handleClick}>run</button>
