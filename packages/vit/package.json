@@ -31,6 +31,17 @@
   "bin": {
     "vit": "bin/index.mjs"
   },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./lib/exports/index.d.ts",
+      "require": "./lib/index.cjs",
+      "import": "./lib/index.mjs"
+    }
+  },
+  "main": "lib/index.cjs",
+  "module": "lib/index.mjs",
+  "types": "lib/exports/index.d.ts",
   "scripts": {
     "build": "rimraf lib && rollup -c --silent --environment BUILD:production",
     "dev": "rollup -c -w",
@@ -71,6 +82,7 @@
     "prettier": "^2.5.1",
     "rimraf": "^3.0.2",
     "rollup": "^3.25.1",
+    "rollup-plugin-condition-exports": "2.0.0-next.3",
     "rollup-plugin-esbuild": "^5.0.0",
     "rollup-plugin-node-externals": "^6.1.1",
     "rollup-plugin-size": "^0.3.1",

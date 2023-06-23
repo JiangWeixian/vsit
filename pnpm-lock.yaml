@@ -141,6 +141,7 @@ importers:
       prettier: ^2.5.1
       rimraf: ^3.0.2
       rollup: ^3.25.1
+      rollup-plugin-condition-exports: 2.0.0-next.3
       rollup-plugin-esbuild: ^5.0.0
       rollup-plugin-node-externals: ^6.1.1
       rollup-plugin-size: ^0.3.1
@@ -178,6 +179,7 @@ importers:
       prettier: 2.8.8
       rimraf: 3.0.2
       rollup: 3.25.1
+      rollup-plugin-condition-exports: 2.0.0-next.3
       rollup-plugin-esbuild: 5.0.0_oturou6z2atwnkefwdv4ynxdsi
       rollup-plugin-node-externals: 6.1.1_rollup@3.25.1
       rollup-plugin-size: 0.3.1_debug@4.3.4
@@ -1738,6 +1740,14 @@ packages:
       '@rollup/pluginutils': 5.0.2_rollup@3.25.1
       magic-string: 0.27.0
       rollup: 3.25.1
+    dev: true
+
+  /@rollup/pluginutils/4.2.1:
+    resolution: {integrity: sha512-iKnFXr7NkdZAIHiIWE+BX5ULi/ucVFYWD6TbAV+rZctiRTY2PL6tsIKhoIOaoskiWAkgu+VsbXgUVDNLHf+InQ==}
+    engines: {node: '>= 8.0.0'}
+    dependencies:
+      estree-walker: 2.0.2
+      picomatch: 2.3.1
     dev: true
 
   /@rollup/pluginutils/5.0.2:
@@ -4267,6 +4277,15 @@ packages:
   /fraction.js/4.2.0:
     resolution: {integrity: sha512-MhLuK+2gUcnZe8ZHlaaINnQLl0xRIGRfcGk2yl8xoQAfHrSsL3rYu6FCmBdkdbhc9EPlwyGHewaRsvwRMJtAlA==}
 
+  /fs-extra/10.1.0:
+    resolution: {integrity: sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==}
+    engines: {node: '>=12'}
+    dependencies:
+      graceful-fs: 4.2.11
+      jsonfile: 6.1.0
+      universalify: 2.0.0
+    dev: true
+
   /fs-extra/11.1.1:
     resolution: {integrity: sha512-MGIE4HOvQCeUCzmlHs0vXpih4ysz4wg9qiSAu6cd42lVwPbTM1TjV7RusoyQqMmk/95gdQZX72u+YW+c3eEpFQ==}
     engines: {node: '>=14.14'}
@@ -6177,6 +6196,20 @@ packages:
     hasBin: true
     dependencies:
       glob: 7.2.3
+    dev: true
+
+  /rollup-plugin-condition-exports/2.0.0-next.3:
+    resolution: {integrity: sha512-4CBx5XF8fWBJ7sazpbLTPe8Jew6pNqU+yXU2hDJiTfTgoJiYmHn4FliwfpcFJ7wCHAQF8Qr5pNNnWmdWwKMh+g==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    dependencies:
+      '@antfu/utils': 0.7.2
+      '@rollup/pluginutils': 4.2.1
+      debug: 4.3.4
+      fast-glob: 3.2.12
+      fs-extra: 10.1.0
+      ufo: 1.1.2
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /rollup-plugin-esbuild/5.0.0_oturou6z2atwnkefwdv4ynxdsi:

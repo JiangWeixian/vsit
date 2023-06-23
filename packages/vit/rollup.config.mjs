@@ -6,6 +6,7 @@ import json from '@rollup/plugin-json'
 import { nodeResolve } from '@rollup/plugin-node-resolve'
 import replace from '@rollup/plugin-replace'
 import { defineConfig } from 'rollup'
+import ce from 'rollup-plugin-condition-exports'
 import esbuild from 'rollup-plugin-esbuild'
 import { externals } from 'rollup-plugin-node-externals'
 import size from 'rollup-plugin-size'
@@ -52,6 +53,9 @@ export default defineConfig([
       json(),
       size(),
     ],
+    watch: {
+      exclude: ['./package.json'],
+    },
     output: [
       {
         sourcemap: process.env.BUILD !== 'production',
@@ -63,10 +67,12 @@ export default defineConfig([
     ],
   },
   {
-    input: 'src/exports/index.ts',
     preserveEntrySignatures: 'strict',
-    external: ['source-map-support/register.js'],
     plugins: [
+      ce({
+        outDir: 'lib',
+        declarationDir: 'lib',
+      }),
       externals({
         devDeps: false,
         builtinsPrefix: 'ignore',
@@ -90,6 +96,9 @@ export default defineConfig([
       json(),
       size(),
     ],
+    watch: {
+      exclude: ['./package.json'],
+    },
     output: [
       {
         sourcemap: true,
