@@ -13,7 +13,7 @@ import { createStore } from '@/common/store'
 
 import type { Plugin } from 'vite'
 
-export const vit = (): Plugin[] => {
+export const PluginVit = (): Plugin[] => {
   let content = ''
   const store = createStore()
   return [
@@ -75,24 +75,8 @@ ${body.content}
         return id
       },
     },
-    // {
-    //   name: 'proxy-middleware',
-    //   async resolveId(id) {
-    //     if (id.startsWith('virtual:https://esm.sh')) {
-    //       return id // Return the virtual URL as is
-    //     }
-    //   },
-    //   async load(id) {
-    //     if (id.startsWith('virtual:https://esm.sh')) {
-    //       const url = id.replace('virtual:https://esm.sh', 'https://esm.sh')
-    //       const response = await fetch(url)
-    //       const code = await response.text()
-    //       return code
-    //     }
-    //   },
-    // },
     {
-      name: 'remote-module',
+      name: 'vit:esmsh',
       resolveId(id) {
         // console.log('resolveId', id)
         if (isEsmSh(id)) {

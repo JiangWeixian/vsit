@@ -4,6 +4,8 @@ import 'source-map-support/register.js'
 import cac from 'cac'
 import consola from 'consola'
 
+// eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error
+// @ts-ignore -- ignore package out of dir
 import { version } from '../package.json'
 
 const commands = {

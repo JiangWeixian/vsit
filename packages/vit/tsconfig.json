@@ -18,10 +18,18 @@
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
     "outDir": "lib",
+    "rootDir": "src",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "plugins": [
+      { "transform": "typescript-transform-paths" },
+      {
+        "transform": "typescript-transform-paths",
+        "afterDeclarations": true
+      }
+    ]
   },
   "exclude": ["node_modules", "lib"],
   "include": ["src", "./global.d.ts"]

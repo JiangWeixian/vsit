@@ -60,7 +60,7 @@ export default defineConfig([
       {
         sourcemap: process.env.BUILD !== 'production',
         entryFileNames: '[name].mjs',
-        dir: 'lib',
+        dir: 'dist',
         chunkFileNames: 'chunks/[name].mjs',
         format: 'esm',
       },
@@ -70,8 +70,8 @@ export default defineConfig([
     preserveEntrySignatures: 'strict',
     plugins: [
       ce({
-        outDir: 'lib',
-        declarationDir: 'lib',
+        outDir: 'dist',
+        declarationDir: 'dist',
       }),
       externals({
         devDeps: false,
@@ -103,7 +103,7 @@ export default defineConfig([
       {
         sourcemap: true,
         entryFileNames: '[name].mjs',
-        dir: 'lib',
+        dir: 'dist',
         chunkFileNames: 'chunks/[name].mjs',
         format: 'esm',
       },
