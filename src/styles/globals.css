@@ -5,3 +5,7 @@
 #root {
   height: 100vh;
 }
+
+.cm-editor .cm-scroller {
+  @apply font-mono;
+}
