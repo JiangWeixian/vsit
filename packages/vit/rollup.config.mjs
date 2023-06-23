@@ -3,7 +3,7 @@ import path from 'node:path'
 import alias from '@rollup/plugin-alias'
 import commonjs from '@rollup/plugin-commonjs'
 import json from '@rollup/plugin-json'
-import { nodeResolve } from '@rollup/plugin-node-resolve'
+import resolve from '@rollup/plugin-node-resolve'
 import replace from '@rollup/plugin-replace'
 import { defineConfig } from 'rollup'
 import ce from 'rollup-plugin-condition-exports'
@@ -25,8 +25,9 @@ export default defineConfig([
     plugins: [
       externals({
         devDeps: false,
-        builtinsPrefix: 'ignore',
+        builtinsPrefix: 'add',
       }),
+      commonjs(),
       replace({
         delimiters: ['', ''],
         preventAssignment: true,
@@ -40,7 +41,7 @@ export default defineConfig([
         target: 'es2021',
       }),
       alias({
-        customResolver: nodeResolve({ extensions: ['.tsx', '.ts'] }),
+        customResolver: resolve({ extensions: ['.tsx', '.ts'] }),
         entries: Object.entries({
           '@/*': ['./src/*'],
         }).map(([alias, value]) => ({
@@ -48,8 +49,7 @@ export default defineConfig([
           replacement: path.resolve(process.cwd(), `${value[0].replace('/*', '')}`),
         })),
       }),
-      commonjs(),
-      nodeResolve({ preferBuiltins: true }),
+      resolve(),
       json(),
       size(),
     ],
@@ -67,23 +67,19 @@ export default defineConfig([
     ],
   },
   {
-    preserveEntrySignatures: 'strict',
     plugins: [
-      ce({
-        outDir: 'dist',
-        declarationDir: 'dist',
-      }),
       externals({
         devDeps: false,
-        builtinsPrefix: 'ignore',
+        builtinsPrefix: 'add',
       }),
+      commonjs(),
       esbuild({
         minify: false,
         sourceMap: true,
         target: 'es2021',
       }),
       alias({
-        customResolver: nodeResolve({ extensions: ['.tsx', '.ts'] }),
+        customResolver: resolve({ extensions: ['.tsx', '.ts'] }),
         entries: Object.entries({
           '@/*': ['./src/*'],
         }).map(([alias, value]) => ({
@@ -91,9 +87,12 @@ export default defineConfig([
           replacement: path.resolve(process.cwd(), `${value[0].replace('/*', '')}`),
         })),
       }),
-      commonjs(),
-      nodeResolve({ preferBuiltins: true }),
+      resolve(),
       json(),
+      ce({
+        outDir: 'dist',
+        declarationDir: 'dts',
+      }),
       size(),
     ],
     watch: {
@@ -106,6 +105,13 @@ export default defineConfig([
         dir: 'dist',
         chunkFileNames: 'chunks/[name].mjs',
         format: 'esm',
+      },
+      {
+        sourcemap: true,
+        entryFileNames: '[name].cjs',
+        dir: 'dist',
+        chunkFileNames: 'chunks/[name].cjs',
+        format: 'cjs',
       },
     ],
   },

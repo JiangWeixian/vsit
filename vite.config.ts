@@ -7,6 +7,7 @@ import {
   Hook,
 } from 'console-feed'
 import { parseURL, withoutLeadingSlash } from 'ufo'
+import { PluginVit } from 'vit'
 import { defineConfig } from 'vite'
 // import { VitePluginDocument } from 'vite-plugin-document'
 import inspect from 'vite-plugin-inspect'
@@ -152,7 +153,8 @@ ${body.content}
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    vit(),
+    // vit(),
+    PluginVit(),
     solid(),
     // react(),
     // Not working in solidjs

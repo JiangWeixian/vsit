@@ -72,7 +72,7 @@ ${body.content}
         if (id === RESOLVED_NODE_ID) {
           return content
         }
-        return id
+        return null
       },
     },
     {
