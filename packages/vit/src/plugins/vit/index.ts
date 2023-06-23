@@ -1,58 +1,28 @@
-import path from 'node:path'
-
 import bodyparser from 'body-parser'
-import {
-  Decode,
-  Encode,
-  Hook,
-} from 'console-feed'
+import { Hook } from 'console-feed'
 import { parseURL, withoutLeadingSlash } from 'ufo'
-import { defineConfig } from 'vite'
-// import { VitePluginDocument } from 'vite-plugin-document'
-import inspect from 'vite-plugin-inspect'
-import solid from 'vite-plugin-solid'
 
-import { isEsmSh } from './packages/vit/src/common/resolver/is'
+import { RESOLVED_NODE_ID, VIRUTAL_NODE_ID } from '@/common/resolver/constants'
+import { isEsmSh } from '@/common/resolver/is'
 import {
   unWrapId,
   wrapCode,
   wrapId,
-} from './packages/vit/src/common/resolver/normalize'
-import { createStore } from './packages/vit/src/common/store'
+} from '@/common/resolver/normalize'
+import { createStore } from '@/common/store'
 
 import type { Plugin } from 'vite'
 
-const store = createStore()
-const ID = 'fake-node-file'
-const RESOLVED_ID = `\0${ID}`
-const REMOTE_RE = /^virtual:https:/
-const HTTP_RE = /https?:\/\/esm\.sh/g
-let content = `
-import { consolehook } from "./src/lib/consolehook"
-import { uniq } from "esm.sh:lodash-es@4.17.21"
-import stripAnsi from "esm.sh:strip-ansi@7.1.0"
-
-const a = uniq([1, 2, 3, 3])
-const b = stripAnsi('\u001B[4mUnicorn\u001B[0m');
-globalThis.__hook(consolehook, (log) => {
-  console.log(log)
-  globalThis.__viteDevServer.ws.send({
-    type: 'custom',
-    data: globalThis.__encode(log),
-    event: 'vit:custom',
-  })
-})
-consolehook.log(a, b, uniq)
-`
-
-const vit = (): Plugin[] => {
+export const vit = (): Plugin[] => {
+  let content = ''
+  const store = createStore()
   return [
     {
-      name: 'vit',
+      name: 'vit:core',
       configureServer(server) {
         globalThis.__viteDevServer = server
-        globalThis.__encode = Encode
-        globalThis.__decode = Decode
+        // globalThis.__encode = Encode
+        // globalThis.__decode = Decode
         globalThis.__hook = Hook
         server.middlewares.use(bodyparser.json())
         server.middlewares.use(async (req, res, next) => {
@@ -93,14 +63,16 @@ ${body.content}
         })
       },
       resolveId(id) {
-        if (id === ID) {
-          return RESOLVED_ID
+        if (id === VIRUTAL_NODE_ID) {
+          return RESOLVED_NODE_ID
         }
+        return null
       },
       async load(id) {
-        if (id === RESOLVED_ID) {
+        if (id === RESOLVED_NODE_ID) {
           return content
         }
+        return id
       },
     },
     // {
@@ -131,6 +103,7 @@ ${body.content}
             id: resolvedId,
           }
         }
+        return null
       },
       async load(id) {
         // vite will remove duplicate slash if id starts with 'https://'
@@ -144,39 +117,8 @@ ${body.content}
             moduleSideEffects: false,
           }
         }
+        return null
       },
     },
   ]
 }
-
-// https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [
-    vit(),
-    solid(),
-    // react(),
-    // Not working in solidjs
-    // pages(),
-    // svgrs(),
-    // VitePluginDocument({ solidjs: true }),
-    !!process.env.VITE_INSPECT && inspect(),
-  ],
-  ssr: {
-    noExternal: [HTTP_RE],
-  },
-  optimizeDeps: {
-    force: true,
-  },
-  resolve: {
-    alias: [
-      {
-        find: '@',
-        replacement: path.resolve(__dirname, 'src'),
-      },
-      {
-        find: 'https:',
-        replacement: path.resolve(__dirname, 'src'),
-      },
-    ],
-  },
-})

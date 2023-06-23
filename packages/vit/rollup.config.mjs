@@ -1,3 +1,5 @@
+import path from 'node:path'
+
 import alias from '@rollup/plugin-alias'
 import commonjs from '@rollup/plugin-commonjs'
 import json from '@rollup/plugin-json'
@@ -37,12 +39,13 @@ export default defineConfig([
         target: 'es2021',
       }),
       alias({
-        resolve: ['.ts', '.js', '.tsx', '.jsx'],
-        entries: [
-          { find: '@/', replacement: './src/' },
-          // https://github.com/MatrixAI/js-virtualfs/issues/4
-          { find: 'readable-stream', replacement: 'stream' },
-        ],
+        customResolver: nodeResolve({ extensions: ['.tsx', '.ts'] }),
+        entries: Object.entries({
+          '@/*': ['./src/*'],
+        }).map(([alias, value]) => ({
+          find: new RegExp(`${alias.replace('/*', '')}`),
+          replacement: path.resolve(process.cwd(), `${value[0].replace('/*', '')}`),
+        })),
       }),
       commonjs(),
       nodeResolve({ preferBuiltins: true }),
@@ -52,6 +55,44 @@ export default defineConfig([
     output: [
       {
         sourcemap: process.env.BUILD !== 'production',
+        entryFileNames: '[name].mjs',
+        dir: 'lib',
+        chunkFileNames: 'chunks/[name].mjs',
+        format: 'esm',
+      },
+    ],
+  },
+  {
+    input: 'src/exports/index.ts',
+    preserveEntrySignatures: 'strict',
+    external: ['source-map-support/register.js'],
+    plugins: [
+      externals({
+        devDeps: false,
+        builtinsPrefix: 'ignore',
+      }),
+      esbuild({
+        minify: false,
+        sourceMap: true,
+        target: 'es2021',
+      }),
+      alias({
+        customResolver: nodeResolve({ extensions: ['.tsx', '.ts'] }),
+        entries: Object.entries({
+          '@/*': ['./src/*'],
+        }).map(([alias, value]) => ({
+          find: new RegExp(`${alias.replace('/*', '')}`),
+          replacement: path.resolve(process.cwd(), `${value[0].replace('/*', '')}`),
+        })),
+      }),
+      commonjs(),
+      nodeResolve({ preferBuiltins: true }),
+      json(),
+      size(),
+    ],
+    output: [
+      {
+        sourcemap: true,
         entryFileNames: '[name].mjs',
         dir: 'lib',
         chunkFileNames: 'chunks/[name].mjs',

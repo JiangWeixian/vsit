@@ -1,5 +1,13 @@
-import { ESMSH_PROTOCOL_RE, ESMSH_HTTP_SUB_RE, ESMSH_HTTP_RE, ESM_HOST, VIRTUAL_RE, ESMSH_PROTOCOL } from "./constants"
 import { withoutLeadingSlash, withoutTrailingSlash } from 'ufo'
+
+import {
+  ESM_HOST,
+  ESMSH_HTTP_RE,
+  ESMSH_HTTP_SUB_RE,
+  ESMSH_PROTOCOL,
+  ESMSH_PROTOCOL_RE,
+  VIRTUAL_RE,
+} from './constants'
 
 // '\0' tell vite to not resolve this id via internal node resolver algorithm
 export const wrapId = (id: string) => {
@@ -28,4 +36,19 @@ export const unWrapId = (id: string) => {
 // TODO: should use es-lexer and magic-string?
 export const wrapCode = (code: string) => {
   return code.replace(new RegExp(ESM_HOST, 'gi'), ESMSH_PROTOCOL)
+}
+
+export const injectConsoleHook = (content: string) => {
+  return `
+import { consolehook } from "./src/lib/consolehook"
+globalThis.__hook(consolehook, (log) => {
+  console.log(log)
+  globalThis.__viteDevServer.ws.send({
+    type: 'custom',
+    data: globalThis.__encode(log),
+    event: 'vit:custom',
+  })
+})
+${content}
+`
 }

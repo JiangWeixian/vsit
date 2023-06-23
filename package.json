@@ -26,6 +26,7 @@
   },
   "scripts": {
     "test": "vitest",
+    "dev:cli": "pnpm --filter=./packages/vit dev",
     "dev": "vite",
     "build:cli": "pnpm --filter=./packages/vit build",
     "build": "tsc && vite build",
@@ -72,7 +73,7 @@
     "ufo": "^1.1.2"
   },
   "devDependencies": {
-    "@aiou/eslint-config": "^0.10.0",
+    "@aiou/eslint-config": "^0.11.0",
     "@changesets/cli": "^2.24.4",
     "@svgr-rs/svgrs-plugin": "^0.1.0",
     "@types/debug": "^4.1.8",

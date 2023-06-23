@@ -1,0 +1,1 @@
+{"version":3,"file":"main.mjs","sources":["../../src/commands/main.ts"],"sourcesContent":["export const main = () => {\n  console.log('main')\n}\n"],"names":[],"mappings":"AAAO,MAAM,OAAO,MAAM;AACxB,EAAA,OAAA,CAAQ,IAAI,MAAM,CAAA,CAAA;AACpB;;;;"}

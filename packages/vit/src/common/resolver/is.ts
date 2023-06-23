@@ -1,4 +1,9 @@
-import { ESMSH_HTTP_RE, ESMSH_PROTOCOL_RE, ESMSH_HTTP_SUB_RE, VIRTUAL_RE } from './constants'
+import {
+  ESMSH_HTTP_RE,
+  ESMSH_HTTP_SUB_RE,
+  ESMSH_PROTOCOL_RE,
+  VIRTUAL_RE,
+} from './constants'
 
 export const isEsmSh = (id: string) => {
   const stripId = id.replace(VIRTUAL_RE, '')

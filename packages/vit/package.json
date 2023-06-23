@@ -29,7 +29,7 @@
     "url": "https://twitter.com/jiangweixian"
   },
   "bin": {
-    "bin-template": "bin/index.mjs"
+    "vit": "bin/index.mjs"
   },
   "scripts": {
     "build": "rimraf lib && rollup -c --silent --environment BUILD:production",
@@ -41,6 +41,9 @@
     "ci:snapshot": "pnpm changeset version --snapshot beta",
     "ci:prerelease": "pnpm run build && pnpm changeset publish --tag beta"
   },
+  "dependencies": {
+    "vite": "^4.3.8"
+  },
   "devDependencies": {
     "@changesets/cli": "^2.26.0",
     "@rollup/plugin-alias": "^5.0.0",
@@ -48,16 +51,21 @@
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.1.0",
     "@rollup/plugin-replace": "^5.0.2",
+    "@types/debug": "^4.1.8",
     "@types/inquirer": "^8.1.3",
-    "@types/node": "17.0.8",
+    "@types/node": "20.3.1",
     "@types/rimraf": "^3.0.2",
+    "body-parser": "^1.20.2",
     "cac": "6.7.12",
     "consola": "^2.15.3",
+    "console-feed": "3.3.0",
     "cz-emoji": "^1.3.1",
+    "debug": "^4.3.4",
     "esbuild": "^0.18.6",
     "execa": "^6.0.0",
     "husky": "^8.0.3",
     "inquirer": "8.2.0",
+    "ofetch": "^1.0.1",
     "ora": "6.0.1",
     "picocolors": "1.0.0",
     "prettier": "^2.5.1",
@@ -68,6 +76,7 @@
     "rollup-plugin-size": "^0.3.1",
     "source-map-support": "^0.5.21",
     "typescript": "^4.6.4",
+    "ufo": "^1.1.2",
     "vitest": "^0.22.1"
   }
 }

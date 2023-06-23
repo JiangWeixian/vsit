@@ -14,7 +14,7 @@ const cli = path.resolve(__dirname, '../bin/index.mjs')
 
 describe('version', () => {
   it('print version should work', async () => {
-    const { stdout } = await execaNode(cli, ['-V'])
+    const { stdout } = await execaNode(cli, ['-v'])
     expect(stdout).toBeDefined()
   })
 })

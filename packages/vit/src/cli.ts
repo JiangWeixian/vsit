@@ -4,14 +4,13 @@ import 'source-map-support/register.js'
 import cac from 'cac'
 import consola from 'consola'
 
-import pkg from '../package.json'
+import { version } from '../package.json'
 
 const commands = {
-  hello: () => import('./commands/hello').then(m => m.hello),
-  loading: () => import('./commands/loading').then(m => m.loading),
+  main: () => import('./commands/main').then(m => m.main),
 }
 
-const cli = cac('bin-template').version(pkg.version)
+const cli = cac('bin-template').version(version)
 
 const handler = (cmdName: string) => {
   return async function (...args: any[]) {
@@ -20,12 +19,7 @@ const handler = (cmdName: string) => {
   }
 }
 
-cli.command('hello [word]', 'say hello').alias('hi').action(handler('hello'))
-
-cli
-  .command('loading [ms]', 'loading')
-  .option('-t, --text [text]', 'define loading text')
-  .action(handler('loading'))
+cli.command('[word]', 'say hello').alias('hi').action(handler('main'))
 
 cli.help()
 

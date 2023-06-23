@@ -1,7 +1,8 @@
-import { fetch } from 'ofetch'
 import { createHash } from 'node:crypto'
-import Debug from 'debug'
 import { performance } from 'node:perf_hooks'
+
+import Debug from 'debug'
+import { fetch } from 'ofetch'
 
 const debug = Debug('vit:store')
 
@@ -11,13 +12,13 @@ export const createStore = () => {
   const createInstance = (id: string, url: string, options?: RequestInit) => {
     const promise = (async () => {
       try {
-        let now = performance.now()
+        const now = performance.now()
         return fetch(url, options)
-          .then(async res => {
+          .then(async (res) => {
             const content = await res.text()
             globalCache.set(id, content)
             pool.delete(id)
-            debug('load url %s took', url, `${(performance.now() - now)/1000}ms`)
+            debug('load url %s took', url, `${(performance.now() - now) / 1000}ms`)
             return content
           })
       } catch (e) {
@@ -49,6 +50,6 @@ export const createStore = () => {
       instance = createInstance(hash, url, options)
       instance && pool.set(hash, instance)
       return instance
-    }
+    },
   }
 }
