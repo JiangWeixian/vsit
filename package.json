@@ -1,6 +1,6 @@
 {
-  "name": "@aiou/vite-template",
-  "version": "0.2.0",
+  "name": "vit-monorepo",
+  "version": "0.0.0",
   "description": "vite react template",
   "keywords": [
     "aiou",
@@ -27,6 +27,7 @@
   "scripts": {
     "test": "vitest",
     "dev": "vite",
+    "build:cli": "pnpm --filter=./packages/vit build",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "ci:publish": "pnpm changeset publish",

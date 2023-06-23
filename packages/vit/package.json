@@ -1,0 +1,73 @@
+{
+  "name": "vit",
+  "version": "4.0.0",
+  "type": "module",
+  "packageManager": "pnpm@7.33.0",
+  "description": "templates for cli project",
+  "keywords": [
+    "aiou",
+    "cli",
+    "neo",
+    "template"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=16"
+  },
+  "homepage": "https://github.com/neo-hack/bin-template#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neo-hack/bin-template.git"
+  },
+  "bugs": {
+    "url": "https://github.com/neo-hack/bin-template/issues",
+    "email": "jiangweixian1994@gmail.com"
+  },
+  "author": {
+    "name": "JW",
+    "email": "jiangweixian1994@gmail.com",
+    "url": "https://twitter.com/jiangweixian"
+  },
+  "bin": {
+    "bin-template": "bin/index.mjs"
+  },
+  "scripts": {
+    "build": "rimraf lib && rollup -c --silent --environment BUILD:production",
+    "dev": "rollup -c -w",
+    "vitest": "vitest",
+    "test": "pnpm run build && pnpm run vitest",
+    "ci:publish": "pnpm run build && pnpm changeset publish",
+    "ci:version": "pnpm changeset version",
+    "ci:snapshot": "pnpm changeset version --snapshot beta",
+    "ci:prerelease": "pnpm run build && pnpm changeset publish --tag beta"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.26.0",
+    "@rollup/plugin-alias": "^5.0.0",
+    "@rollup/plugin-commonjs": "^25.0.2",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.1.0",
+    "@rollup/plugin-replace": "^5.0.2",
+    "@types/inquirer": "^8.1.3",
+    "@types/node": "17.0.8",
+    "@types/rimraf": "^3.0.2",
+    "cac": "6.7.12",
+    "consola": "^2.15.3",
+    "cz-emoji": "^1.3.1",
+    "esbuild": "^0.18.6",
+    "execa": "^6.0.0",
+    "husky": "^8.0.3",
+    "inquirer": "8.2.0",
+    "ora": "6.0.1",
+    "picocolors": "1.0.0",
+    "prettier": "^2.5.1",
+    "rimraf": "^3.0.2",
+    "rollup": "^3.25.1",
+    "rollup-plugin-esbuild": "^5.0.0",
+    "rollup-plugin-node-externals": "^6.1.1",
+    "rollup-plugin-size": "^0.3.1",
+    "source-map-support": "^0.5.21",
+    "typescript": "^4.6.4",
+    "vitest": "^0.22.1"
+  }
+}
