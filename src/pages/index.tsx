@@ -10,6 +10,7 @@ import { createSignal } from 'solid-js'
 import { unStripEsmsh } from '../lib/strip-esmsh'
 import { CodeMirror } from '@/components/console-feed/codemirror'
 import { fromConsoleToString } from '@/components/console-feed/from-code-to-string'
+// debug
 import { consolehook } from '@/lib/consolehook'
 
 let socket
@@ -83,8 +84,15 @@ function setupWebSocket(protocol: string, hostAndPath: string, onCloseWithoutOpe
 const VIRTUAL_MODULES_ID = 'fake-web-files'
 globalThis.consolehook = consolehook
 type Message = ReturnType<typeof Decode>
+const InitialCode = `
+import { uniq } from "esm.sh:lodash-es@4.17.21"
+import stripAnsi from "esm.sh:strip-ansi@7.1.0"
+const a = uniq([1, 2, 3, 3])
+consolehook.log(a, uniq, stripAnsi)
+`
 const Home = () => {
   const [type, setType] = createSignal<'web' | 'node'>('web')
+  const [code, setCode] = createSignal(InitialCode)
   let contentRef: HTMLPreElement
   const [logState, setLogState] = createSignal<Message[]>([])
   setLogStateInCompnent = setLogState
@@ -98,52 +106,50 @@ const Home = () => {
     })
   }
   const handleClick = async () => {
-    if (contentRef) {
-      const content = contentRef.innerText
-      if (type() === 'node') {
-        const timestamp = Date.now()
-        let search = new URLSearchParams({
-          t: `${timestamp}`,
-        })
-        let url = `/update-fake-node-file?${search}`
-        await fetch(url, {
-          method: 'POST',
-          body: JSON.stringify({
-            content,
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-        // Why use timestamp as a query parameter for method get
-        search = new URLSearchParams({
-          t: `${timestamp}`,
-        })
-        url = `/fake-node-file?${search}`
-        fetch(url, { method: 'GET' })
-        return
-      }
-      let script = document.getElementById(VIRTUAL_MODULES_ID) as HTMLScriptElement
-      if (!script) {
-        script = document.createElement('script')
-        script.type = 'module'
-        script.innerHTML = unStripEsmsh(content)
-        script.id = VIRTUAL_MODULES_ID
-        const body = document.querySelector('body')
-        body?.appendChild(script)
-      } else {
-        script.remove()
-        setLogState([])
-        script = document.createElement('script')
-        script.type = 'module'
-        script.innerHTML = unStripEsmsh(content)
-        script.id = VIRTUAL_MODULES_ID
-        const body = document.querySelector('body')
-        body?.appendChild(script)
-        script.innerHTML = unStripEsmsh(content)
-      }
-      wrapConsole()
+    const content = code()
+    if (type() === 'node') {
+      const timestamp = Date.now()
+      let search = new URLSearchParams({
+        t: `${timestamp}`,
+      })
+      let url = `/update-fake-node-file?${search}`
+      await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({
+          content,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      // Why use timestamp as a query parameter for method get
+      search = new URLSearchParams({
+        t: `${timestamp}`,
+      })
+      url = `/fake-node-file?${search}`
+      fetch(url, { method: 'GET' })
+      return
     }
+    let script = document.getElementById(VIRTUAL_MODULES_ID) as HTMLScriptElement
+    if (!script) {
+      script = document.createElement('script')
+      script.type = 'module'
+      script.innerHTML = unStripEsmsh(content)
+      script.id = VIRTUAL_MODULES_ID
+      const body = document.querySelector('body')
+      body?.appendChild(script)
+    } else {
+      script.remove()
+      setLogState([])
+      script = document.createElement('script')
+      script.type = 'module'
+      script.innerHTML = unStripEsmsh(content)
+      script.id = VIRTUAL_MODULES_ID
+      const body = document.querySelector('body')
+      body?.appendChild(script)
+      script.innerHTML = unStripEsmsh(content)
+    }
+    wrapConsole()
   }
   const handleSwitchType = (type: 'web' | 'node') => {
     setType(type)
@@ -156,7 +162,7 @@ const Home = () => {
         <a class={clsx('tab', { 'tab-active': type() === 'node' })} onClick={() => handleSwitchType('node')}>Node</a>
       </div>
       {/* https://stackoverflow.com/questions/49639144/why-does-react-warn-against-an-contenteditable-component-having-children-managed */}
-      <pre
+      {/* <pre
         contentEditable={true}
         ref={el => contentRef = el}
         class="code-editor"
@@ -166,6 +172,14 @@ import stripAnsi from "esm.sh:strip-ansi@7.1.0"
 const a = uniq([1, 2, 3, 3])
 consolehook.log(a, uniq, stripAnsi)
         `}
+      /> */}
+      <CodeMirror
+        code={InitialCode}
+        initMode="immediate"
+        showLineNumbers={false}
+        fileType="fake.js"
+        readOnly={false}
+        onCodeUpdate={code => setCode(code)}
       />
       <button class="btn" onClick={handleClick}>run</button>
       {logState().map(({ data }, logIndex, references) => {

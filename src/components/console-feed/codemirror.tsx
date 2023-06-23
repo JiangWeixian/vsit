@@ -267,6 +267,8 @@ export const CodeMirror: Component<CodeMirrorProps>
         parentDiv.removeChild(existingPlaceholder)
       }
 
+      const state = EditorState.create({ doc: code ?? '' })
+      console.log('EditorState', state, code)
       const view = new EditorView({
         doc: code,
         extensions: extensionList,
@@ -298,9 +300,9 @@ export const CodeMirror: Component<CodeMirrorProps>
 
       cmView = view
 
-      return (): void => {
-        cmView?.destroy()
-      }
+      // return (): void => {
+      //   cmView?.destroy()
+      // }
 
       // eslint-disable-next-line react-hooks/exhaustive-deps
     })
@@ -422,7 +424,6 @@ export const CodeMirror: Component<CodeMirrorProps>
       return (
         <>
           <pre
-            // ref={combinedRef}
             // className={classNames('cm', [
             //   classNames(editorState),
             //   classNames(languageExtension),
@@ -456,7 +457,7 @@ export const CodeMirror: Component<CodeMirrorProps>
 
     return (
       <div
-        // ref={combinedRef}
+        ref={el => wrapper = el}
         aria-autocomplete="list"
         // aria-label={
         //   filePath ? `Code Editor for ${getFileName(filePath)}` : 'Code Editor'
@@ -468,12 +469,12 @@ export const CodeMirror: Component<CodeMirrorProps>
         //   cmClassName,
         //   tokensClassName,
         // ])}
-        onKeyDown={handleContainerKeyDown}
+        // onKeyDown={handleContainerKeyDown}
         role="textbox"
         tabIndex={0}
         translate="no"
       >
-        <pre >
+        <pre class="pre-placeholder">
           {syntaxHighlightRender}
         </pre>
       </div>
