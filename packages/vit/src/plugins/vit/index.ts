@@ -1,10 +1,12 @@
 import bodyparser from 'body-parser'
-import { Hook } from 'console-feed'
+import { Encode, Hook } from 'console-feed'
+import Debug from 'debug'
 import { parseURL, withoutLeadingSlash } from 'ufo'
 
 import { RESOLVED_NODE_ID, VIRUTAL_NODE_ID } from '@/common/resolver/constants'
 import { isEsmSh } from '@/common/resolver/is'
 import {
+  injectConsoleHook,
   unWrapId,
   wrapCode,
   wrapId,
@@ -12,6 +14,8 @@ import {
 import { createStore } from '@/common/store'
 
 import type { Plugin } from 'vite'
+
+const debug = Debug('vit:plugin')
 
 export const PluginVit = (): Plugin[] => {
   let content = ''
@@ -21,7 +25,7 @@ export const PluginVit = (): Plugin[] => {
       name: 'vit:core',
       configureServer(server) {
         globalThis.__viteDevServer = server
-        // globalThis.__encode = Encode
+        globalThis.__encode = Encode
         // globalThis.__decode = Decode
         globalThis.__hook = Hook
         server.middlewares.use(bodyparser.json())
@@ -29,22 +33,13 @@ export const PluginVit = (): Plugin[] => {
           const url = parseURL(req.url)
           if (url.pathname === '/update-fake-node-file' && req.method === 'POST') {
             const body = (req as any).body as { content: string }
-            content = `
-import { consolehook } from "./src/lib/consolehook"
-globalThis.__hook(consolehook, (log) => {
-  console.log(log)
-  globalThis.__viteDevServer.ws.send({
-    type: 'custom',
-    data: globalThis.__encode(log),
-    event: 'vit:custom',
-  })
-})
-${body.content}
-            `
+            content = injectConsoleHook(body.content)
+            debug('update fake node file %s', content)
             res.end('ok')
             return
           }
           if (url.pathname === '/fake-node-file' && req.method === 'GET') {
+            debug('request latest fake node file')
             try {
               // console.log('request', req.url)
               // /fake-node-file?t=<timestamp>

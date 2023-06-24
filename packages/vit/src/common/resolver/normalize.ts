@@ -40,7 +40,7 @@ export const wrapCode = (code: string) => {
 
 export const injectConsoleHook = (content: string) => {
   return `
-import { consolehook } from "./src/lib/consolehook"
+import { consolehook } from "vit"
 globalThis.__hook(consolehook, (log) => {
   console.log(log)
   globalThis.__viteDevServer.ws.send({

@@ -12,7 +12,7 @@
   "repository": {
     "url": "git+https://github.com/vit.git",
     "type": "git",
-    "directory": "client"
+    "directory": "packages/client"
   },
   "bugs": {
     "url": "https://github.com/vit/issues"

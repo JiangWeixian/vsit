@@ -2,24 +2,20 @@
   "name": "vit",
   "version": "0.0.0",
   "packageManager": "pnpm@7.33.0",
-  "description": "templates for cli project",
-  "keywords": [
-    "aiou",
-    "cli",
-    "neo",
-    "template"
-  ],
+  "description": "todo",
+  "keywords": ["vit"],
   "license": "MIT",
   "engines": {
     "node": ">=16"
   },
-  "homepage": "https://github.com/neo-hack/bin-template#readme",
+  "homepage": "https://github.com/vit#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/neo-hack/bin-template.git"
+    "url": "git+https://github.com/vit.git",
+    "directory": "packages/vit"
   },
   "bugs": {
-    "url": "https://github.com/neo-hack/bin-template/issues",
+    "url": "https://github.com/vit/issues",
     "email": "jiangweixian1994@gmail.com"
   },
   "author": {
@@ -33,14 +29,21 @@
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "types": "./dts/exports/index.d.ts",
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.mjs"
+      "browser": {
+        "types": "./dts/exports/browser.d.ts",
+        "require": "./dist/browser.cjs",
+        "import": "./dist/browser.mjs"
+      },
+      "node": {
+        "types": "./dts/exports/node.d.ts",
+        "require": "./dist/node.cjs",
+        "import": "./dist/node.mjs"
+      }
     }
   },
-  "main": "dist/index.cjs",
-  "module": "dist/index.mjs",
-  "types": "dts/exports/index.d.ts",
+  "main": "dist/node.cjs",
+  "module": "dist/node.mjs",
+  "types": "dts/exports/node.d.ts",
   "scripts": {
     "build:dts": "rimraf dts && ttsc",
     "build:lib": "rimraf dist && rollup -c --silent --environment BUILD:production",

@@ -1,4 +1,4 @@
-import type { Hook } from 'console-feed'
+import type { Encode, Hook } from 'console-feed'
 import type { ViteDevServer } from 'vite'
 
 declare global {
@@ -6,6 +6,8 @@ declare global {
   var __viteDevServer: ViteDevServer | undefined
   // eslint-disable-next-line vars-on-top, no-var
   var __hook: Hook
+  // eslint-disable-next-line vars-on-top, no-var
+  var __encode: Encode
 }
 
 export {}

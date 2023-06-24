@@ -49,7 +49,7 @@ export default defineConfig([
           replacement: path.resolve(process.cwd(), `${value[0].replace('/*', '')}`),
         })),
       }),
-      resolve(),
+      resolve({ browser: false, exportConditions: ['node', 'default'] }),
       json(),
       size(),
     ],
@@ -87,7 +87,7 @@ export default defineConfig([
           replacement: path.resolve(process.cwd(), `${value[0].replace('/*', '')}`),
         })),
       }),
-      resolve(),
+      resolve({ browser: false, exportConditions: ['node', 'default'] }),
       json(),
       ce({
         outDir: 'dist',

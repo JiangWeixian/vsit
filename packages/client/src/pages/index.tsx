@@ -6,15 +6,17 @@ import {
   Hook,
 } from 'console-feed'
 import { createSignal } from 'solid-js'
+import { consolehook } from 'vit'
 
-import { unStripEsmsh } from '../lib/strip-esmsh'
 import { CodeMirror } from '@/components/console-feed/codemirror'
 import { fromConsoleToString } from '@/components/console-feed/from-code-to-string'
-// debug
-import { consolehook } from '@/lib/consolehook'
+import { API_GET_FAKE_NODE_FILE, API_UPDATE_FAKE_NODE_FILE } from '@/lib/constants'
+import { unStripEsmsh } from '@/lib/strip-esmsh'
+
+import type { Setter } from 'solid-js'
 
 let socket
-let setLogStateInCompnent
+let setLogStateInCompnent: Setter<Message[]>
 const importMetaUrl = new URL(import.meta.url)
 // use server configuration, then fallback to inference
 const serverHost = 'localhost:undefined/'
@@ -93,7 +95,6 @@ consolehook.log(a, uniq, stripAnsi)
 const Home = () => {
   const [type, setType] = createSignal<'web' | 'node'>('web')
   const [code, setCode] = createSignal(InitialCode)
-  let contentRef: HTMLPreElement
   const [logState, setLogState] = createSignal<Message[]>([])
   setLogStateInCompnent = setLogState
   const wrapConsole = () => {
@@ -112,7 +113,7 @@ const Home = () => {
       let search = new URLSearchParams({
         t: `${timestamp}`,
       })
-      let url = `/update-fake-node-file?${search}`
+      let url = `/${API_UPDATE_FAKE_NODE_FILE}?${search}`
       await fetch(url, {
         method: 'POST',
         body: JSON.stringify({
@@ -126,7 +127,7 @@ const Home = () => {
       search = new URLSearchParams({
         t: `${timestamp}`,
       })
-      url = `/fake-node-file?${search}`
+      url = `/${API_GET_FAKE_NODE_FILE}?${search}`
       fetch(url, { method: 'GET' })
       return
     }
@@ -161,18 +162,6 @@ const Home = () => {
         <a class={clsx('tab', { 'tab-active': type() === 'web' })} onClick={() => handleSwitchType('web')}>Web</a>
         <a class={clsx('tab', { 'tab-active': type() === 'node' })} onClick={() => handleSwitchType('node')}>Node</a>
       </div>
-      {/* https://stackoverflow.com/questions/49639144/why-does-react-warn-against-an-contenteditable-component-having-children-managed */}
-      {/* <pre
-        contentEditable={true}
-        ref={el => contentRef = el}
-        class="code-editor"
-        innerHTML={`
-import { uniq } from "esm.sh:lodash-es@4.17.21"
-import stripAnsi from "esm.sh:strip-ansi@7.1.0"
-const a = uniq([1, 2, 3, 3])
-consolehook.log(a, uniq, stripAnsi)
-        `}
-      /> */}
       <CodeMirror
         code={InitialCode}
         initMode="immediate"
@@ -199,10 +188,6 @@ consolehook.log(a, uniq, stripAnsi)
           )
         })
       })}
-      {/* <Console logs={logState()} variant="dark" /> */}
-      {/* <pre className="log">
-        {logState.map((item, index) => <p key={index}>{JSON.stringify(item, null, 2)}</p>)}
-      </pre> */}
     </div>
   )
 }

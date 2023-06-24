@@ -26,7 +26,7 @@ const methods = [
   'warn',
 ]
 let length = methods.length
-const consolehook: any = {}
+const consolehook: Console = {} as Console
 
 while (length--) {
   method = methods[length]
