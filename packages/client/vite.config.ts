@@ -1,10 +1,10 @@
 import path from 'node:path'
 
-import { PluginVit } from 'vit'
 import { defineConfig } from 'vite'
 // import { VitePluginDocument } from 'vite-plugin-document'
 import inspect from 'vite-plugin-inspect'
 import solid from 'vite-plugin-solid'
+import { PluginVit } from 'vsit'
 
 // https://vitejs.dev/config/
 export default defineConfig({

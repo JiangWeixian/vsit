@@ -1,7 +1,7 @@
 import { createServer } from 'vite'
 
 import { PluginPreview } from '@/plugins/preview'
-import { PluginVit } from '@/plugins/vit'
+import { PluginVit } from '@/plugins/vsit'
 
 export const main = async () => {
   console.log('main')

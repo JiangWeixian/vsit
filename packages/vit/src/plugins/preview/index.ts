@@ -9,7 +9,7 @@ import type { Plugin } from 'vite'
 const clientDir = 'dist-client'
 export const PluginPreview = (): Plugin => {
   return {
-    name: 'vit:preview',
+    name: 'vsit:preview',
     configureServer(server) {
       const resolvedStaticPath = path.resolve(pkgRoot, clientDir)
       const client = sirv(resolvedStaticPath, { dev: true })

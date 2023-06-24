@@ -42,7 +42,7 @@ export const wrapCode = (code: string) => {
 }
 
 export const injectConsoleHook = (content: string) => {
-  const entryOfVit = process.env.TEST ? 'vit' : join(pkgRoot, 'dist/node.mjs')
+  const entryOfVit = process.env.TEST ? 'vsit' : join(pkgRoot, 'dist/node.mjs')
   return `
 import { consolehook } from "${entryOfVit}"
 globalThis.__hook(consolehook, (log) => {
@@ -50,7 +50,7 @@ globalThis.__hook(consolehook, (log) => {
   globalThis.__viteDevServer.ws.send({
     type: 'custom',
     data: globalThis.__encode(log),
-    event: 'vit:custom',
+    event: 'vsit:custom',
   })
 })
 ${content}

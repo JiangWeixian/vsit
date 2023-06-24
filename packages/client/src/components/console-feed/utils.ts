@@ -74,7 +74,7 @@ export const getCodeMirrorLanguage = (
   return options[extension as keyof typeof options]
 }
 
-const THEME_PREFIX = 'vit'
+const THEME_PREFIX = 'vsit'
 const classNameToken = (name: string): string =>
   `${THEME_PREFIX}-syntax-${name}`
 

@@ -4,7 +4,7 @@ import { performance } from 'node:perf_hooks'
 import Debug from 'debug'
 import { fetch } from 'ofetch'
 
-const debug = Debug('vit:store')
+const debug = Debug('vsit:store')
 
 export const createStore = () => {
   const pool = new Map<string, Promise<string>>()

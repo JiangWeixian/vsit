@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import Hook from 'console-feed/lib/Hook'
 import { Decode, Encode } from 'console-feed/lib/Transform'
 import { createSignal } from 'solid-js'
-import { consolehook, MESSAGE_EVENT_TYPE } from 'vit'
+import { consolehook, MESSAGE_EVENT_TYPE } from 'vsit'
 
 import { CodeMirror } from '@/components/console-feed/codemirror'
 import { fromConsoleToString } from '@/components/console-feed/from-code-to-string'

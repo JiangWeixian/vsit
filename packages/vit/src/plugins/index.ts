@@ -1,1 +1,1 @@
-export { PluginVit } from './vit'
+export { PluginVit } from './vsit'

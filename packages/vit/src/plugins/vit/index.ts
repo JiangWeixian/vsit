@@ -15,14 +15,14 @@ import { createStore } from '@/common/store'
 
 import type { Plugin } from 'vite'
 
-const debug = Debug('vit:plugin')
+const debug = Debug('vsit:plugin')
 
 export const PluginVit = (): Plugin[] => {
   let content = ''
   const store = createStore()
   return [
     {
-      name: 'vit:core',
+      name: 'vsit:core',
       configureServer(server) {
         globalThis.__viteDevServer = server
         globalThis.__encode = Encode
@@ -71,7 +71,7 @@ export const PluginVit = (): Plugin[] => {
       },
     },
     {
-      name: 'vit:esmsh',
+      name: 'vsit:esmsh',
       resolveId(id) {
         // console.log('resolveId', id)
         if (isEsmSh(id)) {

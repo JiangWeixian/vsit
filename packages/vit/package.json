@@ -1,21 +1,21 @@
 {
-  "name": "vit",
+  "name": "vsit",
   "version": "0.0.0",
   "packageManager": "pnpm@7.33.0",
   "description": "todo",
-  "keywords": ["vit"],
+  "keywords": ["vsit"],
   "license": "MIT",
   "engines": {
     "node": ">=16"
   },
-  "homepage": "https://github.com/vit#readme",
+  "homepage": "https://github.com/vsit#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vit.git",
-    "directory": "packages/vit"
+    "url": "git+https://github.com/vsit.git",
+    "directory": "packages/vsit"
   },
   "bugs": {
-    "url": "https://github.com/vit/issues",
+    "url": "https://github.com/vsit/issues",
     "email": "jiangweixian1994@gmail.com"
   },
   "author": {
@@ -29,7 +29,7 @@
     "dist-client"
   ],
   "bin": {
-    "vit": "bin/index.mjs"
+    "vsit": "bin/index.mjs"
   },
   "exports": {
     "./package.json": "./package.json",

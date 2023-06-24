@@ -1,17 +1,17 @@
 {
-  "name": "vit-monorepo",
+  "name": "vsit-monorepo",
   "version": "0.0.0",
   "private": true,
-  "description": "vit monorepo",
-  "keywords": ["vit"],
+  "description": "vsit monorepo",
+  "keywords": ["vsit"],
   "license": "MIT",
-  "homepage": "https://github.com/vit#readme",
+  "homepage": "https://github.com/vsit#readme",
   "repository": {
-    "url": "git+https://github.com/vit.git",
+    "url": "git+https://github.com/vsit.git",
     "type": "git"
   },
   "bugs": {
-    "url": "https://github.com/vit/issues"
+    "url": "https://github.com/vsit/issues"
   },
   "author": {
     "name": "JiangWeixian",
@@ -19,9 +19,9 @@
   },
   "scripts": {
     "test": "pnpm --filter=./packages/** run vitest",
-    "dev:cli": "pnpm --filter=./packages/vit dev",
+    "dev:cli": "pnpm --filter=./packages/vsit dev",
     "dev": "pnpm --filter=./packages/client dev",
-    "build:cli": "pnpm --filter=./packages/vit build",
+    "build:cli": "pnpm --filter=./packages/vsit build",
     "build:client": "pnpm --filter=./packages/client build",
     "build:copy": "esno ./scripts/client.ts",
     "build": "run-s build:*",
