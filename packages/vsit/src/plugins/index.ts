@@ -1,0 +1,1 @@
+export { PluginVit } from './vsit'
