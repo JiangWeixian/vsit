@@ -18,7 +18,7 @@
     "jsxImportSource": "solid-js",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     },
     "composite": true,
     "rootDir": "src",

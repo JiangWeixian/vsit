@@ -156,7 +156,7 @@ const Home = () => {
   }
   console.log('logState', logState())
   return (
-    <div class="h-full bg-base-200">
+    <div class="bg-base-200 h-full">
       <div class="tabs tabs-boxed">
         <a class={clsx('tab', { 'tab-active': type() === 'web' })} onClick={() => handleSwitchType('web')}>Web</a>
         <a class={clsx('tab', { 'tab-active': type() === 'node' })} onClick={() => handleSwitchType('node')}>Node</a>

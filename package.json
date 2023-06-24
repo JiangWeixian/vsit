@@ -1,24 +1,17 @@
 {
   "name": "vit-monorepo",
   "version": "0.0.0",
-  "description": "vite react template",
-  "keywords": [
-    "aiou",
-    "vite",
-    "react",
-    "tailwindcss",
-    "stitches",
-    "template",
-    "neo"
-  ],
+  "private": true,
+  "description": "vit monorepo",
+  "keywords": ["vit"],
   "license": "MIT",
-  "homepage": "https://github.com/neo-hack/vite-template#readme",
+  "homepage": "https://github.com/vit#readme",
   "repository": {
-    "url": "git+https://github.com/neo-hack/vite-template.git",
+    "url": "git+https://github.com/vit.git",
     "type": "git"
   },
   "bugs": {
-    "url": "https://github.com/neo-hack/vite-template/issues"
+    "url": "https://github.com/vit/issues"
   },
   "author": {
     "name": "JiangWeixian",
@@ -27,10 +20,10 @@
   "scripts": {
     "test": "vitest",
     "dev:cli": "pnpm --filter=./packages/vit dev",
-    "dev": "vite",
+    "dev": "pnpm --filter=./packages/client dev",
     "build:cli": "pnpm --filter=./packages/vit build",
+    "build:client": "pnpm --filter=./packages/client build",
     "build": "tsc && vite build",
-    "preview": "vite preview",
     "ci:publish": "pnpm changeset publish",
     "ci:version": "pnpm changeset version",
     "ci:snapshot": "pnpm changeset version --snapshot beta",
@@ -41,67 +34,14 @@
   "lint-staged": {
     "**/**/*.{js,ts,tsx,vue,json}": ["eslint --fix"]
   },
-  "dependencies": {
-    "@codemirror/autocomplete": "^6.7.1",
-    "@codemirror/commands": "^6.2.4",
-    "@codemirror/lang-css": "^6.2.0",
-    "@codemirror/lang-html": "^6.4.4",
-    "@codemirror/lang-javascript": "^6.1.9",
-    "@codemirror/language": "^6.7.0",
-    "@codemirror/state": "^6.2.1",
-    "@codemirror/view": "^6.13.0",
-    "@lezer/highlight": "^1.1.6",
-    "@stitches/react": "1.2.8",
-    "@tailwindcss/typography": "0.5.7",
-    "@uiw/codemirror-theme-atomone": "^4.21.2",
-    "clsx": "1.2.1",
-    "consolehook": "npm:console@^0.7.2",
-    "daisyui": "^2.24.0",
-    "debug": "^4.3.4",
-    "es-module-lexer": "^1.3.0",
-    "ofetch": "^1.0.1",
-    "pathe": "^1.1.1",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-router": "6.3.0",
-    "react-router-dom": "6.3.0",
-    "react-solid-bridge": "^1.0.1",
-    "solid-codemirror": "^2.3.0",
-    "solid-js": "^1.7.6",
-    "ufo": "^1.1.2"
-  },
   "devDependencies": {
     "@aiou/eslint-config": "^0.11.0",
     "@changesets/cli": "^2.24.4",
-    "@svgr-rs/svgrs-plugin": "^0.1.0",
-    "@types/debug": "^4.1.8",
     "@types/node": "^20.1.3",
-    "@types/react": "^18.0.18",
-    "@types/react-dom": "^18.0.6",
-    "@vitejs/plugin-react": "^4.0.0",
-    "autoprefixer": "10.4.8",
-    "body-parser": "^1.20.2",
-    "console-feed": "3.3.0",
     "cz-emoji": "1.3.2-canary.2",
     "eslint": "^8.23.0",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
-    "postcss": "8.4.16",
-    "prettier": "^2.7.1",
-    "tailwind-cssgg": "^0.0.1",
-    "tailwindcss": "3.3.2",
-    "typescript": "4.4.4",
-    "vit": "workspace:*",
-    "vite": "^4.3.8",
-    "vite-plugin-document": "^0.1.1",
-    "vite-plugin-inspect": "^0.7.26",
-    "vite-plugin-pages": "^0.30.1",
-    "vite-plugin-solid": "^2.7.0",
-    "vitest": "^0.32.2"
-  },
-  "config": {
-    "commitizen": {
-      "path": "node_modules/cz-emoji"
-    }
+    "typescript": "4.4.4"
   }
 }
