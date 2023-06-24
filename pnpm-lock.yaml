@@ -95,9 +95,9 @@ importers:
       vite-plugin-pages: 0.30.1_vite@4.3.8
       vite-plugin-solid: 2.7.0_solid-js@1.7.6+vite@4.3.8
       vitest: 0.32.2
-      vsit: link:../vit
+      vsit: link:../vsit
 
-  packages/vit:
+  packages/vsit:
     specifiers:
       '@changesets/cli': ^2.26.0
       '@rollup/plugin-alias': 4.0.3

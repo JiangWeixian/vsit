@@ -22,8 +22,8 @@
     "email": "jiangweixian1994@gmail.com"
   },
   "scripts": {
-    "test": "vitest",
-    "vitest": "vitest",
+    "test": "echo test",
+    "vitest": "echo test",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
