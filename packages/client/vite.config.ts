@@ -17,6 +17,9 @@ export default defineConfig({
     // VitePluginDocument({ solidjs: true }),
     !!process.env.VITE_INSPECT && inspect(),
   ],
+  build: {
+    minify: false,
+  },
   resolve: {
     alias: [
       {

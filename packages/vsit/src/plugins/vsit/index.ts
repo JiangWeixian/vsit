@@ -1,5 +1,6 @@
 import bodyparser from 'body-parser'
-import { Encode, Hook } from 'console-feed'
+import Hook from 'console-feed/lib/Hook'
+import { Encode } from 'console-feed/lib/Transform'
 import Debug from 'debug'
 import { parseURL, withoutLeadingSlash } from 'ufo'
 
