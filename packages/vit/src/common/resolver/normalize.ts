@@ -1,5 +1,8 @@
+import { join } from 'node:path'
+
 import { withoutLeadingSlash, withoutTrailingSlash } from 'ufo'
 
+import { pkgRoot } from '../path'
 import {
   ESM_HOST,
   ESMSH_HTTP_RE,
@@ -39,8 +42,9 @@ export const wrapCode = (code: string) => {
 }
 
 export const injectConsoleHook = (content: string) => {
+  const entryOfVit = join(pkgRoot, 'dist/node.mjs')
   return `
-import { consolehook } from "vit"
+import { consolehook } from "${entryOfVit}"
 globalThis.__hook(consolehook, (log) => {
   console.log(log)
   globalThis.__viteDevServer.ws.send({

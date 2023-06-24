@@ -9,7 +9,6 @@ import solid from 'vite-plugin-solid'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    // vit(),
     PluginVit(),
     solid(),
     // react(),
@@ -19,17 +18,10 @@ export default defineConfig({
     // VitePluginDocument({ solidjs: true }),
     !!process.env.VITE_INSPECT && inspect(),
   ],
-  optimizeDeps: {
-    force: true,
-  },
   resolve: {
     alias: [
       {
         find: '@',
-        replacement: path.resolve(__dirname, 'src'),
-      },
-      {
-        find: 'https:',
         replacement: path.resolve(__dirname, 'src'),
       },
     ],
