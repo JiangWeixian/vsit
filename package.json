@@ -18,7 +18,7 @@
     "email": "jiangweixian1994@gmail.com"
   },
   "scripts": {
-    "test": "vitest",
+    "test": "pnpm --filter=./packages/** run vitest",
     "dev:cli": "pnpm --filter=./packages/vit dev",
     "dev": "pnpm --filter=./packages/client dev",
     "build:cli": "pnpm --filter=./packages/vit build",

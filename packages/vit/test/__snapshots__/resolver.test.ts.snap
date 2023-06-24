@@ -2,7 +2,7 @@
 
 exports[`normalize > inject console hook on node file 1`] = `
 "
-import { consolehook } from \\"./src/lib/consolehook\\"
+import { consolehook } from \\"vit\\"
 globalThis.__hook(consolehook, (log) => {
   console.log(log)
   globalThis.__viteDevServer.ws.send({

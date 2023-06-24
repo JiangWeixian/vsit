@@ -42,7 +42,7 @@ export const wrapCode = (code: string) => {
 }
 
 export const injectConsoleHook = (content: string) => {
-  const entryOfVit = join(pkgRoot, 'dist/node.mjs')
+  const entryOfVit = process.env.TEST ? 'vit' : join(pkgRoot, 'dist/node.mjs')
   return `
 import { consolehook } from "${entryOfVit}"
 globalThis.__hook(consolehook, (log) => {
