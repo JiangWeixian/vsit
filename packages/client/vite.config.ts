@@ -11,7 +11,6 @@ export default defineConfig({
   plugins: [
     PluginVit(),
     solid(),
-    // react(),
     // Not working in solidjs
     // pages(),
     // svgrs(),
