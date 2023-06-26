@@ -1,10 +1,8 @@
 import { createHash } from 'node:crypto'
-import { performance } from 'node:perf_hooks'
 
-import Debug from 'debug'
 import { fetch } from 'ofetch'
 
-const debug = Debug('vsit:store')
+import { debug } from '@/common/log'
 
 export const createStore = () => {
   const pool = new Map<string, Promise<string>>()
@@ -12,13 +10,12 @@ export const createStore = () => {
   const createInstance = (id: string, url: string, options?: RequestInit) => {
     const promise = (async () => {
       try {
-        const now = performance.now()
+        debug.store('start fetch %s', url)
         return fetch(url, options)
           .then(async (res) => {
             const content = await res.text()
             globalCache.set(id, content)
             pool.delete(id)
-            debug('load url %s took', url, `${(performance.now() - now) / 1000}ms`)
             return content
           })
       } catch (e) {
@@ -36,11 +33,10 @@ export const createStore = () => {
       pool.delete(hash)
     },
     async fetch(url: string, options?: RequestInit) {
-      debug('start fetch %s', url)
       const hash = createHash('sha256').update(url).digest('hex')
       const cache = globalCache.get(hash)
       if (cache) {
-        debug('load cache %s', url)
+        debug.store('load cache %s', url)
         return Promise.resolve(cache)
       }
       let instance = pool.get(hash)

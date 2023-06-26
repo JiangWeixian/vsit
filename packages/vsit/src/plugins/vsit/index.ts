@@ -1,9 +1,11 @@
+import { performance } from 'node:perf_hooks'
+
 import bodyparser from 'body-parser'
 import Hook from 'console-feed/lib/Hook'
 import { Encode } from 'console-feed/lib/Transform'
-import Debug from 'debug'
 import { parseURL, withoutLeadingSlash } from 'ufo'
 
+import { debug } from '@/common/log'
 import { RESOLVED_NODE_ID, VIRUTAL_NODE_ID } from '@/common/resolver/constants'
 import { isEsmSh } from '@/common/resolver/is'
 import {
@@ -15,8 +17,6 @@ import {
 import { createStore } from '@/common/store'
 
 import type { Plugin } from 'vite'
-
-const debug = Debug('vsit:plugin')
 
 export const PluginVit = (): Plugin[] => {
   let content = ''
@@ -35,12 +35,12 @@ export const PluginVit = (): Plugin[] => {
           if (url.pathname === '/update-fake-node-file' && req.method === 'POST') {
             const body = (req as any).body as { content: string }
             content = injectConsoleHook(body.content)
-            debug('update fake node file %s', content)
+            debug.plugin('update fake node file %s', content)
             res.end('ok')
             return
           }
           if (url.pathname === '/fake-node-file' && req.method === 'GET') {
-            debug('request latest fake node file')
+            debug.plugin('request latest fake node file')
             try {
               // console.log('request', req.url)
               // /fake-node-file?t=<timestamp>
@@ -89,9 +89,11 @@ export const PluginVit = (): Plugin[] => {
         // vite will remove duplicate slash if id starts with 'https://'
         if (isEsmSh(id)) {
           // un wrap
+          const now = performance.now()
           const url = unWrapId(id)
           const code = await store.fetch(url)
           const resolvedCode = wrapCode(code)
+          debug.benchmark('load url %s took', url, `${(performance.now() - now) / 1000}ms`)
           return {
             code: resolvedCode,
             moduleSideEffects: false,
