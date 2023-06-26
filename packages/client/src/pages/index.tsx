@@ -176,7 +176,7 @@ const Home = () => {
             code={InitialCode}
             initMode="immediate"
             showLineNumbers={false}
-            fileType="fake.js"
+            fileType="ts"
             readOnly={false}
             onCodeUpdate={code => setCode(code)}
           />
@@ -193,7 +193,7 @@ const Home = () => {
                   code={fromConsoleToString(msg, fixReferences)}
                   initMode="immediate"
                   showLineNumbers={false}
-                  fileType="fake.js"
+                  fileType="ts"
                   readOnly={true}
                 />
               )
