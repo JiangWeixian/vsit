@@ -7,5 +7,5 @@ export const ESMSH_PROTOCOL = 'esm.sh:'
 
 export const VIRTUAL_RE = /^(?:virtual:)|\0/
 
-export const VIRUTAL_NODE_ID = 'fake-node-file'
-export const RESOLVED_NODE_ID = `\0${VIRUTAL_NODE_ID}`
+export const VIRUTAL_NODE_ID = 'fake-node-file.ts'
+export const VIRUTAL_WEB_ID = 'fake-web-file.ts'
