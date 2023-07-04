@@ -26,6 +26,7 @@ export const PluginVit = (): Plugin[] => {
     {
       name: 'vsit:core',
       configureServer(server) {
+        // TODO: common middlewares or standalone vite plugin
         globalThis.__viteDevServer = server
         globalThis.__encode = Encode
         // globalThis.__decode = Decode
