@@ -1,8 +1,8 @@
 import { performance } from 'node:perf_hooks'
 
+import Hook from '@nicksrandall/console-feed/lib/Hook'
+import { Encode } from '@nicksrandall/console-feed/lib/Transform'
 import bodyparser from 'body-parser'
-import Hook from 'console-feed/lib/Hook'
-import { Encode } from 'console-feed/lib/Transform'
 import { parseURL } from 'ufo'
 
 import { debug } from '@/common/log'

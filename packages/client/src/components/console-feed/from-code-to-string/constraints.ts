@@ -13,3 +13,4 @@ export const MAX_LENGTH_STRING = 10000
 export const MAX_NEST_LEVEL = 2
 export const MAX_KEYS = 400
 export const MAX_MESSAGE_COUNT = MAX_KEYS * 2
+export const REMAINING_KEY = '__console_feed_remaining__'

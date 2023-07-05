@@ -1,12 +1,12 @@
 /* eslint-disable react/jsx-key */
+import Hook from '@nicksrandall/console-feed/lib/Hook'
+import { Decode } from '@nicksrandall/console-feed/lib/Transform'
 import clsx from 'clsx'
-import Hook from 'console-feed/lib/Hook'
-import { Decode, Encode } from 'console-feed/lib/Transform'
 import { createSignal } from 'solid-js'
 import { consolehook, MESSAGE_EVENT_TYPE } from 'vsit'
 
 import { CodeMirror } from '@/components/console-feed/codemirror'
-import { fromConsoleToString } from '@/components/console-feed/from-code-to-string'
+import { fromConsoleToString, removeRemainKeys } from '@/components/console-feed/from-code-to-string'
 import {
   API_GET_FAKE_NODE_FILE,
   API_GET_FAKE_WEB_FILE,
@@ -68,9 +68,8 @@ const useWS = (props: UseWSProps) => {
     socket.addEventListener('message', async ({ data }) => {
       const result = JSON.parse(data)
       if (result.event === MESSAGE_EVENT_TYPE) {
-        const encodeMessage = Decode(result.data)
-        // console.log('node', encodeMessage)
-        props.onMessageUpdate?.(encodeMessage)
+        const encodeMessage = Decode(Array.isArray(result.data) ? result.data[0] : result.data)
+        props.onMessageUpdate?.([encodeMessage])
       }
     })
     // ping server
@@ -106,11 +105,7 @@ const Home = () => {
   useWS({ onMessageUpdate: setLogState })
   const wrapConsole = () => {
     Hook(globalThis.consolehook, (log) => {
-      const encodeMessage = Decode(Encode(log) as any) as any
-      console.log('web', encodeMessage)
-      setLogState(encodeMessage)
-      // setLogState(Array.isArray(encodeMessage) ? encodeMessage[0] : encodeMessage)
-      // setLogState([Decode(log)])
+      setLogState(log as any ?? [])
     })
   }
   const handleClick = async () => {
@@ -207,7 +202,7 @@ const Home = () => {
         </div>
         <div class="flex-1">
           {logState().map(({ data }, logIndex, references) => {
-            return data?.map((msg) => {
+            return removeRemainKeys(data)?.map((msg) => {
               const fixReferences = references.slice(
                 logIndex,
                 references.length,
