@@ -1,15 +1,17 @@
 /* eslint-disable react/jsx-key */
+import Hook from '@nicksrandall/console-feed/lib/Hook'
+import { Decode } from '@nicksrandall/console-feed/lib/Transform'
 import clsx from 'clsx'
-import Hook from 'console-feed/lib/Hook'
-import { Decode, Encode } from 'console-feed/lib/Transform'
 import { createSignal } from 'solid-js'
 import { consolehook, MESSAGE_EVENT_TYPE } from 'vsit'
 
 import { CodeMirror } from '@/components/console-feed/codemirror'
-import { fromConsoleToString } from '@/components/console-feed/from-code-to-string'
+import { fromConsoleToString, removeRemainKeys } from '@/components/console-feed/from-code-to-string'
 import {
   API_GET_FAKE_NODE_FILE,
+  API_GET_FAKE_WEB_FILE,
   API_UPDATE_FAKE_NODE_FILE,
+  API_UPDATE_FAKE_WEB_FILE,
   VIRTUAL_MODULES_ID,
 } from '@/lib/constants'
 import { unStripEsmsh } from '@/lib/strip-esmsh'
@@ -66,9 +68,8 @@ const useWS = (props: UseWSProps) => {
     socket.addEventListener('message', async ({ data }) => {
       const result = JSON.parse(data)
       if (result.event === MESSAGE_EVENT_TYPE) {
-        const encodeMessage = Decode(result.data)
-        // console.log('node', encodeMessage)
-        props.onMessageUpdate?.(encodeMessage)
+        const encodeMessage = Decode(Array.isArray(result.data) ? result.data[0] : result.data)
+        props.onMessageUpdate?.([encodeMessage])
       }
     })
     // ping server
@@ -94,7 +95,8 @@ const InitialCode = `
 import { uniq } from "esm.sh:lodash-es@4.17.21"
 import stripAnsi from "esm.sh:strip-ansi@7.1.0"
 const a = uniq([1, 2, 3, 3])
-consolehook.log(a, uniq, stripAnsi)
+const b: number = 1
+consolehook.log(a, b, uniq, stripAnsi)
 `
 const Home = () => {
   const [type, setType] = createSignal<'web' | 'node'>('web')
@@ -103,17 +105,14 @@ const Home = () => {
   useWS({ onMessageUpdate: setLogState })
   const wrapConsole = () => {
     Hook(globalThis.consolehook, (log) => {
-      const encodeMessage = Decode(Encode(log) as any) as any
-      console.log('web', encodeMessage)
-      setLogState(encodeMessage)
-      // setLogState(Array.isArray(encodeMessage) ? encodeMessage[0] : encodeMessage)
-      // setLogState([Decode(log)])
+      setLogState(log as any ?? [])
     })
   }
   const handleClick = async () => {
     const content = code()
     if (type() === 'node') {
       const timestamp = Date.now()
+      // TODO: create common fetch function
       let search = new URLSearchParams({
         t: `${timestamp}`,
       })
@@ -135,11 +134,32 @@ const Home = () => {
       fetch(url, { method: 'GET' })
       return
     }
+    // update web file
+    const timestamp = Date.now()
+    let search = new URLSearchParams({
+      t: `${timestamp}`,
+    })
+    let url = `/${API_UPDATE_FAKE_WEB_FILE}?${search}`
+    await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({
+        content: unStripEsmsh(content),
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    // Why use timestamp as a query parameter for method get
+    search = new URLSearchParams({
+      t: `${timestamp}`,
+    })
+    url = `/${API_GET_FAKE_WEB_FILE}?${search}`
     let script = document.getElementById(VIRTUAL_MODULES_ID) as HTMLScriptElement
     if (!script) {
       script = document.createElement('script')
       script.type = 'module'
-      script.innerHTML = unStripEsmsh(content)
+      script.src = url
+      // script.innerHTML = unStripEsmsh(content)
       script.id = VIRTUAL_MODULES_ID
       const body = document.querySelector('body')
       body?.appendChild(script)
@@ -148,11 +168,11 @@ const Home = () => {
       setLogState([])
       script = document.createElement('script')
       script.type = 'module'
-      script.innerHTML = unStripEsmsh(content)
+      script.src = url
+      // script.innerHTML = unStripEsmsh(content)
       script.id = VIRTUAL_MODULES_ID
       const body = document.querySelector('body')
       body?.appendChild(script)
-      script.innerHTML = unStripEsmsh(content)
     }
     wrapConsole()
   }
@@ -160,7 +180,6 @@ const Home = () => {
     setLogState([])
     setType(type)
   }
-  console.log('logState', logState())
   return (
     <div class="bg-base-200 h-full">
       <div class="flex items-center justify-between p-2">
@@ -176,14 +195,14 @@ const Home = () => {
             code={InitialCode}
             initMode="immediate"
             showLineNumbers={false}
-            fileType="fake.js"
+            fileType="ts"
             readOnly={false}
             onCodeUpdate={code => setCode(code)}
           />
         </div>
         <div class="flex-1">
           {logState().map(({ data }, logIndex, references) => {
-            return data?.map((msg) => {
+            return removeRemainKeys(data)?.map((msg) => {
               const fixReferences = references.slice(
                 logIndex,
                 references.length,
@@ -193,7 +212,7 @@ const Home = () => {
                   code={fromConsoleToString(msg, fixReferences)}
                   initMode="immediate"
                   showLineNumbers={false}
-                  fileType="fake.js"
+                  fileType="ts"
                   readOnly={true}
                 />
               )

@@ -4,7 +4,6 @@ import { PluginPreview } from '@/plugins/preview'
 import { PluginVit } from '@/plugins/vsit'
 
 export const main = async () => {
-  console.log('main')
   const server = await createServer({
     configFile: false,
     preview: {

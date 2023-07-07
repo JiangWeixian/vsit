@@ -74,20 +74,17 @@ export const getCodeMirrorLanguage = (
   return options[extension as keyof typeof options]
 }
 
-const THEME_PREFIX = 'vsit'
-const classNameToken = (name: string): string =>
-  `${THEME_PREFIX}-syntax-${name}`
-
-// TODO: add types
-type SandpackTheme = any
-export const getSyntaxHighlight = (theme?: SandpackTheme): HighlightStyle =>
+// Based on: https://github.com/uiwjs/react-codemirror/blob/master/themes/atomone/src/index.ts
+// https://github.com/codesandbox/sandpack/blob/main/sandpack-themes/src/atomDark.ts
+export const getSyntaxHighlight = (): HighlightStyle =>
   HighlightStyle.define([
     {
       tag: [tags.function(tags.variableName), tags.function(tags.propertyName), tags.url, tags.processingInstruction],
       color: 'hsl(207, 82%, 66%)',
     },
     { tag: [tags.tagName, tags.heading], color: '#e06c75' },
-    { tag: [tags.comment, tags.quote], color: '#54636D' },
+    { tag: [tags.comment, tags.quote], color: '#757575' },
+    { tag: tags.comment, fontStyle: 'italic' },
     { tag: [tags.propertyName], color: 'hsl(220, 14%, 71%)' },
     { tag: [tags.atom, tags.number, tags.bool, tags.attributeName], color: 'hsl( 29, 54%, 61%)' },
     { tag: tags.className, color: 'hsl( 39, 67%, 69%)' },
@@ -114,16 +111,14 @@ export const getSyntaxHighlight = (theme?: SandpackTheme): HighlightStyle =>
         // "Custom tags", meaning React component
         tags.tagName,
       ],
-      class: classNameToken('definition'),
+      color: '#62aeef',
     },
     {
       tag: [tags.literal, tags.inserted],
-      color: 'hsl(207, 82%, 66%)',
-      // class: classNameToken(theme.syntax.string ? 'string' : 'static'),
+      color: '#98c379',
     },
     {
       tag: tags.punctuation,
-      class: classNameToken('punctuation'),
-      color: '#54636D',
+      color: '#a8b1c2',
     },
   ])

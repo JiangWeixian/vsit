@@ -11,6 +11,7 @@ import {
   MAX_KEYS,
   MAX_LENGTH_STRING,
   MAX_NEST_LEVEL,
+  REMAINING_KEY,
   TRANSFORMED_TYPE_KEY,
 } from './constraints'
 import { transformers } from './transformers'
@@ -35,6 +36,10 @@ export type Message =
       proto: TransformsTypes
     }
   }
+
+export const removeRemainKeys = (msgs: any[] | undefined = []) => {
+  return msgs.filter(msg => !(typeof msg === 'string' && msg.startsWith(REMAINING_KEY)))
+}
 
 const formatSymbols = (message: Message): any => {
   if (
@@ -161,7 +166,7 @@ const arrayToString = (
   references: Array<Message>,
   level: number,
 ) => {
-  const mergeArray = output.reduce<string>((acc, curr, index) => {
+  const mergeArray = removeRemainKeys(output).reduce<string>((acc, curr, index) => {
     return `${acc}${index ? ', ' : ''}${fromConsoleToString(
       curr,
       references,
