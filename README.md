@@ -5,6 +5,12 @@
 
 [Edit on StackBlitz ⚡️](https://stackblitz.com/github/vsit/tree/main)
 
+## usage
+
+```
+pnpm i vsit -g
+vsit
+```
 
 ## features
 
