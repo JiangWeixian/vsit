@@ -38,10 +38,10 @@
     "@codemirror/state": "^6.2.1",
     "@codemirror/view": "^6.13.0",
     "@lezer/highlight": "^1.1.6",
-    "@nicksrandall/console-feed": "3.5.0",
     "@tailwindcss/typography": "0.5.7",
     "@uiw/codemirror-theme-atomone": "^4.21.2",
     "clsx": "1.2.1",
+    "console-feed": "3.5.0",
     "daisyui": "^2.24.0",
     "solid-codemirror": "^2.3.0",
     "solid-js": "^1.7.6"
