@@ -1,5 +1,11 @@
 # vsit
 
+## 0.0.3
+
+### Patch Changes
+
+- 99f03bd: replace @nicksrandall/console-feed to console-feed
+
 ## 0.0.2
 
 ### Patch Changes
