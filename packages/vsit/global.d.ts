@@ -1,4 +1,4 @@
-import type { Encode, Hook } from '@nicksrandall/@nicksrandall/console-feed'
+import type { Encode, Hook } from 'console-feed'
 import type { ViteDevServer } from 'vite'
 
 declare global {

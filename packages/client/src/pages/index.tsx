@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-key */
-import Hook from '@nicksrandall/console-feed/lib/Hook'
-import { Decode } from '@nicksrandall/console-feed/lib/Transform'
 import clsx from 'clsx'
+import Hook from 'console-feed/lib/Hook'
+import { Decode } from 'console-feed/lib/Transform'
 import { createSignal } from 'solid-js'
 import { consolehook, MESSAGE_EVENT_TYPE } from 'vsit'
 
