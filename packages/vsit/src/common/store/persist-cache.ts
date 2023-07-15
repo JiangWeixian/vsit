@@ -22,13 +22,31 @@ interface Options {
 }
 
 interface ResolvedLockFileOptions {
+  /**
+   * @description Virtual store path
+   * @default <homedir>/<.vsit-store>
+   */
   storePath: string
+  /**
+   * @description Virtual store lock file path
+   * @default <homedir>/<.vsit-store>/vsit-lock.yaml
+   */
   lockFilePath: string
 }
 
 export interface Package {
+  /**
+   * @description Encoded url
+   */
   id: string
+  /**
+   * @description Remote package url
+   */
   url: string
+  /**
+   * @description Dependent packages
+   * @todo not used currently, in the future, we will outdated the persist cache, and concurrent download the packages based on deps
+   */
   deps?: string[]
 }
 
@@ -149,5 +167,3 @@ export class PersistCache {
     await outputFile(path, content)
   }
 }
-
-export const createPersistCache = () => {}
