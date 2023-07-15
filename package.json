@@ -2,6 +2,7 @@
   "name": "vsit-monorepo",
   "version": "0.0.0",
   "private": true,
+  "packageManager": "pnpm@7.29.3",
   "description": "vsit monorepo",
   "keywords": ["vsit"],
   "license": "MIT",
