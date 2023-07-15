@@ -8,23 +8,28 @@ import { parseURL } from 'ufo'
 import { debug } from '@/common/log'
 import { VIRUTAL_NODE_ID, VIRUTAL_WEB_ID } from '@/common/resolver/constants'
 import { isEsmSh } from '@/common/resolver/is'
+import { createStore } from '@/common/store'
 import {
   injectConsoleHook,
-  unWrapId,
+  parseModulesDeps,
+  unwrapId,
   wrapCode,
   wrapId,
-} from '@/common/resolver/normalize'
-import { createStore } from '@/common/store'
+} from '@/common/utils'
 
+import type { AsyncReturnType } from 'type-fest'
 import type { Plugin } from 'vite'
 
 export const PluginVit = (): Plugin[] => {
   let content = ''
   let webContent = ''
-  const store = createStore()
+  let store: AsyncReturnType<typeof createStore>
   return [
     {
       name: 'vsit:core',
+      async configResolved() {
+        store = await createStore()
+      },
       configureServer(server) {
         // TODO: common middlewares or standalone vite plugin
         globalThis.__viteDevServer = server
@@ -57,13 +62,16 @@ export const PluginVit = (): Plugin[] => {
               // /fake-node-file?t=<timestamp>
               await server.ssrLoadModule(VIRUTAL_NODE_ID)
               const module = await server.moduleGraph.getModuleByUrl(VIRUTAL_NODE_ID)
+              const packages = parseModulesDeps(module)
+              store.cache.writePackages(packages)
+              // console.log([...module?.ssrTransformResult?.values()][1], [...module?.importedModules?.values()][1].ssrTransformResult?.deps)
               if (module) {
                 res.setHeader('Content-Type', 'text/javascript')
                 res.end(module.ssrTransformResult?.code ?? '')
               } else {
                 res.end('ok')
               }
-              // module && server.moduleGraph.invalidateModule(module)
+              module && server.moduleGraph.invalidateModule(module)
             } catch (e) {
               console.error(e)
             }
@@ -111,7 +119,7 @@ export const PluginVit = (): Plugin[] => {
           }
           // un wrap
           const now = performance.now()
-          const url = unWrapId(id)
+          const url = unwrapId(id)
           const code = await store.fetch(url)
           const resolvedCode = wrapCode(code)
           debug.benchmark('load url %s took', url, `${(performance.now() - now) / 1000}ms`)

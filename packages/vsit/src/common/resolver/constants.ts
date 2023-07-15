@@ -9,3 +9,9 @@ export const VIRTUAL_RE = /^(?:virtual:)|\0/
 
 export const VIRUTAL_NODE_ID = 'fake-node-file.ts'
 export const VIRUTAL_WEB_ID = 'fake-web-file.ts'
+/**
+ * Borrowed from vite
+ */
+export const VALID_ID_PREFIX = '/@id/'
+export const NULL_BYTE_PLACEHOLDER = '__x00__'
+export const NULL_BYTE = '\x00'
