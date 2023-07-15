@@ -1,0 +1,17 @@
+// Vitest Snapshot v1
+
+exports[`lock file > write packages should work 1`] = `
+{
+  "deps": [],
+  "id": "210a361251f5fc11991e0e11ff17b5b543b3d992ab4fb473782e3589571b16ad",
+  "url": "https://esm.sh/lodash",
+}
+`;
+
+exports[`lock file > write packages should work 2`] = `
+{
+  "deps": [],
+  "id": "https://esm.sh/lodash",
+  "url": "https://esm.sh/lodash",
+}
+`;
