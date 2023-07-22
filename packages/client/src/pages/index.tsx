@@ -5,11 +5,12 @@ import { Decode } from 'console-feed/lib/Transform'
 import { createSignal } from 'solid-js'
 import { consolehook, MESSAGE_EVENT_TYPE } from 'vsit'
 
-import { NODE_API_PATH, WBE_API_PATH } from '../../../shared/constants'
+import { WBE_API_PATH } from '../../../shared/constants'
 import { CodeMirror } from '@/components/console-feed/codemirror'
 import { fromConsoleToString, removeRemainKeys } from '@/components/console-feed/from-code-to-string'
+import { apis } from '@/lib/apis'
 import { VIRUTAL_WEB_ID } from '@/lib/constants'
-import { unStripEsmsh } from '@/lib/strip-esmsh'
+import { withQuery } from '@/lib/utils'
 
 import type { Setter } from 'solid-js'
 
@@ -24,7 +25,6 @@ const useWS = (props: UseWSProps) => {
   const socketProtocol = null || (importMetaUrl.protocol === 'https:' ? 'wss' : 'ws')
   const hmrPort = null
   const socketHost = `${null || importMetaUrl.hostname}:${hmrPort || importMetaUrl.port}${'/'}`
-  console.log(hmrPort)
   try {
     let fallback
     // only use fallback when port is inferred to prevent confusion
@@ -78,6 +78,9 @@ const Home = () => {
   const [code, setCode] = createSignal(InitialCode)
   const [logState, setLogState] = createSignal<Message[]>([])
   useWS({ onMessageUpdate: setLogState })
+  /**
+   * @description Wrap console.log with console-feed
+   */
   const wrapConsole = () => {
     Hook(globalThis.consolehook, (log) => {
       setLogState(log as any ?? [])
@@ -86,69 +89,30 @@ const Home = () => {
   const handleClick = async () => {
     const content = code()
     if (type() === 'node') {
-      const timestamp = Date.now()
-      // TODO: create common fetch function
-      let search = new URLSearchParams({
-        t: `${timestamp}`,
-      })
-      let url = `${NODE_API_PATH}?${search}`
-      await fetch(url, {
-        method: 'POST',
-        body: JSON.stringify({
-          content,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
+      await apis.node.update(content)
       // Why use timestamp as a query parameter for method get
-      search = new URLSearchParams({
-        t: `${timestamp}`,
-      })
-      url = `${NODE_API_PATH}?${search}`
-      fetch(url, { method: 'GET' })
+      // Call fetch after update, make sure vite side exec node module
+      apis.node.get()
       return
     }
-    // update web file
-    const timestamp = Date.now()
-    let search = new URLSearchParams({
-      t: `${timestamp}`,
-    })
-    let url = `${WBE_API_PATH}?${search}`
-    await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify({
-        content: unStripEsmsh(content),
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    // Why use timestamp as a query parameter for method get
-    search = new URLSearchParams({
-      t: `${timestamp}`,
-    })
-    url = `${WBE_API_PATH}?${search}`
-    let script = document.getElementById(VIRUTAL_WEB_ID) as HTMLScriptElement
-    if (!script) {
-      script = document.createElement('script')
-      script.type = 'module'
-      script.src = url
-      // script.innerHTML = unStripEsmsh(content)
-      script.id = VIRUTAL_WEB_ID
-      const body = document.querySelector('body')
-      body?.appendChild(script)
-    } else {
-      script.remove()
+    await apis.web.update(content)
+    /**
+     * @description Inject script src=<VIRUTAL_WEB_ID> will get trasformed results from vite
+     */
+    const injectWebScript = () => {
+      let script = document.getElementById(VIRUTAL_WEB_ID) as HTMLScriptElement
+      script?.remove()
       setLogState([])
-      script = document.createElement('script')
+      script = script ?? document.createElement('script')
       script.type = 'module'
+      const url = withQuery(WBE_API_PATH)
       script.src = url
       // script.innerHTML = unStripEsmsh(content)
       script.id = VIRUTAL_WEB_ID
       const body = document.querySelector('body')
       body?.appendChild(script)
     }
+    injectWebScript()
     wrapConsole()
   }
   const handleSwitchType = (type: 'web' | 'node') => {
