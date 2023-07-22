@@ -267,8 +267,8 @@ export const CodeMirror: Component<CodeMirrorProps>
         parentDiv.removeChild(existingPlaceholder)
       }
 
-      const state = EditorState.create({ doc: code ?? '' })
-      console.log('EditorState', state, code)
+      // const state = EditorState.create({ doc: code ?? '' })
+      // console.log('EditorState', state, code)
       const view = new EditorView({
         doc: code,
         extensions: extensionList,

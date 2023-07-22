@@ -15,6 +15,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       strategies: 'generateSW',
+      selfDestroying: process.env.NODE_ENV === 'development',
       devOptions: {
         enabled: true,
       },
