@@ -88,10 +88,9 @@ globalThis.consolehook = consolehook
 type Message = ReturnType<typeof Decode>
 const InitialCode = `
 import { uniq } from "esm.sh:lodash-es@4.17.21"
-import stripAnsi from "esm.sh:strip-ansi@7.1.0"
 const a = uniq([1, 2, 3, 3])
 const b: number = 1
-consolehook.log(a, b, uniq, stripAnsi)
+consolehook.log(a, b, uniq)
 `
 const Home = () => {
   const [type, setType] = createSignal<'web' | 'node'>('web')
@@ -185,7 +184,7 @@ const Home = () => {
         </div>
       </div>
       <div class="items-top flex">
-        <div class="flex-1">
+        <div class="max-w-[50%] flex-1">
           <CodeMirror
             code={InitialCode}
             initMode="immediate"
