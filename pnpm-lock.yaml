@@ -64,6 +64,7 @@ importers:
       vite-plugin-solid: ^2.7.0
       vitest: ^0.32.2
       vsit: workspace:*
+      workbox-window: ^7.0.0
     dependencies:
       '@codemirror/autocomplete': 6.7.1_sxb653lu6oglfxs7ekdhsp4ari
       '@codemirror/commands': 6.2.4
@@ -94,10 +95,11 @@ importers:
       vite-plugin-document: 0.1.2_vite@4.3.8
       vite-plugin-inspect: 0.7.26_vite@4.3.8
       vite-plugin-pages: 0.30.1_vite@4.3.8
-      vite-plugin-pwa: 0.16.4_vite@4.3.8
+      vite-plugin-pwa: 0.16.4_4x2pqptwkxfo6jwpqgh3oauj7y
       vite-plugin-solid: 2.7.0_solid-js@1.7.6+vite@4.3.8
       vitest: 0.32.2
       vsit: link:../vsit
+      workbox-window: 7.0.0
 
   packages/vsit:
     specifiers:
@@ -8693,11 +8695,12 @@ packages:
       - supports-color
     dev: true
 
-  /vite-plugin-pwa/0.16.4_vite@4.3.8:
+  /vite-plugin-pwa/0.16.4_4x2pqptwkxfo6jwpqgh3oauj7y:
     resolution: {integrity: sha512-lmwHFIs9zI2H9bXJld/zVTbCqCQHZ9WrpyDMqosICDV0FVnCJwniX1NMDB79HGTIZzOQkY4gSZaVTJTw6maz/Q==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       vite: ^3.1.0 || ^4.0.0
+      workbox-window: ^7.0.0
     dependencies:
       debug: 4.3.4
       fast-glob: 3.2.12
