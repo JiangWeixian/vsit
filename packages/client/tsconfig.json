@@ -20,9 +20,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "composite": true,
-    "rootDir": "src",
     "outDir": "dist"
   },
-  "include": ["./src"]
+  "include": ["./src", "../shared/constants"]
 }

@@ -5,6 +5,7 @@ import Hook from 'console-feed/lib/Hook'
 import { Encode } from 'console-feed/lib/Transform'
 import { parseURL } from 'ufo'
 
+import { NODE_API_PATH, WBE_API_PATH } from '../../../../shared/constants'
 import { debug } from '@/common/log'
 import { VIRUTAL_NODE_ID, VIRUTAL_WEB_ID } from '@/common/resolver/constants'
 import { isEsmSh } from '@/common/resolver/is'
@@ -44,12 +45,12 @@ export const PluginVit = (): Plugin[] => {
         server.middlewares.use(bodyparser.json())
         server.middlewares.use(async (req, res, next) => {
           const url = parseURL(req.url)
-          if (url.pathname === '/update-fake-web-file' && req.method === 'POST') {
+          if (url.pathname === WBE_API_PATH && req.method === 'POST') {
             webContent = req.body.content
             res.end('ok')
             return
           }
-          if (url.pathname === '/fake-web-file' && req.method === 'GET') {
+          if (url.pathname === WBE_API_PATH && req.method === 'GET') {
             // Invalid before transformRequest, make sure transformRequest get latest content from user
             await invalid(VIRUTAL_WEB_ID, server)
             webContent = (await server.transformRequest(VIRUTAL_WEB_ID, { ssr: false }))?.code ?? ''
@@ -57,14 +58,14 @@ export const PluginVit = (): Plugin[] => {
             res.end(webContent)
             return
           }
-          if (url.pathname === '/update-fake-node-file' && req.method === 'POST') {
+          if (url.pathname === NODE_API_PATH && req.method === 'POST') {
             const body = req.body
             content = injectConsoleHook(body.content)
             debug.plugin('update fake node file %s', content)
             res.end(content)
             return
           }
-          if (url.pathname === '/fake-node-file' && req.method === 'GET') {
+          if (url.pathname === NODE_API_PATH && req.method === 'GET') {
             try {
               // /fake-node-file?t=<timestamp>
               await server.ssrLoadModule(VIRUTAL_NODE_ID)
