@@ -18,7 +18,12 @@ import {
 } from '@/common/utils'
 
 import type { AsyncReturnType } from 'type-fest'
-import type { Plugin } from 'vite'
+import type { Plugin, ViteDevServer } from 'vite'
+
+const invalid = async (moduleName: string, server: ViteDevServer) => {
+  const module = await server.moduleGraph.getModuleByUrl(moduleName)
+  module && server.moduleGraph.invalidateModule(module)
+}
 
 export const PluginVit = (): Plugin[] => {
   let content = ''
@@ -45,6 +50,8 @@ export const PluginVit = (): Plugin[] => {
             return
           }
           if (url.pathname === '/fake-web-file' && req.method === 'GET') {
+            // Invalid before transformRequest, make sure transformRequest get latest content from user
+            await invalid(VIRUTAL_WEB_ID, server)
             webContent = (await server.transformRequest(VIRUTAL_WEB_ID, { ssr: false }))?.code ?? ''
             res.setHeader('Content-Type', 'text/javascript')
             res.end(webContent)
@@ -71,7 +78,7 @@ export const PluginVit = (): Plugin[] => {
               } else {
                 res.end('ok')
               }
-              module && server.moduleGraph.invalidateModule(module)
+              invalid(VIRUTAL_NODE_ID, server)
             } catch (e) {
               console.error(e)
             }
