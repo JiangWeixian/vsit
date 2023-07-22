@@ -101,9 +101,12 @@ const Home = () => {
      */
     const injectWebScript = () => {
       let script = document.getElementById(VIRUTAL_WEB_ID) as HTMLScriptElement
-      script?.remove()
-      setLogState([])
-      script = script ?? document.createElement('script')
+      if (script) {
+        script?.remove()
+        setLogState([])
+      }
+      // Should always create new script element make sure browser re-fetch script again
+      script = document.createElement('script')
       script.type = 'module'
       const url = withQuery(WBE_API_PATH)
       script.src = url
