@@ -9,3 +9,7 @@ const app = document.getElementById('root')
 if (app) {
   render(() => <App />, app)
 }
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+}

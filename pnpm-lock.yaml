@@ -56,7 +56,6 @@ importers:
       tailwind-cssgg: ^0.0.1
       tailwindcss: 3.3.2
       typescript: 4.4.4
-      ufo: ^1.1.2
       vite: ^4.3.8
       vite-plugin-document: ^0.1.1
       vite-plugin-inspect: ^0.7.26
@@ -65,6 +64,8 @@ importers:
       vite-plugin-solid: ^2.7.0
       vitest: ^0.32.2
       vsit: workspace:*
+      workbox-routing: ^7.0.0
+      workbox-strategies: ^7.0.0
       workbox-window: 7.0.0
     dependencies:
       '@codemirror/autocomplete': 6.7.1_sxb653lu6oglfxs7ekdhsp4ari
@@ -83,6 +84,8 @@ importers:
       daisyui: 2.51.6_25hquoklqeoqwmt7fwvvcyxm5e
       solid-codemirror: 2.3.0_im77duhudjzqkq4jfyk3tbrzby
       solid-js: 1.7.6
+      workbox-routing: 7.0.0
+      workbox-strategies: 7.0.0
     devDependencies:
       '@svgr-rs/svgrs-plugin': 0.1.0_vite@4.3.8
       '@types/debug': 4.1.8
@@ -92,7 +95,6 @@ importers:
       tailwind-cssgg: 0.0.1_tailwindcss@3.3.2
       tailwindcss: 3.3.2
       typescript: 4.4.4
-      ufo: 1.1.2
       vite: 4.3.8_@types+node@20.3.1
       vite-plugin-document: 0.1.2_vite@4.3.8
       vite-plugin-inspect: 0.7.26_vite@4.3.8
@@ -9076,7 +9078,6 @@ packages:
 
   /workbox-core/7.0.0:
     resolution: {integrity: sha512-81JkAAZtfVP8darBpfRTovHg8DGAVrKFgHpOArZbdFd78VqHr5Iw65f2guwjE2NlCFbPFDoez3D3/6ZvhI/rwQ==}
-    dev: true
 
   /workbox-expiration/7.0.0:
     resolution: {integrity: sha512-MLK+fogW+pC3IWU9SFE+FRStvDVutwJMR5if1g7oBJx3qwmO69BNoJQVaMXq41R0gg3MzxVfwOGKx3i9P6sOLQ==}
@@ -9129,13 +9130,11 @@ packages:
     resolution: {integrity: sha512-8YxLr3xvqidnbVeGyRGkaV4YdlKkn5qZ1LfEePW3dq+ydE73hUUJJuLmGEykW3fMX8x8mNdL0XrWgotcuZjIvA==}
     dependencies:
       workbox-core: 7.0.0
-    dev: true
 
   /workbox-strategies/7.0.0:
     resolution: {integrity: sha512-dg3qJU7tR/Gcd/XXOOo7x9QoCI9nk74JopaJaYAQ+ugLi57gPsXycVdBnYbayVj34m6Y8ppPwIuecrzkpBVwbA==}
     dependencies:
       workbox-core: 7.0.0
-    dev: true
 
   /workbox-streams/7.0.0:
     resolution: {integrity: sha512-moVsh+5to//l6IERWceYKGiftc+prNnqOp2sgALJJFbnNVpTXzKISlTIsrWY+ogMqt+x1oMazIdHj25kBSq/HQ==}

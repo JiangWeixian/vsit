@@ -12,29 +12,19 @@ export default defineConfig({
   plugins: [
     PluginVit(),
     solid(),
+    // Use injectManifest just cache from esm.sh
     VitePWA({
-      registerType: 'autoUpdate',
-      strategies: 'generateSW',
-      selfDestroying: process.env.NODE_ENV === 'development',
+      srcDir: 'src',
+      filename: 'sw.ts',
+      strategies: 'injectManifest',
+      injectRegister: false,
+      manifest: false,
       devOptions: {
         enabled: true,
+        type: 'module',
       },
-      workbox: {
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/esm\.sh\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'esm-sh',
-              expiration: {
-                maxAgeSeconds: 60 * 60 * 24 * 365, // <== 365 days
-              },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
-          },
-        ],
+      injectManifest: {
+        injectionPoint: undefined,
       },
     }),
     // Not working in solidjs
