@@ -56,7 +56,6 @@ importers:
       tailwind-cssgg: ^0.0.1
       tailwindcss: 3.3.2
       typescript: 4.4.4
-      vist-shared: workspace:^0.0.0
       vite: ^4.3.8
       vite-plugin-document: ^0.1.1
       vite-plugin-inspect: ^0.7.26
@@ -65,6 +64,7 @@ importers:
       vite-plugin-solid: ^2.7.0
       vitest: ^0.32.2
       vsit: workspace:*
+      vsit-shared: workspace:*
       workbox-routing: ^7.0.0
       workbox-strategies: ^7.0.0
       workbox-window: 7.0.0
@@ -96,7 +96,6 @@ importers:
       tailwind-cssgg: 0.0.1_tailwindcss@3.3.2
       tailwindcss: 3.3.2
       typescript: 4.4.4
-      vist-shared: link:../shared
       vite: 4.3.8_@types+node@20.3.1
       vite-plugin-document: 0.1.2_vite@4.3.8
       vite-plugin-inspect: 0.7.26_vite@4.3.8
@@ -105,6 +104,7 @@ importers:
       vite-plugin-solid: 2.7.0_solid-js@1.7.6+vite@4.3.8
       vitest: 0.32.2
       vsit: link:../vsit
+      vsit-shared: link:../shared
       workbox-window: 7.0.0
 
   packages/shared:
@@ -198,9 +198,9 @@ importers:
       typescript: ^4.6.4
       typescript-transform-paths: ^3.4.6
       ufo: ^1.1.2
-      vist-shared: workspace:^0.0.0
       vite: ^4.3.8
       vitest: ^0.22.1
+      vsit-shared: workspace:*
       write-yaml-file: 5.0.0
     dependencies:
       sirv: 2.0.3
@@ -247,8 +247,8 @@ importers:
       typescript: 4.9.5
       typescript-transform-paths: 3.4.6_typescript@4.9.5
       ufo: 1.1.2
-      vist-shared: link:../shared
       vitest: 0.22.1
+      vsit-shared: link:../shared
       write-yaml-file: 5.0.0
 
 packages:
