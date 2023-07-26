@@ -50,7 +50,7 @@
   "module": "dist/node.mjs",
   "types": "dts/exports/node.d.ts",
   "scripts": {
-    "build:dts": "rimraf dts && ttsc",
+    "build:dts": "rimraf dts && ttsc -p tsconfig.dts.json",
     "build:lib": "rimraf dist && rollup -c --silent --environment BUILD:production",
     "build": "run-s build:*",
     "dev": "rollup -c -w",

@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "plugins": [
+      { "transform": "typescript-transform-paths" },
+      {
+        "transform": "typescript-transform-paths",
+        "afterDeclarations": true
+      }
+    ],
+    "rootDir": "src"
+  },
+  "exclude": ["node_modules", "lib", "test"],
+  "include": ["./global.d.ts", "src"]
+}
