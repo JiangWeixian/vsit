@@ -1,4 +1,4 @@
-import { NODE_API_PATH, WBE_API_PATH } from "../../../shared/constants"
+import { WBE_API_PATH, NODE_API_PATH } from 'vist-shared/constants'
 import { unStripEsmsh } from "./strip-esmsh"
 import { withQuery } from "./utils"
 

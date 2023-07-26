@@ -56,6 +56,7 @@ importers:
       tailwind-cssgg: ^0.0.1
       tailwindcss: 3.3.2
       typescript: 4.4.4
+      vist-shared: workspace:^0.0.0
       vite: ^4.3.8
       vite-plugin-document: ^0.1.1
       vite-plugin-inspect: ^0.7.26
@@ -95,6 +96,7 @@ importers:
       tailwind-cssgg: 0.0.1_tailwindcss@3.3.2
       tailwindcss: 3.3.2
       typescript: 4.4.4
+      vist-shared: link:../shared
       vite: 4.3.8_@types+node@20.3.1
       vite-plugin-document: 0.1.2_vite@4.3.8
       vite-plugin-inspect: 0.7.26_vite@4.3.8
@@ -104,6 +106,53 @@ importers:
       vitest: 0.32.2
       vsit: link:../vsit
       workbox-window: 7.0.0
+
+  packages/shared:
+    specifiers:
+      '@rollup/plugin-alias': 4.0.3
+      '@rollup/plugin-commonjs': 24.0.1
+      '@rollup/plugin-json': ^6.0.0
+      '@rollup/plugin-node-resolve': 15.0.1
+      '@rollup/plugin-replace': ^5.0.2
+      '@types/node': 20.3.1
+      '@types/rimraf': ^3.0.2
+      esbuild: ^0.18.6
+      npm-run-all: ^4.1.5
+      rimraf: ^3.0.2
+      rollup: 3.19.1
+      rollup-plugin-condition-exports: 2.0.0-next.3
+      rollup-plugin-esbuild: ^5.0.0
+      rollup-plugin-node-externals: 5.1.2
+      rollup-plugin-size: ^0.3.1
+      sirv: ^2.0.3
+      ttypescript: ^1.5.15
+      typescript: ^4.6.4
+      typescript-transform-paths: ^3.4.6
+      vite: ^4.3.8
+      vitest: ^0.22.1
+    dependencies:
+      sirv: 2.0.3
+      vite: 4.3.8_@types+node@20.3.1
+    devDependencies:
+      '@rollup/plugin-alias': 4.0.3_rollup@3.19.1
+      '@rollup/plugin-commonjs': 24.0.1_rollup@3.19.1
+      '@rollup/plugin-json': 6.0.0_rollup@3.19.1
+      '@rollup/plugin-node-resolve': 15.0.1_rollup@3.19.1
+      '@rollup/plugin-replace': 5.0.2_rollup@3.19.1
+      '@types/node': 20.3.1
+      '@types/rimraf': 3.0.2
+      esbuild: 0.18.6
+      npm-run-all: 4.1.5
+      rimraf: 3.0.2
+      rollup: 3.19.1
+      rollup-plugin-condition-exports: 2.0.0-next.3
+      rollup-plugin-esbuild: 5.0.0_czcmbiis2pykeywjeyii7jwuda
+      rollup-plugin-node-externals: 5.1.2_rollup@3.19.1
+      rollup-plugin-size: 0.3.1
+      ttypescript: 1.5.15_typescript@4.9.5
+      typescript: 4.9.5
+      typescript-transform-paths: 3.4.6_typescript@4.9.5
+      vitest: 0.22.1
 
   packages/vsit:
     specifiers:
@@ -149,6 +198,7 @@ importers:
       typescript: ^4.6.4
       typescript-transform-paths: ^3.4.6
       ufo: ^1.1.2
+      vist-shared: workspace:^0.0.0
       vite: ^4.3.8
       vitest: ^0.22.1
       write-yaml-file: 5.0.0
@@ -197,6 +247,7 @@ importers:
       typescript: 4.9.5
       typescript-transform-paths: 3.4.6_typescript@4.9.5
       ufo: 1.1.2
+      vist-shared: link:../shared
       vitest: 0.22.1
       write-yaml-file: 5.0.0
 
@@ -3536,6 +3587,16 @@ packages:
     resolution: {integrity: sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==}
     engines: {node: '>= 0.4'}
 
+  /axios/1.4.0:
+    resolution: {integrity: sha512-S4XCWMEmzvo64T9GfvQDOXgYRDJ/wsSZc7Jvdgx5u1sd0JwsuPLqb3SYmusag+edF6ziyMensPVqLTSc1PiSEA==}
+    dependencies:
+      follow-redirects: 1.15.2
+      form-data: 4.0.0
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
+    dev: true
+
   /axios/1.4.0_debug@4.3.4:
     resolution: {integrity: sha512-S4XCWMEmzvo64T9GfvQDOXgYRDJ/wsSZc7Jvdgx5u1sd0JwsuPLqb3SYmusag+edF6ziyMensPVqLTSc1PiSEA==}
     dependencies:
@@ -5435,6 +5496,16 @@ packages:
 
   /flatted/3.2.7:
     resolution: {integrity: sha512-5nqDSxl8nn5BSNxyR3n4I6eDmbolI6WT+QqR547RwxQapgjQBmtktdP+HTBb/a/zLsbzERTONyUB5pefh5TtjQ==}
+    dev: true
+
+  /follow-redirects/1.15.2:
+    resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
     dev: true
 
   /follow-redirects/1.15.2_debug@4.3.4:
@@ -7626,6 +7697,21 @@ packages:
       rollup: ^2.60.0 || ^3.0.0
     dependencies:
       rollup: 3.19.1
+    dev: true
+
+  /rollup-plugin-size/0.3.1:
+    resolution: {integrity: sha512-SAtpTAAJ0nFkISxLxYjDZX9Zqt34tAIil98R305ZM0GhTnnO6VYG0P5M+2IXKo/iNDdbpBcIfg1W06CLtk/vXA==}
+    dependencies:
+      axios: 1.4.0
+      chalk: 5.2.0
+      ci-env: 1.17.0
+      fs-extra: 11.1.1
+      glob: 8.1.0
+      minimatch: 5.1.6
+      pretty-bytes: 6.1.0
+      zlib: 1.0.5
+    transitivePeerDependencies:
+      - debug
     dev: true
 
   /rollup-plugin-size/0.3.1_debug@4.3.4:
