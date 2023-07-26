@@ -6,5 +6,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["vsit-client", "vsit-monorepo", "vsit-shared"]
+  "ignore": ["vsit-client", "vsit-monorepo"]
 }
