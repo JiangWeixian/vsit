@@ -19,7 +19,7 @@
     "email": "jiangweixian1994@gmail.com"
   },
   "scripts": {
-    "test": "pnpm --filter=./packages/** run test",
+    "test": "pnpm run build && pnpm --filter=./packages/** run test",
     "dev": "pnpm --filter=!./packages/client dev",
     "play": "pnpm --filter=./packages/client dev",
     "preview": "pnpm --filter=./packages/vsit preview",
