@@ -44,7 +44,7 @@
     "build:dts": "rimraf dts && ttsc",
     "build:lib": "rimraf dist && rollup -c --silent --environment BUILD:production",
     "build": "run-s build:*",
-    "dev": "rollup -c -w"
+    "dev": "rollup -c"
   },
   "dependencies": {
     "sirv": "^2.0.3",
