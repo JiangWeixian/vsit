@@ -1,5 +1,11 @@
 # vsit
 
+## 0.0.5
+
+### Patch Changes
+
+- f9f4a8f: support prettier code with keymap
+
 ## 0.0.4
 
 ### Patch Changes
