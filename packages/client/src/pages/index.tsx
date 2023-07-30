@@ -8,6 +8,8 @@ import { WBE_API_PATH } from 'vsit-shared/constants'
 
 import { CodeMirror } from '@/components/console-feed/codemirror'
 import { fromConsoleToString, removeRemainKeys } from '@/components/console-feed/from-code-to-string'
+import { Keymaps } from '@/components/keymaps/keymaps'
+import { VsitProvider } from '@/components/vsit-context'
 import { apis } from '@/lib/apis'
 import { VIRUTAL_WEB_ID } from '@/lib/constants'
 import { format } from '@/lib/prettier'
@@ -89,7 +91,7 @@ const Home = () => {
       setLogState(log as any ?? [])
     })
   }
-  const handleClick = async () => {
+  const handleExec = async () => {
     const content = code()
     if (type() === 'node') {
       await apis.node.update(content)
@@ -125,65 +127,58 @@ const Home = () => {
     setLogState([])
     setType(type)
   }
+  const handleFormat = async () => {
+    const formattedCode = await format(code())
+    editorRef.setCode?.(formattedCode)
+  }
   return (
-    <div class="bg-base-200 h-full">
-      <div class="flex items-center justify-between p-2">
-        <div class="flex gap-2">
-          <button class="btn btn-sm" onClick={handleClick}>run</button>
-          <button
-            class="btn btn-sm"
-            onClick={async () => {
-              const formattedCode = await format(code())
-              editorRef.setCode?.(formattedCode)
-            }}
-          >
-            <span class="mr-2">
-              format
-            </span>
-            <kbd class="kbd kbd-xs">⇧</kbd> <kbd class="kbd kbd-xs">⌥</kbd> <kbd class="kbd kbd-xs">F</kbd>
-          </button>
+    <VsitProvider value={{ handleFormat, handleExec }}>
+      <div class="bg-base-200 h-full">
+        <div class="flex items-center justify-between p-2">
+          <div class="tabs tabs-boxed p-2">
+            <a class={clsx('tab', { 'tab-active': type() === 'web' })} onClick={() => handleSwitchType('web')}>Web</a>
+            <a class={clsx('tab', { 'tab-active': type() === 'node' })} onClick={() => handleSwitchType('node')}>Node</a>
+          </div>
         </div>
-        <div class="tabs tabs-boxed p-2">
-          <a class={clsx('tab', { 'tab-active': type() === 'web' })} onClick={() => handleSwitchType('web')}>Web</a>
-          <a class={clsx('tab', { 'tab-active': type() === 'node' })} onClick={() => handleSwitchType('node')}>Node</a>
+        <div class="items-top flex">
+          <div class="max-w-[50%] flex-1">
+            <CodeMirror
+              code={InitialCode}
+              showLineNumbers={false}
+              fileType="ts"
+              readOnly={false}
+              apis={{
+                format,
+                exec: handleExec,
+              }}
+              onCodeUpdate={code => setCode(code)}
+              onImperativehandle={(ref) => {
+                editorRef.setCode = ref.setCode
+              }}
+            />
+          </div>
+          <div class="flex-1">
+            {logState().map(({ data }, logIndex, references) => {
+              return removeRemainKeys(data)?.map((msg) => {
+                const fixReferences = references.slice(
+                  logIndex,
+                  references.length,
+                )
+                return (
+                  <CodeMirror
+                    code={fromConsoleToString(msg, fixReferences)}
+                    showLineNumbers={false}
+                    fileType="ts"
+                    readOnly={true}
+                  />
+                )
+              })
+            })}
+          </div>
         </div>
+        <Keymaps />
       </div>
-      <div class="items-top flex">
-        <div class="max-w-[50%] flex-1">
-          <CodeMirror
-            code={InitialCode}
-            showLineNumbers={false}
-            fileType="ts"
-            readOnly={false}
-            apis={{
-              format,
-            }}
-            onCodeUpdate={code => setCode(code)}
-            onImperativehandle={(ref) => {
-              editorRef.setCode = ref.setCode
-            }}
-          />
-        </div>
-        <div class="flex-1">
-          {logState().map(({ data }, logIndex, references) => {
-            return removeRemainKeys(data)?.map((msg) => {
-              const fixReferences = references.slice(
-                logIndex,
-                references.length,
-              )
-              return (
-                <CodeMirror
-                  code={fromConsoleToString(msg, fixReferences)}
-                  showLineNumbers={false}
-                  fileType="ts"
-                  readOnly={true}
-                />
-              )
-            })
-          })}
-        </div>
-      </div>
-    </div>
+    </VsitProvider>
   )
 }
 
