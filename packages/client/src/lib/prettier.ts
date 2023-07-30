@@ -3,7 +3,7 @@ import { VIRUTAL_WEB_ID } from './constants'
 
 const defaultOptions: Options = {
   semi: false,
-  singleQuote: true,
+  singleQuote: false,
   jsxSingleQuote: false,
   filepath: VIRUTAL_WEB_ID,
   parser: 'typescript',

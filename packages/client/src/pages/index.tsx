@@ -136,7 +136,11 @@ const Home = () => {
               const formattedCode = await format(code())
               editorRef.setCode?.(formattedCode)
             }}
-          >format
+          >
+            <span class="mr-2">
+              format
+            </span>
+            <kbd class="kbd kbd-xs">⇧</kbd> <kbd class="kbd kbd-xs">⌥</kbd> <kbd class="kbd kbd-xs">F</kbd>
           </button>
         </div>
         <div class="tabs tabs-boxed p-2">
@@ -152,6 +156,9 @@ const Home = () => {
             showLineNumbers={false}
             fileType="ts"
             readOnly={false}
+            apis={{
+              format,
+            }}
             onCodeUpdate={code => setCode(code)}
             onImperativehandle={(ref) => {
               editorRef.setCode = ref.setCode
