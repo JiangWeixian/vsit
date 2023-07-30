@@ -43,6 +43,7 @@
     "clsx": "1.2.1",
     "console-feed": "3.5.0",
     "daisyui": "2.24.0",
+    "prettier": "^3.0.0",
     "solid-js": "1.7.6",
     "workbox-routing": "7.0.0",
     "workbox-strategies": "7.0.0"

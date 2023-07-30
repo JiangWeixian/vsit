@@ -80,6 +80,12 @@ interface CodeMirrorProps {
    * for that syntax mode
    */
   additionalLanguages?: CustomLanguage[]
+  /**
+   * @description Expose internal methods of CodeMirror to the parent component
+   */
+  onImperativehandle?: (refs: {
+    setCode: (code: string) => void
+  }) => void
 }
 
 export interface CodeMirrorRef {
@@ -104,6 +110,7 @@ export const CodeMirror: Component<CodeMirrorProps>
       extensions = [],
       extensionsKeymap = [],
       additionalLanguages = [],
+      onImperativehandle,
     },
   ) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -305,6 +312,16 @@ export const CodeMirror: Component<CodeMirrorProps>
       // }
 
       // eslint-disable-next-line react-hooks/exhaustive-deps
+    })
+
+    onImperativehandle?.({
+      setCode: (newCode: string): void => {
+        if (cmView) {
+          cmView.dispatch({
+            changes: { from: 0, to: internalCode().length, insert: newCode },
+          })
+        }
+      },
     })
 
     // React.useEffect(
