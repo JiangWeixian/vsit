@@ -7,6 +7,7 @@ import {
   EditorView,
   highlightActiveLine,
   highlightSpecialChars,
+  keymap,
 } from '@codemirror/view'
 import { createSignal, onMount } from 'solid-js'
 
@@ -49,6 +50,10 @@ export type Decorators = Array<{
   elementAttributes?: Record<string, string>
 }>
 
+interface APIs {
+  format(code: string): Promise<string>
+}
+
 interface CodeMirrorProps {
   code: string
   filePath?: string
@@ -80,6 +85,13 @@ interface CodeMirrorProps {
    * for that syntax mode
    */
   additionalLanguages?: CustomLanguage[]
+  apis?: APIs
+  /**
+   * @description Expose internal methods of CodeMirror to the parent component
+   */
+  onImperativehandle?: (refs: {
+    setCode: (code: string) => void
+  }) => void
 }
 
 export interface CodeMirrorRef {
@@ -104,6 +116,8 @@ export const CodeMirror: Component<CodeMirrorProps>
       extensions = [],
       extensionsKeymap = [],
       additionalLanguages = [],
+      onImperativehandle,
+      apis = {} as APIs,
     },
   ) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -167,53 +181,74 @@ export const CodeMirror: Component<CodeMirrorProps>
     //   [decorators],
     // )
 
+    const applyCodeToMirror = (newCode: string): void => {
+      if (cmView) {
+        cmView.dispatch({
+          changes: { from: 0, to: internalCode().length, insert: newCode },
+        })
+      }
+    }
+
     onMount(() => {
       if (!wrapper || !shouldInitEditor()) {
         return
       }
 
-      // const customCommandsKeymap: KeyBinding[] = [
-      //   {
-      //     key: 'Tab',
-      //     run: (view): boolean => {
-      //       indentMore(view)
+      const customCommandsKeymap: KeyBinding[] = [
+        // Format code with prettier
+        {
+          key: 'Shift-Alt-f',
+          run: (): boolean => {
+            if (!apis.format) {
+              return false
+            }
+            apis.format(internalCode()).then((formattedCode) => {
+              applyCodeToMirror(formattedCode)
+            })
+            return true
+          },
+        },
+        // {
+        //   key: 'Tab',
+        //   run: (view): boolean => {
+        //     indentMore(view)
 
-      //       const customKey = extensionsKeymap.find(({ key }) => key === 'Tab')
+        //     const customKey = extensionsKeymap.find(({ key }) => key === 'Tab')
 
-      //       return customKey?.run?.(view) ?? true
-      //     },
-      //   },
-      //   {
-      //     key: 'Shift-Tab',
-      //     run: ({ state, dispatch }): boolean => {
-      //       indentLess({ state, dispatch })
+        //     return customKey?.run?.(view) ?? true
+        //   },
+        // },
+        // {
+        //   key: 'Shift-Tab',
+        //   run: ({ state, dispatch }): boolean => {
+        //     indentLess({ state, dispatch })
 
-      //       const customKey = extensionsKeymap.find(
-      //         ({ key }) => key === 'Shift-Tab',
-      //       )
+        //     const customKey = extensionsKeymap.find(
+        //       ({ key }) => key === 'Shift-Tab',
+        //     )
 
-      //       return customKey?.run?.(view) ?? true
-      //     },
-      //   },
-      //   {
-      //     key: 'Escape',
-      //     run: (): boolean => {
-      //       if (readOnly) {
-      //         return true
-      //       }
+        //     return customKey?.run?.(view) ?? true
+        //   },
+        // },
+        // {
+        //   key: 'Escape',
+        //   run: (): boolean => {
+        //     if (readOnly) {
+        //       return true
+        //     }
 
-      //       if (wrapper.current) {
-      //         wrapper.current.focus()
-      //       }
+        //     if (wrapper.current) {
+        //       wrapper.current.focus()
+        //     }
 
-      //       return true
-      //     },
-      //   },
-      //   {
-      //     key: 'mod-Backspace',
-      //     run: deleteGroupBackward,
-      //   },
-      // ]
+        //     return true
+        //   },
+        // },
+        // {
+        //   key: 'mod-Backspace',
+        //   run: deleteGroupBackward,
+        // },
+      ]
 
       const extensionList = [
         highlightSpecialChars(),
@@ -222,13 +257,13 @@ export const CodeMirror: Component<CodeMirrorProps>
 
         ...extensions,
 
-        // keymap.of([
-        //   ...closeBracketsKeymap,
-        //   ...defaultKeymap,
-        //   ...historyKeymap,
-        //   ...customCommandsKeymap,
-        //   ...extensionsKeymap,
-        // ] as KeyBinding[]),
+        keymap.of([
+          // ...closeBracketsKeymap,
+          // ...defaultKeymap,
+          // ...historyKeymap,
+          // ...extensionsKeymap,
+          ...customCommandsKeymap,
+        ] as KeyBinding[]),
         langSupport,
 
         // getEditorTheme(),
@@ -305,6 +340,10 @@ export const CodeMirror: Component<CodeMirrorProps>
       // }
 
       // eslint-disable-next-line react-hooks/exhaustive-deps
+    })
+
+    onImperativehandle?.({
+      setCode: applyCodeToMirror,
     })
 
     // React.useEffect(
