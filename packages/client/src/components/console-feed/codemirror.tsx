@@ -11,21 +11,6 @@ import {
 } from '@codemirror/view'
 import { createSignal, onMount } from 'solid-js'
 
-// import useIntersectionObserver from '@react-hook/intersection-observer'
-// import { useSandpack } from '../../hooks/useSandpack'
-// import { useSandpackTheme } from '../../hooks/useSandpackTheme'
-// import { THEME_PREFIX } from '../../styles'
-// import { shallowEqual } from '../../utils/array'
-// import { useClassNames } from '../../utils/classNames'
-// import { getFileName } from '../../utils/stringUtils'
-// import { highlightDecorators } from './highlightDecorators'
-// import { highlightInlineError } from './highlightInlineError'
-// import {
-//   cmClassName,
-//   placeholderClassName,
-//   readOnlyClassName,
-//   tokensClassName,
-// } from './styles'
 import { useSyntaxHighlight } from './use-syntax-highlight'
 import {
   getCodeMirrorLanguage,
@@ -36,11 +21,6 @@ import {
 import type { Extension } from '@codemirror/state'
 import type { KeyBinding } from '@codemirror/view'
 import type { Component } from 'solid-js'
-// import type {
-//   CustomLanguage,
-//   EditorState as SandpackEditorState,
-//   SandpackInitMode,
-// } from '../../types'
 
 export type Decorators = Array<{
   className?: string
@@ -62,7 +42,6 @@ interface CodeMirrorProps {
   showLineNumbers?: boolean
   showInlineErrors?: boolean
   wrapContent?: boolean
-  editorState?: SandpackEditorState
   /**
    * This disables editing of content by the user in all files.
    */
@@ -76,15 +55,8 @@ interface CodeMirrorProps {
    * Provides a way to draw or style a piece of the content.
    */
   decorators?: Decorators
-  initMode: SandpackInitMode
   extensions?: Extension[]
   extensionsKeymap?: KeyBinding[]
-  /**
-   * Provides a way to add custom language modes by supplying a language
-   * type, applicable file extensions, and a LanguageSupport instance
-   * for that syntax mode
-   */
-  additionalLanguages?: CustomLanguage[]
   apis?: APIs
   /**
    * @description Expose internal methods of CodeMirror to the parent component
@@ -105,63 +77,26 @@ export const CodeMirror: Component<CodeMirrorProps>
       filePath,
       fileType,
       onCodeUpdate,
-      showLineNumbers = false,
-      showInlineErrors = false,
-      wrapContent = false,
-      editorState = 'pristine',
       readOnly = false,
-      showReadOnly = true,
-      decorators,
-      initMode = 'lazy',
       extensions = [],
-      extensionsKeymap = [],
-      additionalLanguages = [],
       onImperativehandle,
       apis = {} as APIs,
     },
   ) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let wrapper: HTMLElement
-    // const combinedRef = useCombinedRefs(wrapper, ref)
 
     let cmView: EditorView
     // const { theme, themeId } = useSandpackTheme()
     const [internalCode, setInternalCode] = createSignal<string>(code)
-    const [shouldInitEditor, setShouldInitEditor] = createSignal(
-      initMode === 'immediate',
-    )
-
-    // const classNames = useClassNames()
-    // const { listen } = useSandpack()
-
-    // let prevExtension: Extension[] = []
-    // let prevExtensionKeymap: KeyBinding[] = []
-
-    // const { isIntersecting } = useIntersectionObserver(wrapper, {
-    //   rootMargin: '600px 0px',
-    //   threshold: 0.2,
-    // })
-
-    // React.useImperativeHandle(ref, () => ({
-    //   getCodemirror: (): EditorView | undefined => cmView.current,
-    // }))
-
-    // React.useEffect(() => {
-    //   const mode = initMode === 'lazy' || initMode === 'user-visible'
-
-    //   if (mode && isIntersecting) {
-    //     setShouldInitEditor(true)
-    //   }
-    // }, [initMode, isIntersecting])
 
     const languageExtension = getLanguageFromFile(
       filePath,
       fileType,
-      additionalLanguages,
+      [],
     )
     const langSupport = getCodeMirrorLanguage(
       languageExtension,
-      additionalLanguages,
+      [],
     )
     const highlightTheme = getSyntaxHighlight()
 
@@ -170,16 +105,6 @@ export const CodeMirror: Component<CodeMirrorProps>
       highlightTheme,
       code,
     })
-
-    // decorators need to be sorted by `line`, otherwise it will throw error
-    // see https://github.com/codesandbox/sandpack/issues/383
-    // const sortedDecorators = React.useMemo(
-    //   () =>
-    //     decorators
-    //       ? decorators.sort((d1, d2) => d1.line - d2.line)
-    //       : decorators,
-    //   [decorators],
-    // )
 
     const applyCodeToMirror = (newCode: string): void => {
       if (cmView) {
@@ -190,7 +115,7 @@ export const CodeMirror: Component<CodeMirrorProps>
     }
 
     onMount(() => {
-      if (!wrapper || !shouldInitEditor()) {
+      if (!wrapper) {
         return
       }
 
@@ -322,10 +247,6 @@ export const CodeMirror: Component<CodeMirrorProps>
 
       view.contentDOM.setAttribute('data-gramm', 'false')
       view.contentDOM.setAttribute('data-lt-active', 'false')
-      // view.contentDOM.setAttribute(
-      //   'aria-label',
-      //   filePath ? `Code Editor for ${getFileName(filePath)}` : 'Code Editor',
-      // )
 
       if (readOnly) {
         view.contentDOM.classList.add('cm-readonly')
@@ -334,113 +255,11 @@ export const CodeMirror: Component<CodeMirrorProps>
       }
 
       cmView = view
-
-      // return (): void => {
-      //   cmView?.destroy()
-      // }
-
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     })
 
     onImperativehandle?.({
       setCode: applyCodeToMirror,
     })
-
-    // React.useEffect(
-    //   () => {
-    //     const view = cmView.current
-
-    //     const dependenciesAreDiff
-    //       = !shallowEqual(extensions, prevExtension.current)
-    //       || !shallowEqual(extensionsKeymap, prevExtensionKeymap.current)
-
-    //     if (view && dependenciesAreDiff) {
-    //       view.dispatch({
-    //         effects: StateEffect.appendConfig.of(extensions),
-    //       })
-
-    //       view.dispatch({
-    //         effects: StateEffect.appendConfig.of(
-    //           keymap.of([...extensionsKeymap] as unknown as KeyBinding[]),
-    //         ),
-    //       })
-
-    //       prevExtension.current = extensions
-    //       prevExtensionKeymap.current = extensionsKeymap
-    //     }
-    //   },
-    //   [extensions, extensionsKeymap],
-    // )
-
-    // React.useEffect(() => {
-    //   // When the user clicks on a tab button on a larger screen
-    //   // Avoid autofocus on mobile as it leads to a bad experience and an unexpected layout shift
-    //   if (
-    //     cmView.current
-    //     && editorState === 'dirty'
-    //     && window.matchMedia('(min-width: 768px)').matches
-    //   ) {
-    //     cmView.current.contentDOM.focus()
-    //   }
-    //   // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [])
-
-    // // Update editor when code passed as prop from outside sandpack changes
-    // React.useEffect(() => {
-    //   if (cmView.current && typeof code === 'string' && code !== internalCode) {
-    //     const view = cmView.current
-
-    //     const selection = view.state.selection.ranges.some(
-    //       ({ to, from }) => to > code.length || from > code.length,
-    //     )
-    //       ? EditorSelection.cursor(code.length)
-    //       : view.state.selection
-
-    //     const changes = { from: 0, to: view.state.doc.length, insert: code }
-
-    //     view.dispatch({ changes, selection })
-    //   }
-    //   // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [code])
-
-    // React.useEffect(
-    //   () => {
-    //     if (!showInlineErrors) {
-    //       return
-    //     }
-
-    //     const unsubscribe = listen((message) => {
-    //       const view = cmView.current
-
-    //       if (message.type === 'success') {
-    //         view?.dispatch({
-    //           // @ts-expect-error
-    //           annotations: [new Annotation('remove-errors', true)],
-    //         })
-    //       } else if (
-    //         message.type === 'action'
-    //         && message.action === 'show-error'
-    //         && message.path === filePath
-    //         && message.line
-    //       ) {
-    //         view?.dispatch({
-    //           // @ts-expect-error
-    //           annotations: [new Annotation('show-error', message.line)],
-    //         })
-    //       }
-    //     })
-
-    //     return (): void => unsubscribe()
-    //   },
-    //   [listen, showInlineErrors],
-    // )
-
-    const handleContainerKeyDown = (evt: KeyboardEvent): void => {
-      if (evt.key === 'Enter' && cmView) {
-        evt.preventDefault()
-        cmView.contentDOM.focus()
-      }
-    }
 
     // const gutterLineOffset = (): string => {
     //   // padding-left
@@ -463,33 +282,16 @@ export const CodeMirror: Component<CodeMirrorProps>
       return (
         <>
           <pre
-            // className={classNames('cm', [
-            //   classNames(editorState),
-            //   classNames(languageExtension),
-            //   cmClassName,
-            //   tokensClassName,
-            // ])}
             ref={el => wrapper = el}
             class="font-mono"
             translate="no"
           >
             <code
-              // className={classNames('pre-placeholder', [placeholderClassName])}
               class="pre-placeholder"
-              // style={{ marginLeft: gutterLineOffset() }}
             >
               {syntaxHighlightRender}
             </code>
           </pre>
-
-          {/* {readOnly && showReadOnly && (
-            <span
-              // className={classNames('read-only', [readOnlyClassName])}
-              {...(process.env.TEST_ENV ? { 'data-testId': 'read-only' } : {})}
-            >
-              Read-only
-            </span>
-          )} */}
         </>
       )
     }
@@ -502,13 +304,6 @@ export const CodeMirror: Component<CodeMirrorProps>
         //   filePath ? `Code Editor for ${getFileName(filePath)}` : 'Code Editor'
         // }
         aria-multiline="true"
-        // className={classNames('cm', [
-        //   classNames(editorState),
-        //   classNames(languageExtension),
-        //   cmClassName,
-        //   tokensClassName,
-        // ])}
-        // onKeyDown={handleContainerKeyDown}
         role="textbox"
         tabIndex={0}
         translate="no"

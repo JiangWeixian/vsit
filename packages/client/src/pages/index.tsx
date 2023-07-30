@@ -152,7 +152,6 @@ const Home = () => {
         <div class="max-w-[50%] flex-1">
           <CodeMirror
             code={InitialCode}
-            initMode="immediate"
             showLineNumbers={false}
             fileType="ts"
             readOnly={false}
@@ -175,7 +174,6 @@ const Home = () => {
               return (
                 <CodeMirror
                   code={fromConsoleToString(msg, fixReferences)}
-                  initMode="immediate"
                   showLineNumbers={false}
                   fileType="ts"
                   readOnly={true}
