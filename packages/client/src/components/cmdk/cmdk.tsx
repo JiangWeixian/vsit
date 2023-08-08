@@ -31,15 +31,15 @@ interface ReactRef<T> {
 }
 type DivProps = JSX.HTMLAttributes<HTMLDivElement> & { forwardedRef?: ReactRef<HTMLDivElement> }
 
-type LoadingProps = Children & DivProps & {
-  /** Estimated progress of loading asynchronous options. */
-  progress?: number
-}
+// type LoadingProps = Children & DivProps & {
+//   /** Estimated progress of loading asynchronous options. */
+//   progress?: number
+// }
 type EmptyProps = Children & DivProps & {}
-type SeparatorProps = DivProps & {
-  /** Whether this separator should always be rendered. Useful if you disable automatic filtering. */
-  alwaysRender?: boolean
-}
+// type SeparatorProps = DivProps & {
+//   /** Whether this separator should always be rendered. Useful if you disable automatic filtering. */
+//   alwaysRender?: boolean
+// }
 // type DialogProps = RadixDialog.DialogProps & CommandProps & {
 //   /** Provide a className to the Dialog overlay. */
 //   overlayClassName?: string
@@ -62,14 +62,14 @@ export type ItemProps = Children & Omit<DivProps, 'disabled' | 'onSelect' | 'val
   /** Whether this item is forcibly rendered regardless of filtering. */
   forceMount?: boolean
 }
-type GroupProps = Children & Omit<DivProps, 'heading' | 'value'> & {
-  /** Optional heading to render for this group. */
-  heading?: JSX.Element
-  /** If no heading is provided, you must provide a value that is unique for this group. */
-  value?: string
-  /** Whether this group is forcibly rendered regardless of filtering. */
-  forceMount?: boolean
-}
+// type GroupProps = Children & Omit<DivProps, 'heading' | 'value'> & {
+//   /** Optional heading to render for this group. */
+//   heading?: JSX.Element
+//   /** If no heading is provided, you must provide a value that is unique for this group. */
+//   value?: string
+//   /** Whether this group is forcibly rendered regardless of filtering. */
+//   forceMount?: boolean
+// }
 type InputProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'type'> & {
   /**
    * Optional controlled state for the value of the search input.
@@ -118,11 +118,11 @@ type CommandProps = Children & DivProps & {
 
 interface Context {
   value: (id: string, value: string) => void
-  item: (id: string, groupId: string) => () => void
+  item: (id: string, groupId?: string) => () => void
   group: (id: string) => () => void
   filter: () => boolean
-  label: string
-  commandRef: React.RefObject<HTMLDivElement | null>
+  label?: string
+  commandRef: ReactRef<HTMLDivElement | null>
   // Ids
   listId: string
   labelId: string
@@ -231,7 +231,7 @@ export const Command = (props: CommandProps) => {
   // eslint-disable-next-line @typescript-eslint/no-extra-parens
   const listeners = useRef<Set<() => void>>(() => new Set()) // [...rerenders]
   const propsRef = useAsRef(props)
-  const { label, value, onValueChange, filter, shouldFilter, ...etc } = props
+  const { label, value, forwardedRef, onValueChange, filter, shouldFilter, ...etc } = props
 
   const listId = useId()
   const labelId = useId()
@@ -311,7 +311,7 @@ export const Command = (props: CommandProps) => {
         if (!allGroups.current.has(groupId)) {
           allGroups.current.set(groupId, new Set([id]))
         } else {
-          allGroups.current.get(groupId).add(id)
+          allGroups.current.get(groupId)?.add(id)
         }
       }
 
@@ -341,7 +341,9 @@ export const Command = (props: CommandProps) => {
 
           // The item removed have been the selected one,
           // so selection should be moved to the first
-          if (selectedItem?.getAttribute('id') === id) selectFirstItem()
+          if (selectedItem?.getAttribute('id') === id) {
+            selectFirstItem()
+          }
 
           store().emit()
         })
@@ -359,7 +361,7 @@ export const Command = (props: CommandProps) => {
       }
     },
     filter: () => {
-      return propsRef.current.shouldFilter
+      return !!propsRef.current?.shouldFilter
     },
     label: label || props['aria-label'],
     commandRef: ref,
@@ -370,16 +372,16 @@ export const Command = (props: CommandProps) => {
 
   function score(value: string) {
     const filter = propsRef.current?.filter ?? defaultFilter
-    return value ? filter(value, state.current.search) : 0
+    return value ? filter!(value, state.current.search) : 0
   }
 
   /** Sorts items by score, and groups by highest item score. */
   function sort() {
     if (
-      !ref.current ||
-      !state.current.search ||
+      !ref.current
+      || !state.current.search
       // Explicitly false, because true | undefined is the default
-      propsRef.current.shouldFilter === false
+      || propsRef.current?.shouldFilter === false
     ) {
       return
     }
@@ -394,7 +396,7 @@ export const Command = (props: CommandProps) => {
       // Get the maximum score of the group's items
       let max = 0
       items?.forEach((item) => {
-        const score = scores.get(item)
+        const score = scores.get(item)!
         max = Math.max(score, max)
       })
 
@@ -409,8 +411,8 @@ export const Command = (props: CommandProps) => {
     // Sort the items
     getValidItems()
       .sort((a, b) => {
-        const valueA = a.getAttribute(VALUE_ATTR)
-        const valueB = b.getAttribute(VALUE_ATTR)
+        const valueA = a.getAttribute(VALUE_ATTR)!
+        const valueB = b.getAttribute(VALUE_ATTR)!
         return (scores.get(valueB) ?? 0) - (scores.get(valueA) ?? 0)
       })
       .forEach((item) => {
@@ -419,21 +421,21 @@ export const Command = (props: CommandProps) => {
         if (group) {
           group.appendChild(item.parentElement === group ? item : item.closest(`${GROUP_ITEMS_SELECTOR} > *`))
         } else {
-          list.appendChild(item.parentElement === list ? item : item.closest(`${GROUP_ITEMS_SELECTOR} > *`))
+          list?.appendChild(item.parentElement === list ? item : item.closest(`${GROUP_ITEMS_SELECTOR} > *`))
         }
       })
 
     groups
       .sort((a, b) => b[1] - a[1])
       .forEach((group) => {
-        const element = ref.current.querySelector(`${GROUP_SELECTOR}[${VALUE_ATTR}="${group[0]}"]`)
-        element?.parentElement.appendChild(element)
+        const element = ref.current?.querySelector(`${GROUP_SELECTOR}[${VALUE_ATTR}="${group[0]}"]`)
+        element?.parentElement?.appendChild(element)
       })
   }
 
   function selectFirstItem() {
-    const item = getValidItems().find((item) => !item.ariaDisabled)
-    const value = item?.getAttribute(VALUE_ATTR)
+    const item = getValidItems().find(item => !item.ariaDisabled)!
+    const value = item.getAttribute(VALUE_ATTR)!
     store().setState('value', value || undefined)
   }
 
@@ -455,16 +457,18 @@ export const Command = (props: CommandProps) => {
 
     // Check which items should be included
     for (const id of allItems.current) {
-      const value = ids.current.get(id)
+      const value = ids.current.get(id)!
       const rank = score(value)
       state.current.filtered.items.set(id, rank)
-      if (rank > 0) itemCount++
+      if (rank > 0) {
+        itemCount++
+      }
     }
 
     // Check which groups have at least 1 item shown
     for (const [groupId, group] of allGroups.current) {
       for (const itemId of group) {
-        if (state.current.filtered.items.get(itemId) > 0) {
+        if (state.current.filtered.items.get(itemId)! > 0) {
           state.current.filtered.groups.add(groupId)
           break
         }
@@ -511,7 +515,7 @@ export const Command = (props: CommandProps) => {
   function updateSelectedByChange(change: 1 | -1) {
     const selected = getSelectedItem()
     const items = getValidItems()
-    const index = items.findIndex((item) => item === selected)
+    const index = items.findIndex(item => item === selected)
 
     // Get item at this index
     let newSelected = items[index + change]
@@ -541,7 +545,7 @@ export const Command = (props: CommandProps) => {
     }
 
     if (item) {
-      store().setState('value', item.getAttribute(VALUE_ATTR))
+      store().setState('value', item.getAttribute(VALUE_ATTR)!)
     } else {
       updateSelectedByChange(change)
     }
@@ -549,7 +553,7 @@ export const Command = (props: CommandProps) => {
 
   const last = () => updateSelectedToIndex(getValidItems().length - 1)
 
-  const next = (e: React.KeyboardEvent) => {
+  const next = (e: KeyboardEvent) => {
     e.preventDefault()
 
     if (e.metaKey) {
@@ -564,7 +568,7 @@ export const Command = (props: CommandProps) => {
     }
   }
 
-  const prev = (e: React.KeyboardEvent) => {
+  const prev = (e: KeyboardEvent) => {
     e.preventDefault()
 
     if (e.metaKey) {
@@ -581,7 +585,7 @@ export const Command = (props: CommandProps) => {
 
   return (
     <div
-      ref={mergeRefs([ref, props.forwardedRef])}
+      ref={mergeRefs([ref, forwardedRef])}
       {...etc}
       cmdk-root=""
       onKeyDown={(e) => {
@@ -676,7 +680,7 @@ export const CommandItem = (props: ItemProps) => {
   const store = useStore()!
   const selected = useCmdk(state => state?.value && state?.value === value.current)
   const render = useCmdk(state =>
-    forceMount ? true : context.filter?.() === false ? true : !state.search ? true : state?.filtered?.items?.get?.(id) > 0,
+    forceMount ? true : context.filter?.() === false ? true : !state.search ? true : (state.filtered?.items?.get?.(id) as number) > 0,
   )
 
   createEffect(() => {
@@ -690,19 +694,19 @@ export const CommandItem = (props: ItemProps) => {
 
   function onSelect() {
     select()
-    propsRef.current?.onSelect?.(value.current)
+    propsRef.current?.onSelect?.(value.current!)
   }
 
   function select() {
-    store.setState('value', value.current, true)
+    store.setState('value', value.current!, true)
   }
 
-  const { disabled, value: _, onSelect: __, ...etc } = props
+  const { disabled, value: _, onSelect: __, forwardedRef, ...etc } = props
 
   return (
     <Show when={render()}>
       <div
-        ref={mergeRefs([ref, props.forwardedRef])}
+        ref={mergeRefs([ref, forwardedRef])}
         {...etc}
         id={id}
         cmdk-item=""
@@ -724,60 +728,60 @@ export const CommandItem = (props: ItemProps) => {
  * Group command menu items together with a heading.
  * Grouped items are always shown together.
  */
-const Group = (props: GroupProps) => {
-  const { heading, children, forceMount, ...etc } = props
-  const id = useId()
-  const ref: ReactRef<HTMLDivElement> = { current: null }
-  const headingRef: ReactRef<HTMLDivElement> = { current: null }
-  const headingId = useId()
-  const context = useCommand()!
-  const render = useCmdk((state) =>
-    forceMount ? true : context.filter() === false ? true : !state.search ? true : state.filtered.groups.has(id),
-  )
+// const Group = (props: GroupProps) => {
+//   const { heading, children, forceMount, ...etc } = props
+//   const id = useId()
+//   const ref: ReactRef<HTMLDivElement> = { current: null }
+//   const headingRef: ReactRef<HTMLDivElement> = { current: null }
+//   const headingId = useId()
+//   const context = useCommand()!
+//   const render = useCmdk((state) =>
+//     forceMount ? true : context.filter() === false ? true : !state.search ? true : state.filtered.groups.has(id),
+//   )
 
-  onMount(() => {
-    return context.group(id)
-  })
+//   onMount(() => {
+//     return context.group(id)
+//   })
 
-  useValue(id, ref, [props.value, props.heading, headingRef])
+//   useValue(id, ref, [props.value, props.heading, headingRef])
 
-  const contextValue = createMemo(() => ({ id, forceMount }), [forceMount])
-  const inner = <GroupContext.Provider value={contextValue()}>{children}</GroupContext.Provider>
+//   const contextValue = createMemo(() => ({ id, forceMount }), [forceMount])
+//   const inner = <GroupContext.Provider value={contextValue()}>{children}</GroupContext.Provider>
 
-  return (
-    <div
-      ref={mergeRefs([ref, props.forwardedRef])}
-      {...etc}
-      cmdk-group=""
-      role="presentation"
-      hidden={render() ? undefined : true}
-    >
-      {heading && (
-        <div ref={dom => headingRef.current = dom} cmdk-group-heading="" aria-hidden={true} id={headingId}>
-          {heading}
-        </div>
-      )}
-      <div cmdk-group-items="" role="group" aria-labelledby={heading ? headingId : undefined}>
-        {inner}
-      </div>
-    </div>
-  )
-}
+//   return (
+//     <div
+//       ref={mergeRefs([ref, props.forwardedRef])}
+//       {...etc}
+//       cmdk-group=""
+//       role="presentation"
+//       hidden={render() ? undefined : true}
+//     >
+//       {heading && (
+//         <div ref={dom => headingRef.current = dom} cmdk-group-heading="" aria-hidden={true} id={headingId}>
+//           {heading}
+//         </div>
+//       )}
+//       <div cmdk-group-items="" role="group" aria-labelledby={heading ? headingId : undefined}>
+//         {inner}
+//       </div>
+//     </div>
+//   )
+// }
 
 /**
  * A visual and semantic separator between items or groups.
  * Visible when the search query is empty or `alwaysRender` is true, hidden otherwise.
  */
-const Separator = (props: SeparatorProps) => {
-  const { alwaysRender, ...etc } = props
-  const ref: ReactRef<HTMLDivElement> = { current: null }
-  const render = useCmdk(state => !state.search)
+// const Separator = (props: SeparatorProps) => {
+//   const { alwaysRender, ...etc } = props
+//   const ref: ReactRef<HTMLDivElement> = { current: null }
+//   const render = useCmdk(state => !state.search)
 
-  if (!alwaysRender && !render()) {
-    return null
-  }
-  return <div ref={mergeRefs([ref, props.forwardedRef])} {...etc} cmdk-separator="" role="separator" />
-}
+//   if (!alwaysRender && !render()) {
+//     return null
+//   }
+//   return <div ref={mergeRefs([ref, props.forwardedRef])} {...etc} cmdk-separator="" role="separator" />
+// }
 
 /**
  * Command menu input.
@@ -848,7 +852,7 @@ export const CommandList = (props: ListProps) => {
       const observer = new ResizeObserver(() => {
         animationFrame = requestAnimationFrame(() => {
           const height = el.offsetHeight
-          wrapper.style.setProperty('--cmdk-list-height', height.toFixed(1) + 'px')
+          wrapper.style.setProperty('--cmdk-list-height', `${height.toFixed(1)}px`)
         })
       })
       observer.observe(el)
@@ -877,23 +881,6 @@ export const CommandList = (props: ListProps) => {
 }
 
 /**
- * Renders the command menu in a Radix Dialog.
- */
-// const Dialog = React.forwardRef<HTMLDivElement, DialogProps>((props, forwardedRef) => {
-//   const { open, onOpenChange, overlayClassName, contentClassName, container, ...etc } = props
-//   return (
-//     <RadixDialog.Root open={open} onOpenChange={onOpenChange}>
-//       <RadixDialog.Portal container={container}>
-//         <RadixDialog.Overlay cmdk-overlay="" className={overlayClassName} />
-//         <RadixDialog.Content aria-label={props.label} cmdk-dialog="" className={contentClassName}>
-//           <Command ref={forwardedRef} {...etc} />
-//         </RadixDialog.Content>
-//       </RadixDialog.Portal>
-//     </RadixDialog.Root>
-//   )
-// })
-
-/**
  * Automatically renders when there are no results for the search query.
  */
 export const CommandEmpty = (props: EmptyProps) => {
@@ -917,47 +904,24 @@ export const CommandEmpty = (props: EmptyProps) => {
 /**
  * You should conditionally render this with `progress` while loading asynchronous items.
  */
-const Loading = (props: LoadingProps) => {
-  const { progress, children, ...etc } = props
+// const Loading = (props: LoadingProps) => {
+//   const { progress, children, ...etc } = props
 
-  return (
-    <div
-      ref={props.forwardedRef}
-      {...etc}
-      cmdk-loading=""
-      role="progressbar"
-      aria-valuenow={progress}
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-label="Loading..."
-    >
-      <div aria-hidden={true}>{children}</div>
-    </div>
-  )
-}
-
-// const pkg = Object.assign(Command, {
-//   List,
-//   Item,
-//   Input,
-//   Group,
-//   Separator,
-//   // Dialog,
-//   Empty,
-//   Loading,
-// })
-
-// export { useCmdk as useCommandState }
-// export { pkg as Command }
-
-// export { Command as CommandRoot }
-// export { List as CommandList }
-// export { Item as CommandItem }
-// export { Input as CommandInput }
-// export { Group as CommandGroup }
-// export { Separator as CommandSeparator }
-// export { Empty as CommandEmpty }
-// export { Loading as CommandLoading }
+//   return (
+//     <div
+//       ref={props.forwardedRef}
+//       {...etc}
+//       cmdk-loading=""
+//       role="progressbar"
+//       aria-valuenow={progress}
+//       aria-valuemin={0}
+//       aria-valuemax={100}
+//       aria-label="Loading..."
+//     >
+//       <div aria-hidden={true}>{children}</div>
+//     </div>
+//   )
+// }
 
 /**
  *
@@ -971,7 +935,9 @@ function findNextSibling(el: Element, selector: string) {
   let sibling = el.nextElementSibling
 
   while (sibling) {
-    if (sibling.matches(selector)) return sibling
+    if (sibling.matches(selector)) {
+      return sibling
+    }
     sibling = sibling.nextElementSibling
   }
 }
@@ -980,7 +946,9 @@ function findPreviousSibling(el: Element, selector: string) {
   let sibling = el.previousElementSibling
 
   while (sibling) {
-    if (sibling.matches(selector)) return sibling
+    if (sibling.matches(selector)) {
+      return sibling
+    }
     sibling = sibling.previousElementSibling
   }
 }
@@ -1011,10 +979,11 @@ function useLazyRef<T>(fn: () => T) {
   return ref
 }
 
+type RefCallback<T> = { bivarianceHack(instance: T | null): void }['bivarianceHack']
 // ESM is still a nightmare with Next.js so I'm just gonna copy the package code in
 // https://github.com/gregberge/react-merge-refs
 // Copyright (c) 2020 Greg Bergé
-function mergeRefs<T = any>(refs: Array<ReactRef<T> | undefined>) {
+function mergeRefs<T = any>(refs: Array<RefCallback<T> | ReactRef<T> | undefined>) {
   return (value: any) => {
     refs.filter(Boolean).forEach((ref) => {
       if (typeof ref === 'function') {
@@ -1057,14 +1026,14 @@ function useValue(
           return part.trim().toLowerCase()
         }
 
-        if (typeof part === 'object' && 'current' in part && part.current) {
+        if (part && typeof part === 'object' && 'current' in part && part.current) {
           return part.current.textContent?.trim().toLowerCase()
         }
       }
     })()
 
-    context.value?.(id, value)
-    ref.current?.setAttribute(VALUE_ATTR, value)
+    context.value?.(id, value!)
+    ref.current?.setAttribute(VALUE_ATTR, value!)
     valueRef.current = value
   })
 
