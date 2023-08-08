@@ -6,6 +6,7 @@ import { createSignal } from 'solid-js'
 import { consolehook, MESSAGE_EVENT_TYPE } from 'vsit'
 import { WBE_API_PATH } from 'vsit-shared/constants'
 
+import { VsitCmdk } from '@/components/cmdk'
 import { CodeMirror } from '@/components/console-feed/codemirror'
 import { fromConsoleToString, removeRemainKeys } from '@/components/console-feed/from-code-to-string'
 import { Keymaps } from '@/components/keymaps/keymaps'
@@ -177,6 +178,7 @@ const Home = () => {
           </div>
         </div>
         <Keymaps />
+        <VsitCmdk />
       </div>
     </VsitProvider>
   )
