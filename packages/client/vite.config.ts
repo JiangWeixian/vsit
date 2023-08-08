@@ -20,7 +20,7 @@ export default defineConfig({
       injectRegister: false,
       manifest: false,
       devOptions: {
-        enabled: true,
+        enabled: false,
         type: 'module',
       },
       injectManifest: {

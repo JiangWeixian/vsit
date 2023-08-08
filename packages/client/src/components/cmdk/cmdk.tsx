@@ -1,3 +1,12 @@
+// MIT License
+
+// Copyright (c) 2022 Paco Coursey
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import {
   createContext,
   createEffect,
@@ -219,6 +228,7 @@ export const Command = (props: CommandProps) => {
   const allItems = useRef<Set<string>>(() => new Set()) // [...itemIds]
   const allGroups = useRef<Map<string, Set<string>>>(() => new Map()) // groupId → [...itemIds]
   const ids = useRef<Map<string, string>>(() => new Map()) // id → value
+  // eslint-disable-next-line @typescript-eslint/no-extra-parens
   const listeners = useRef<Set<() => void>>(() => new Set()) // [...rerenders]
   const propsRef = useAsRef(props)
   const { label, value, onValueChange, filter, shouldFilter, ...etc } = props
@@ -239,7 +249,6 @@ export const Command = (props: CommandProps) => {
       return state.current
     },
     setState: (key, value, opts) => {
-      console.log(key, value)
       if (Object.is(state.current[key], value)) {
         return
       }
@@ -267,7 +276,6 @@ export const Command = (props: CommandProps) => {
       store().emit()
     },
     emit: () => {
-      console.log('emit')
       listeners.current.forEach(l => l())
     },
   })
@@ -436,7 +444,6 @@ export const Command = (props: CommandProps) => {
       // Explicitly false, because true | undefined is the default
       || propsRef.current?.shouldFilter === false
     ) {
-      console.log('filterItems', allItems)
       state.current.filtered.count = allItems.current.size
       // Do nothing, each item will know to show itself because search is empty
       return
@@ -777,7 +784,7 @@ const Separator = (props: SeparatorProps) => {
  * All props are forwarded to the underyling `input` element.
  */
 export const CommandInput = (props: InputProps) => {
-  const { onValueChange, ...etc } = props
+  const { onValueChange, forwardedRef, ...etc } = props
   const isControlled = props.value != null
   const store = useStore()!
   const search = useCmdk(state => state?.search)
@@ -797,7 +804,7 @@ export const CommandInput = (props: InputProps) => {
 
   return (
     <input
-      ref={mergeRefs([props.forwardedRef])}
+      ref={mergeRefs([forwardedRef])}
       {...etc}
       cmdk-input=""
       autocomplete="off"
@@ -1028,7 +1035,6 @@ function useCmdk<T = any>(selector: (state: State) => T) {
   onMount(() => {
     store.subscribe?.(() => {
       const next = cb()
-      console.log('useCmdk', next, selector)
       // @ts-expect-error -- ignore
       ss(next as T)
     })

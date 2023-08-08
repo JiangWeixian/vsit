@@ -9,7 +9,6 @@ import { WBE_API_PATH } from 'vsit-shared/constants'
 import { VsitCmdk } from '@/components/cmdk'
 import { CodeMirror } from '@/components/console-feed/codemirror'
 import { fromConsoleToString, removeRemainKeys } from '@/components/console-feed/from-code-to-string'
-import { Keymaps } from '@/components/keymaps/keymaps'
 import { VsitProvider } from '@/components/vsit-context'
 import { apis } from '@/lib/apis'
 import { VIRUTAL_WEB_ID } from '@/lib/constants'
@@ -177,7 +176,6 @@ const Home = () => {
             })}
           </div>
         </div>
-        <Keymaps />
         <VsitCmdk />
       </div>
     </VsitProvider>

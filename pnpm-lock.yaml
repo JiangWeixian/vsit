@@ -51,6 +51,7 @@ importers:
       clsx: 1.2.1
       console-feed: 3.5.0
       daisyui: 2.24.0
+      focus-if-need: ^0.1.0
       lodash-es: ^4.17.21
       postcss: 8.4.16
       prettier: ^3.0.0
@@ -85,6 +86,7 @@ importers:
       clsx: 1.2.1
       console-feed: 3.5.0
       daisyui: 2.24.0_25hquoklqeoqwmt7fwvvcyxm5e
+      focus-if-need: 0.1.0
       lodash-es: 4.17.21
       prettier: 3.0.0
       solid-js: 1.7.6
@@ -5574,6 +5576,15 @@ packages:
     resolution: {integrity: sha512-5nqDSxl8nn5BSNxyR3n4I6eDmbolI6WT+QqR547RwxQapgjQBmtktdP+HTBb/a/zLsbzERTONyUB5pefh5TtjQ==}
     dev: true
 
+  /focus-if-need/0.1.0:
+    resolution: {integrity: sha512-QdDtK+GyWWlXgt7P5fcpfCAc9+rsi/daY+wu8h3Hcx9cXvy/65Juzevqq22AvtNdyAMPTpATMqVLo5MoInVKrw==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      react: ^17 || ^18
+    dependencies:
+      hookable: 5.5.3
+    dev: false
+
   /follow-redirects/1.15.2:
     resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
     engines: {node: '>=4.0'}
@@ -5908,6 +5919,10 @@ packages:
   /homedir/0.6.0:
     resolution: {integrity: sha512-KZFBHenkVuyyG4uaqRSXqWJr3HTxcaPguM7rU1BlH/mtbDlzaXNSXTa9AhV+fXEjrNemHu9vtLRIaM8/8OW0xA==}
     dev: true
+
+  /hookable/5.5.3:
+    resolution: {integrity: sha512-Yc+BQe8SvoXH1643Qez1zqLRmbA5rCL+sSmk6TVos0LWVfNIB7PGncdlId77WzLGSIB5KaWgTaNTs2lNVEI6VQ==}
+    dev: false
 
   /hosted-git-info/2.8.9:
     resolution: {integrity: sha512-mxIDAb9Lsm6DoOJ7xH+5+X4y1LU/4Hi50L9C5sIswK3JzULS4bwk1FvjdBgvYR4bzT4tuUQiC15FE2f5HbLvYw==}

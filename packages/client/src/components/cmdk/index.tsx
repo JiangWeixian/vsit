@@ -1,4 +1,5 @@
 import cx from 'clsx'
+import { focusIfNeed } from 'focus-if-need'
 import { onMount } from 'solid-js'
 
 import { useVsitContext } from '../vsit-context'
@@ -37,6 +38,7 @@ const Item = (props: ItemProps) => {
 export const VsitCmdk = () => {
   let modalBtnRef: HTMLLabelElement | null = null
   let modalOpen = false
+  const inputRef: { current?: HTMLInputElement } = { current: undefined }
   const vsit = useVsitContext()
   onMount(() => {
     document.addEventListener('keydown', (e) => {
@@ -44,6 +46,7 @@ export const VsitCmdk = () => {
       if (e.key === 'j' && e.metaKey) {
         modalBtnRef?.click()
         modalOpen = true
+        modalOpen && focusIfNeed.focus('command_modal_input', inputRef)
         return
       }
       // Close
@@ -71,7 +74,7 @@ export const VsitCmdk = () => {
       <div id="command_modal" class="modal bg-base-200 rounded bg-transparent p-0">
         <form method="dialog" class="modal-box flex min-w-[250px] flex-col p-0 py-2">
           <Command loop={true} label="Command Menu">
-            <CommandInput placeholder="Type here" autofocus={true} class="input input-ghost w-full border-0 focus:outline-none" />
+            <CommandInput forwardedRef={inputRef} placeholder="Type here" class="input input-ghost w-full border-0 focus:outline-none" />
             <div class="bg-base-content my-2 h-[1px] w-full opacity-10" />
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
