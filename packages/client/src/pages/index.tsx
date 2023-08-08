@@ -135,6 +135,14 @@ const Home = () => {
     <VsitProvider value={{ handleFormat, handleExec }}>
       <div class="bg-base-200 h-full">
         <div class="flex items-center justify-between p-2">
+          <button
+            class="btn btn-sm"
+          >
+            <span class="mr-2 capitalize">
+              Open Command
+            </span>
+            <kbd class="kbd kbd-xs">⌘</kbd> <kbd class="kbd kbd-xs">j</kbd>
+          </button>
           <div class="tabs tabs-boxed p-2">
             <a class={clsx('tab', { 'tab-active': type() === 'web' })} onClick={() => handleSwitchType('web')}>Web</a>
             <a class={clsx('tab', { 'tab-active': type() === 'node' })} onClick={() => handleSwitchType('node')}>Node</a>
