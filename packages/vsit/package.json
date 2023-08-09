@@ -3,7 +3,9 @@
   "version": "0.0.5",
   "packageManager": "pnpm@7.33.0",
   "description": "todo",
-  "keywords": ["vsit"],
+  "keywords": [
+    "vsit"
+  ],
   "license": "MIT",
   "engines": {
     "node": ">=16"
@@ -35,14 +37,14 @@
     "./package.json": "./package.json",
     ".": {
       "browser": {
-        "types": "./dts/exports/browser.d.ts",
         "require": "./dist/browser.cjs",
-        "import": "./dist/browser.mjs"
+        "import": "./dist/browser.mjs",
+        "types": "./dts/exports/browser.d.ts"
       },
       "node": {
-        "types": "./dts/exports/node.d.ts",
         "require": "./dist/node.cjs",
-        "import": "./dist/node.mjs"
+        "import": "./dist/node.mjs",
+        "types": "./dts/exports/node.d.ts"
       }
     }
   },

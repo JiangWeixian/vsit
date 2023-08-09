@@ -32,6 +32,7 @@ export type Decorators = Array<{
 
 interface APIs {
   format(code: string): Promise<string>
+  exec(): void
 }
 
 interface CodeMirrorProps {
@@ -132,6 +133,17 @@ export const CodeMirror: Component<CodeMirrorProps>
             })
             return true
           },
+        },
+        {
+          key: 'Shift-Alt-s',
+          run: (): boolean => {
+            if (!apis.exec) {
+              return false
+            }
+            apis.exec()
+            return true
+          },
+          preventDefault: true,
         },
         // {
         //   key: 'Tab',
