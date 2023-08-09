@@ -52,6 +52,9 @@ export const wrapCode = (code: string) => {
   return code.replace(new RegExp(ESM_HOST, 'gi'), ESMSH_PROTOCOL)
 }
 
+/**
+ * @description Inject consolehook to node content
+ */
 export const injectConsoleHook = (content: string) => {
   const entryOfVit = process.env.TEST ? 'vsit' : join(pkgRoot, 'dist/node.mjs')
   return `
@@ -66,6 +69,14 @@ globalThis.__hook(consolehook, (log) => {
 })
 ${content}
 `
+}
+
+export const transform = (content: string, type?: 'web' | 'node') => {
+  const resolvedContent = content.replace('console.log', 'consolehook.log')
+  if (type === 'node') {
+    return injectConsoleHook(resolvedContent)
+  }
+  return resolvedContent
 }
 
 export const parseDeps = (deps: string[] = []) => {
