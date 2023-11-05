@@ -1,0 +1,8 @@
+// Vitest Snapshot v1
+
+exports[`string > wrap code 1`] = `
+"
+import { uniq } from \\"esm.sh:lodash-es@4.17.21\\"
+import stripAnsi from \\"esm.sh:strip-ansi@7.1.0\\"
+    "
+`;
