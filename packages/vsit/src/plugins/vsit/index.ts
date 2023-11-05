@@ -11,8 +11,8 @@ import { VIRUTAL_NODE_ID, VIRUTAL_WEB_ID } from '@/common/resolver/constants'
 import { isEsmSh } from '@/common/resolver/is'
 import { createStore } from '@/common/store'
 import {
-  injectConsoleHook,
   parseModulesDeps,
+  transform,
   unwrapId,
   wrapCode,
   wrapId,
@@ -27,7 +27,7 @@ const invalid = async (moduleName: string, server: ViteDevServer) => {
 }
 
 export const PluginVit = (): Plugin[] => {
-  let content = ''
+  let nodeContent = ''
   let webContent = ''
   let store: AsyncReturnType<typeof createStore>
   return [
@@ -60,9 +60,9 @@ export const PluginVit = (): Plugin[] => {
           }
           if (url.pathname === NODE_API_PATH && req.method === 'POST') {
             const body = req.body
-            content = injectConsoleHook(body.content)
-            debug.plugin('update fake node file %s', content)
-            res.end(content)
+            nodeContent = body.content
+            debug.plugin('update fake node file %s', nodeContent)
+            res.end(nodeContent)
             return
           }
           if (url.pathname === NODE_API_PATH && req.method === 'GET') {
@@ -100,10 +100,10 @@ export const PluginVit = (): Plugin[] => {
       },
       async load(id) {
         if (id === VIRUTAL_NODE_ID) {
-          return content
+          return transform(nodeContent, 'node')
         }
         if (id === VIRUTAL_WEB_ID) {
-          return webContent
+          return transform(webContent, 'web')
         }
         return null
       },

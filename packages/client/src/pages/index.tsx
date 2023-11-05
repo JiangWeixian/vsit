@@ -73,7 +73,7 @@ type Message = ReturnType<typeof Decode>
 const InitialCode = `import { uniq } from "esm.sh:lodash-es@4.17.21"
 const a = uniq([1, 2, 3, 3])
 const b: number = 1
-consolehook.log(a, b, uniq)
+console.log(a, b, uniq)
 `
 const Home = () => {
   const [type, setType] = createSignal<'web' | 'node'>('web')
