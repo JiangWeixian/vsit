@@ -10,49 +10,62 @@ import ce from 'rollup-plugin-condition-exports'
 import esbuild from 'rollup-plugin-esbuild'
 import { externals } from 'rollup-plugin-node-externals'
 import size from 'rollup-plugin-size'
+import { createRequire } from 'node:module'
+
+const require = createRequire(import.meta.url)
+
+const plugins = [
+  externals({
+    devDeps: false,
+    builtinsPrefix: 'add',
+  }),
+  commonjs(),
+  replace({
+    delimiters: ['', ''],
+    preventAssignment: true,
+    values: {
+      'import \'source-map-support/register.js\';': '',
+    },
+  }),
+  esbuild({
+    minify: false,
+    sourceMap: process.env.BUILD !== 'production',
+    target: 'es2021',
+  }),
+  alias({
+    customResolver: resolve({ extensions: ['.tsx', '.ts'] }),
+    entries: Object.entries({
+      '@/*': ['./src/*'],
+    }).map(([alias, value]) => ({
+      find: new RegExp(`${alias.replace('/*', '')}`),
+      replacement: path.resolve(process.cwd(), `${value[0].replace('/*', '')}`),
+    })),
+  }),
+  resolve({ browser: false, exportConditions: ['node', 'default'] }),
+  json(),
+  size(),
+]
 
 export default defineConfig([
-  // CommonJS (for Node) and ES module (for bundlers) build.
-  // (We could have three entries in the configuration array
-  // instead of two, but it's quicker to generate multiple
-  // builds from a single configuration where possible, using
-  // an array for the `output` option, where we can specify
-  // `file` and `format` for each target)
+  {
+    input: {
+      'write-yaml-file/index': require.resolve('write-yaml-file')
+    },
+    plugins,
+    output: [
+      {
+        entryFileNames: '[name].cjs',
+        dir: 'vendors',
+        chunkFileNames: 'chunks/[name].cjs',
+        format: 'cjs',
+      },
+    ],
+  },
   {
     input: 'src/cli.ts',
     preserveEntrySignatures: 'strict',
     external: ['source-map-support/register.js'],
-    plugins: [
-      externals({
-        devDeps: false,
-        builtinsPrefix: 'add',
-      }),
-      commonjs(),
-      replace({
-        delimiters: ['', ''],
-        preventAssignment: true,
-        values: {
-          'import \'source-map-support/register.js\';': '',
-        },
-      }),
-      esbuild({
-        minify: false,
-        sourceMap: process.env.BUILD !== 'production',
-        target: 'es2021',
-      }),
-      alias({
-        customResolver: resolve({ extensions: ['.tsx', '.ts'] }),
-        entries: Object.entries({
-          '@/*': ['./src/*'],
-        }).map(([alias, value]) => ({
-          find: new RegExp(`${alias.replace('/*', '')}`),
-          replacement: path.resolve(process.cwd(), `${value[0].replace('/*', '')}`),
-        })),
-      }),
-      resolve({ browser: false, exportConditions: ['node', 'default'] }),
-      json(),
-      size(),
-    ],
+    plugins,
     watch: {
       exclude: ['./package.json'],
     },
@@ -68,32 +81,11 @@ export default defineConfig([
   },
   {
     plugins: [
-      externals({
-        devDeps: false,
-        builtinsPrefix: 'add',
-      }),
-      commonjs(),
-      esbuild({
-        minify: false,
-        sourceMap: true,
-        target: 'es2021',
-      }),
-      alias({
-        customResolver: resolve({ extensions: ['.tsx', '.ts'] }),
-        entries: Object.entries({
-          '@/*': ['./src/*'],
-        }).map(([alias, value]) => ({
-          find: new RegExp(`${alias.replace('/*', '')}`),
-          replacement: path.resolve(process.cwd(), `${value[0].replace('/*', '')}`),
-        })),
-      }),
-      resolve({ browser: false, exportConditions: ['node', 'default'] }),
-      json(),
       ce({
         outDir: 'dist',
         declarationDir: 'dts',
       }),
-      size(),
+      ...plugins,
     ],
     watch: {
       exclude: ['./package.json'],

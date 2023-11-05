@@ -1,3 +1,4 @@
+import { createRequire } from 'node:module'
 import { resolve } from 'node:path'
 
 import {
@@ -6,9 +7,9 @@ import {
   readFile,
 } from 'fs-extra'
 import readYaml from 'read-yaml-file'
-import writeYaml from 'write-yaml-file'
 
 import { version } from '../../../package.json'
+import { pkgRoot } from '../path'
 import {
   LOCK_FILE,
   STORE_PACKAGES_DIR,
@@ -16,6 +17,8 @@ import {
 } from './constants'
 import { computeCacheKey } from './utils'
 import { debug } from '@/common/log'
+
+const require = createRequire(import.meta.url)
 
 interface Options {
   storePath?: string
@@ -54,6 +57,8 @@ interface LockFileYaml {
   version: string
   packages?: Record<string, Package>
 }
+
+const writeYaml = require(resolve(pkgRoot, './vendors/write-yaml-file/index.cjs'))
 
 export class LockFile {
   options: ResolvedLockFileOptions
