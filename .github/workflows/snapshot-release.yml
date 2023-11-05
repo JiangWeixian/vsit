@@ -9,7 +9,7 @@ on:
     paths:
       - '.changeset/**'
     branches:
-      - master
+      - main
 env:
   CI: true
 jobs:
