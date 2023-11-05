@@ -1,5 +1,11 @@
 # vsit
 
+## 0.0.6
+
+### Patch Changes
+
+- d40f623: support keymaps panel
+
 ## 0.0.5
 
 ### Patch Changes
