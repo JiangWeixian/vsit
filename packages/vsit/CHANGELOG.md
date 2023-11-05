@@ -1,5 +1,13 @@
 # vsit
 
+## 0.1.1
+
+### Patch Changes
+
+- 7da8f26: wrong bin name
+- ffa4e31: fix root on prod mode
+- ffa4e31: fix \_\_filename not found
+
 ## 0.1.0
 
 ### Minor Changes
