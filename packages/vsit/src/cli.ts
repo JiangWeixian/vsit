@@ -12,7 +12,7 @@ const commands = {
   main: () => import('./commands/main').then(m => m.main),
 }
 
-const cli = cac('bin-template').version(version)
+const cli = cac('vsit').version(version)
 
 const handler = (cmdName: string) => {
   return async function (...args: any[]) {
@@ -21,7 +21,7 @@ const handler = (cmdName: string) => {
   }
 }
 
-cli.command('[word]', 'say hello').alias('hi').action(handler('main'))
+cli.command('', 'JavaScript playground').alias('hi').action(handler('main'))
 
 cli.help()
 
