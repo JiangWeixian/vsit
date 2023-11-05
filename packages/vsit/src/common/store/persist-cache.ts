@@ -58,7 +58,8 @@ interface LockFileYaml {
   packages?: Record<string, Package>
 }
 
-const writeYaml = require(resolve(pkgRoot, './vendors/write-yaml-file/index.cjs'))
+let writeYaml = require(resolve(pkgRoot, './vendors/write-yaml-file/index.cjs'))
+writeYaml = writeYaml.default ?? writeYaml
 
 export class LockFile {
   options: ResolvedLockFileOptions
