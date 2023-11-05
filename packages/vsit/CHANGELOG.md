@@ -1,5 +1,15 @@
 # vsit
 
+## 0.1.0
+
+### Minor Changes
+
+- 4e76c06: replace console with consolehook
+
+### Patch Changes
+
+- b30b331: disable pwa
+
 ## 0.0.6
 
 ### Patch Changes
