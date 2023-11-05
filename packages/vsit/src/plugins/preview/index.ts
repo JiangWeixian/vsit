@@ -7,12 +7,22 @@ import { pkgRoot } from '@/common/path'
 import type { Plugin } from 'vite'
 
 const clientDir = 'dist-client'
+const resolvedClientDir = path.resolve(pkgRoot, clientDir)
 export const PluginPreview = (): Plugin => {
   return {
     name: 'vsit:preview',
+    config() {
+      return {
+        // if prod, use dist-client as root
+        root: resolvedClientDir,
+        // prevent throw pre-bundling warnings on preview and prod
+        optimizeDeps: {
+          disabled: true,
+        },
+      }
+    },
     configureServer(server) {
-      const resolvedStaticPath = path.resolve(pkgRoot, clientDir)
-      const client = sirv(resolvedStaticPath, { dev: true })
+      const client = sirv(resolvedClientDir, { dev: true })
       server.middlewares.use('/', client)
     },
   }

@@ -26,7 +26,8 @@
   "files": [
     "dts",
     "dist",
-    "dist-client"
+    "dist-client",
+    "vendors"
   ],
   "bin": {
     "vsit": "bin/index.mjs"
