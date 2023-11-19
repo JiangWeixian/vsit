@@ -1,11 +1,10 @@
 # vsit
 > A Replit client based on vite
 
-[![npm](https://img.shields.io/npm/v/vsit)](https://github.com/vsit/tree/main) [![GitHub](https://img.shields.io/npm/l/vsit)](https://github.com/vsit/tree/main) [![stackblitz](https://img.shields.io/badge/%E2%9A%A1%EF%B8%8Fstackblitz-online-blue)](https://stackblitz.com/github/vsit/tree/main)
+[![npm](https://img.shields.io/npm/v/vsit)](https://github.com/vsit/tree/main) [![GitHub](https://img.shields.io/npm/l/vsit)](https://github.com/vsit/tree/main)
 
-[Edit on StackBlitz ⚡️](https://stackblitz.com/github/vsit/tree/main)
+![vsit-screenshot](https://user-images.githubusercontent.com/6839576/283995715-d376f1d5-03be-494d-8b80-15cd6239e442.png)
 
-## usage
 
 ```
 pnpm i vsit -g
