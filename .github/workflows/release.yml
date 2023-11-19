@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-      - 'releases/*'
+      - "releases/*"
 env:
   CI: true
 jobs:

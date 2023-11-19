@@ -1,20 +1,12 @@
 import { createRequire } from 'node:module'
 import { resolve } from 'node:path'
 
-import {
-  existsSync,
-  outputFile,
-  readFile,
-} from 'fs-extra'
+import { existsSync, outputFile, readFile } from 'fs-extra'
 import readYaml from 'read-yaml-file'
 
 import { version } from '../../../package.json'
 import { pkgRoot } from '../path'
-import {
-  LOCK_FILE,
-  STORE_PACKAGES_DIR,
-  STORE_PATH,
-} from './constants'
+import { LOCK_FILE, STORE_PACKAGES_DIR, STORE_PATH } from './constants'
 import { computeCacheKey } from './utils'
 import { debug } from '@/common/log'
 

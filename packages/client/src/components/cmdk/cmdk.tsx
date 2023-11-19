@@ -70,7 +70,7 @@ export type ItemProps = Children & Omit<DivProps, 'disabled' | 'onSelect' | 'val
 //   /** Whether this group is forcibly rendered regardless of filtering. */
 //   forceMount?: boolean
 // }
-type InputProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'type'> & {
+type InputProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'type' | 'value'> & {
   /**
    * Optional controlled state for the value of the search input.
    */
@@ -180,14 +180,14 @@ const GroupContext = createContext<Group>(undefined)
 /** Imperatively run a function on the next layout effect cycle. */
 const useScheduleLayoutEffect = () => {
   const [s, ss] = createSignal<object>()
-  const fns = useLazyRef(() => new Map<string | number, () => void>())
+  const fns = useLazyRef(() => new Map<number | string, () => void>())
 
   on(s, () => {
     fns.current?.forEach(f => f())
     fns.current = new Map()
   })
 
-  return (id: string | number, cb: () => void) => {
+  return (id: number | string, cb: () => void) => {
     fns.current?.set(id, cb)
     ss({})
   }
@@ -512,7 +512,7 @@ export const Command = (props: CommandProps) => {
     }
   }
 
-  function updateSelectedByChange(change: 1 | -1) {
+  function updateSelectedByChange(change: -1 | 1) {
     const selected = getSelectedItem()
     const items = getValidItems()
     const index = items.findIndex(item => item === selected)
@@ -534,7 +534,7 @@ export const Command = (props: CommandProps) => {
     }
   }
 
-  function updateSelectedToGroup(change: 1 | -1) {
+  function updateSelectedToGroup(change: -1 | 1) {
     const selected = getSelectedItem()
     let group = selected?.closest(GROUP_SELECTOR)
     let item: HTMLElement
@@ -983,7 +983,7 @@ type RefCallback<T> = { bivarianceHack(instance: T | null): void }['bivarianceHa
 // ESM is still a nightmare with Next.js so I'm just gonna copy the package code in
 // https://github.com/gregberge/react-merge-refs
 // Copyright (c) 2020 Greg Bergé
-function mergeRefs<T = any>(refs: Array<RefCallback<T> | ReactRef<T> | undefined>) {
+function mergeRefs<T = any>(refs: Array<ReactRef<T> | RefCallback<T> | undefined>) {
   return (value: any) => {
     refs.filter(Boolean).forEach((ref) => {
       if (typeof ref === 'function') {
@@ -1014,7 +1014,7 @@ function useCmdk<T = any>(selector: (state: State) => T) {
 function useValue(
   id: string,
   ref: ReactRef<HTMLElement>,
-  deps: (string | JSX.Element | ReactRef<HTMLElement>)[],
+  deps: (JSX.Element | ReactRef<HTMLElement> | string)[],
 ) {
   const valueRef: ReactRef<string> = {}
   const context = useCommand()

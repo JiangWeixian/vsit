@@ -1,8 +1,4 @@
-import {
-  NavigationRoute,
-  registerRoute,
-  Route,
-} from 'workbox-routing'
+import { NavigationRoute, registerRoute, Route } from 'workbox-routing'
 import { CacheFirst, NetworkFirst } from 'workbox-strategies'
 
 const urlPattern = /^https:\/\/esm\.sh\/.*/i

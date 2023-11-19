@@ -10,6 +10,6 @@
     ],
     "rootDir": "src"
   },
-  "exclude": ["node_modules", "lib", "test"],
-  "include": ["./global.d.ts", "src"]
+  "include": ["./global.d.ts", "src"],
+  "exclude": ["node_modules", "lib", "test"]
 }

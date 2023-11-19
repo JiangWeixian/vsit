@@ -3,20 +3,11 @@ import { closeBrackets } from '@codemirror/autocomplete'
 import { history } from '@codemirror/commands'
 import { bracketMatching, syntaxHighlighting } from '@codemirror/language'
 import { EditorState } from '@codemirror/state'
-import {
-  EditorView,
-  highlightActiveLine,
-  highlightSpecialChars,
-  keymap,
-} from '@codemirror/view'
+import { EditorView, highlightActiveLine, highlightSpecialChars, keymap } from '@codemirror/view'
 import { createSignal, onMount } from 'solid-js'
 
 import { useSyntaxHighlight } from './use-syntax-highlight'
-import {
-  getCodeMirrorLanguage,
-  getLanguageFromFile,
-  getSyntaxHighlight,
-} from './utils'
+import { getCodeMirrorLanguage, getLanguageFromFile, getSyntaxHighlight } from './utils'
 
 import type { Extension } from '@codemirror/state'
 import type { KeyBinding } from '@codemirror/view'

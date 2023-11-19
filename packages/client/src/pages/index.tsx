@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import Hook from 'console-feed/lib/Hook'
 import { Decode } from 'console-feed/lib/Transform'
 import { createSignal } from 'solid-js'
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { consolehook, MESSAGE_EVENT_TYPE } from 'vsit'
 import { WBE_API_PATH } from 'vsit-shared/constants'
 
@@ -76,7 +77,7 @@ const b: number = 1
 console.log(a, b, uniq)
 `
 const Home = () => {
-  const [type, setType] = createSignal<'web' | 'node'>('web')
+  const [type, setType] = createSignal<'node' | 'web'>('web')
   const [code, setCode] = createSignal(InitialCode)
   const [logState, setLogState] = createSignal<Message[]>([])
   useWS({ onMessageUpdate: setLogState })
@@ -123,7 +124,7 @@ const Home = () => {
     injectWebScript()
     wrapConsole()
   }
-  const handleSwitchType = (type: 'web' | 'node') => {
+  const handleSwitchType = (type: 'node' | 'web') => {
     setLogState([])
     setType(type)
   }

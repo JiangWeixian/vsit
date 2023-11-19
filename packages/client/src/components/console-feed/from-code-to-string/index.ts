@@ -19,23 +19,14 @@ import { transformers } from './transformers'
 import type { TransformsTypes } from './transformers'
 
 export type Message =
-  | null
-  | string
-  | number
-  | undefined
-  | Array<any>
-  | Record<any, any>
-  | Boolean
-  | Symbol
-  | { '@r': number }
-  | {
+  Array<any> | Boolean | Record<any, any> | Symbol | number | string | {
     '@t': TransformsTypes
     data: {
       name: string
       body: string
       proto: TransformsTypes
     }
-  }
+  } | { '@r': number } | null | undefined
 
 export const removeRemainKeys = (msgs: any[] | undefined = []) => {
   return msgs.filter(msg => !(typeof msg === 'string' && msg.startsWith(REMAINING_KEY)))

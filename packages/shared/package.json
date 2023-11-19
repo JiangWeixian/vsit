@@ -3,9 +3,7 @@
   "version": "0.0.0",
   "packageManager": "pnpm@7.33.0",
   "description": "todo",
-  "keywords": [
-    "vsit"
-  ],
+  "keywords": ["vsit"],
   "license": "MIT",
   "engines": {
     "node": ">=16"
@@ -36,8 +34,8 @@
   "exports": {
     "./package.json": "./package.json",
     "./constants": {
-      "require": "./dist/constants.cjs",
       "import": "./dist/constants.mjs",
+      "require": "./dist/constants.cjs",
       "types": "./dts/exports/constants.d.ts"
     }
   },
@@ -70,9 +68,7 @@
   },
   "typesVersions": {
     "*": {
-      "constants": [
-        "dts/exports/constants.d.ts"
-      ]
+      "constants": ["dts/exports/constants.d.ts"]
     }
   }
 }

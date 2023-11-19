@@ -13,7 +13,7 @@ import {
 
 import type { ItemProps } from '@/components/cmdk/cmdk'
 
-type CommandValue = 'run' | 'format'
+type CommandValue = 'format' | 'run'
 
 const Item = (props: ItemProps) => {
   return (

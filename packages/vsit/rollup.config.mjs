@@ -1,3 +1,4 @@
+import { createRequire } from 'node:module'
 import path from 'node:path'
 
 import alias from '@rollup/plugin-alias'
@@ -10,7 +11,6 @@ import ce from 'rollup-plugin-condition-exports'
 import esbuild from 'rollup-plugin-esbuild'
 import { externals } from 'rollup-plugin-node-externals'
 import size from 'rollup-plugin-size'
-import { createRequire } from 'node:module'
 
 const require = createRequire(import.meta.url)
 
@@ -49,7 +49,7 @@ const plugins = [
 export default defineConfig([
   {
     input: {
-      'write-yaml-file/index': require.resolve('write-yaml-file')
+      'write-yaml-file/index': require.resolve('write-yaml-file'),
     },
     plugins,
     output: [

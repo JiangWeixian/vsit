@@ -3,7 +3,7 @@ name: Node.js CI
 on:
   push:
   pull_request:
-    branches: [main,release]
+    branches: [main, release]
 
 jobs:
   test:
@@ -40,7 +40,7 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
-      - name: Install 
+      - name: Install
         run: |
           pnpm install --frozen-lockfile=false
       - name: Test

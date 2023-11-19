@@ -71,7 +71,7 @@ ${content}
 `
 }
 
-export const transform = (content: string, type?: 'web' | 'node') => {
+export const transform = (content: string, type?: 'node' | 'web') => {
   const resolvedContent = content.replace('console.log', 'consolehook.log')
   if (type === 'node') {
     return injectConsoleHook(resolvedContent)

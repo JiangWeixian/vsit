@@ -35,15 +35,15 @@
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "browser": {
-        "types": "./dts/exports/browser.d.ts",
-        "require": "./dist/browser.cjs",
-        "import": "./dist/browser.mjs"
-      },
       "node": {
-        "types": "./dts/exports/node.d.ts",
+        "import": "./dist/node.mjs",
         "require": "./dist/node.cjs",
-        "import": "./dist/node.mjs"
+        "types": "./dts/exports/node.d.ts"
+      },
+      "browser": {
+        "import": "./dist/browser.mjs",
+        "require": "./dist/browser.cjs",
+        "types": "./dts/exports/browser.d.ts"
       }
     }
   },

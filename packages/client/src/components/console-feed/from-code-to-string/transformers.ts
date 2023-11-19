@@ -15,20 +15,7 @@ const MAP_SUPPORTED = typeof Map === 'function'
 const SET_SUPPORTED = typeof Set === 'function'
 
 export type TransformsTypes =
-  | 'Function'
-  | 'HTMLElement'
-  | '[[NaN]]'
-  | '[[undefined]]'
-  | '[[Date]]'
-  | '[[RegExp]]'
-  | '[[Error]]'
-  | '[[RegExp]]'
-  | '[[Error]]'
-  | '[[ArrayBuffer]]'
-  | '[[TypedArray]]'
-  | '[[Map]]'
-  | '[[Set]]'
-  | 'Arithmetic'
+  '[[ArrayBuffer]]' | '[[Date]]' | '[[Error]]' | '[[Error]]' | '[[Map]]' | '[[NaN]]' | '[[RegExp]]' | '[[RegExp]]' | '[[Set]]' | '[[TypedArray]]' | '[[undefined]]' | 'Arithmetic' | 'Function' | 'HTMLElement'
 
 type Transforms = Record<TransformsTypes, (...params: any) => any>
 
