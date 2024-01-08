@@ -35,6 +35,9 @@ export default defineConfig(({ command }) => {
             }
           },
           vite: {
+            resolve: {
+              conditions: ['node', 'default'],
+            },
             build: {
               sourcemap,
               minify: isBuild,

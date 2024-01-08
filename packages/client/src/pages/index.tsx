@@ -27,8 +27,9 @@ const useWS = (props: UseWSProps) => {
   const importMetaUrl = new URL(import.meta.url)
   // use server configuration, then fallback to inference
   const socketProtocol = null || (importMetaUrl.protocol === 'https:' ? 'wss' : 'ws')
-  const hmrPort = null
+  const hmrPort = 8080 // null
   const socketHost = `${null || importMetaUrl.hostname}:${hmrPort || importMetaUrl.port}${'/'}`
+  console.log('[vit] websocket %s opened', socketHost)
   try {
     let fallback
     // only use fallback when port is inferred to prevent confusion
@@ -49,6 +50,7 @@ const useWS = (props: UseWSProps) => {
       const result = JSON.parse(data)
       if (result.event === MESSAGE_EVENT_TYPE) {
         const encodeMessage = Decode(Array.isArray(result.data) ? result.data[0] : result.data)
+        console.log(encodeMessage)
         props.onMessageUpdate?.([encodeMessage])
       }
     })

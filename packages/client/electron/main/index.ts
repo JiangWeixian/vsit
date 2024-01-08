@@ -1,9 +1,11 @@
 import { release } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import http from 'http'
 
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
-import { createLogger } from 'vite'
+import { createLogger, createServer } from 'vite'
+import { PluginVit } from 'vsit'
 
 import { update } from './update'
 
@@ -93,6 +95,43 @@ async function createWindow() {
 }
 
 app.whenReady().then(createWindow)
+
+app.on('ready', async () => {
+  const vite = await createServer({
+    configFile: false,
+    appType: 'custom',
+    root: __dirname,
+    server: {
+      middlewareMode: true,
+      port: 8080,
+      cors: true,
+    },
+    plugins: [
+      PluginVit(),
+    ]
+  })
+  const server = http.createServer(async (req, res) => {
+    // if (req.url?.includes('/node')) {
+    //   res.end(`ah, you send 123.`);
+    //   return
+    // } else {
+    //   const remoteAddress = res.socket?.remoteAddress;
+    //   const remotePort = res.socket?.remotePort;
+    //   res.end(`Your IP address is ${remoteAddress} and your source port is ${remotePort}.`);  
+    // }
+    // Set CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    if (vite.middlewares) {
+      await new Promise((resolve) =>
+        vite.middlewares(req, res, resolve)
+      );
+    }
+  })
+  server.listen(8080, () => {
+    console.log('listen on http://localhost:8080')
+  })
+})
 
 app.on('window-all-closed', () => {
   win = null

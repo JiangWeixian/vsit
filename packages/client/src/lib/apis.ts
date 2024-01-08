@@ -20,7 +20,7 @@ export const apis = {
   node: {
     async update(content: string) {
       const url = withQuery(NODE_API_PATH)
-      await fetch(url, {
+      await fetch(`http://localhost:8080${url}`, {
         method: 'POST',
         body: JSON.stringify({
           content,
@@ -32,7 +32,7 @@ export const apis = {
     },
     async get() {
       const url = withQuery(NODE_API_PATH)
-      fetch(url, { method: 'GET' })
+      fetch(`http://localhost:8080${url}`, { method: 'GET' })
     }
   }
 }
