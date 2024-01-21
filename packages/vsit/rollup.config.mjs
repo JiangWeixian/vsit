@@ -81,7 +81,6 @@ export default defineConfig([
   },
   {
     plugins: [
-      // TODO: condition field order is not correct
       ce({
         outDir: 'dist',
         declarationDir: 'dts',

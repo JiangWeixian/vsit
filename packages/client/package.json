@@ -1,8 +1,7 @@
 {
-  "name": "vsit-client",
+  "name": "@vsit/client",
   "version": "0.0.0",
   "type": "module",
-  "private": true,
   "description": "vsit client",
   "keywords": [
     "vsit",
@@ -27,10 +26,11 @@
     "test": "echo test",
     "vitest": "echo test",
     "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
     "dev:electron": "vite --config ./vite.config.electron.mts",
+    "build": "vite build",
     "build:electron": "vite build --config ./vite.config.electron.mts && electron-builder",
+    "publish:electron": "vite build --config ./vite.config.electron.mts && electron-builder --publish=always",
+    "preview": "vite preview",
     "preview:electron": "vite preview --config ./vite.config.electron.mts"
   },
   "dependencies": {
@@ -66,6 +66,7 @@
     "electron-builder": "^24.6.3",
     "focus-if-need": "^0.1.0",
     "lodash-es": "^4.17.21",
+    "npm-run-all": "^4.1.5",
     "postcss": "8.4.31",
     "prettier": "^3.0.0",
     "react": "^18.2.0",
@@ -87,6 +88,11 @@
     "workbox-window": "7.0.0"
   },
   "build": {
-    "productName": "vsit"
+    "productName": "vsit",
+    "publish": {
+      "provider": "github",
+      "owner": "vsit",
+      "repo": "vsit"
+    }
   }
 }
