@@ -1,40 +1,27 @@
-# @aiou/bin-template
-*build npm cli command application*
+# vsit
+> A Replit client based on vite
 
-[![npm](https://img.shields.io/npm/v/@aiou/bin-template)](https://github.com/spring-catponents/bin-template) [![GitHub](https://img.shields.io/npm/l/@aiou/bin-template)](https://github.com/spring-catponents/bin-template) [![stackblitz](https://img.shields.io/badge/%E2%9A%A1%EF%B8%8Fstackblitz-online-blue)](https://stackblitz.com/github/spring-catponents/bin-template)
+[![npm](https://img.shields.io/npm/v/vsit)](https://github.com/vsit/tree/main) [![GitHub](https://img.shields.io/npm/l/vsit)](https://github.com/vsit/tree/main)
 
-[Edit on StackBlitz ⚡️](https://stackblitz.com/github/spring-catponents/bin-template)
+![vsit-screenshot](https://user-images.githubusercontent.com/6839576/283995715-d376f1d5-03be-494d-8b80-15cd6239e442.png)
+
+
+```
+pnpm i vsit -g
+vsit
+```
 
 ## features
 
-- Native ESM Module development
-- Use [**cac**](https://github.com/cacjs/cac) build cli application
-- Interaction interface with [**inquirer**](https://github.com/SBoudrias/Inquirer.js/) and [**ora**](https://github.com/sindresorhus/ora)
-- Type safe
-- Release with github workflows and changeset
-- pnpm
-- vitest
-
-## install 
-
-```console
-pnpm i -g @aiou/bin-template
-```
-
-## commands
-
-### `hello`
-
-say hello world with select option
-
-`bin-template hello [word]`
-
-### `loading`
-
-display loading and loading text
-
-`bin-template loading --text=[text] [ms]`
-
+- 💞 Import packages from [`esm.sh`](https://esm.sh/) without installed
 ## development
 
-- `pnpm run build`
+- **Setup** - `pnpm i`
+- **Build** - `pnpm build`
+
+# 
+<div align='right'>
+
+*built with ❤️ by 😼*
+
+</div>

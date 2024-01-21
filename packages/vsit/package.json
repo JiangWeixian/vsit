@@ -52,7 +52,7 @@
   "types": "dts/exports/node.d.ts",
   "scripts": {
     "build:dts": "rimraf dts && tspc -p tsconfig.dts.json",
-    "build:lib": "rimraf dist && rollup -c --silent --environment BUILD:production",
+    "build:lib": "rimraf dist && rollup -c --silent",
     "build": "run-s build:*",
     "dev": "rollup -c -w",
     "preview": "node ./bin/index.mjs",

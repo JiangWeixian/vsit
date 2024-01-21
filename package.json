@@ -26,6 +26,7 @@
     "preview": "pnpm --filter=./packages/vsit preview",
     "build:cli": "pnpm --filter=./packages/vsit build",
     "build:client": "pnpm --filter=./packages/client build",
+    "build:electron": "pnpm --filter=./packages/client build:electron",
     "build:copy": "esno ./scripts/client.ts",
     "build": "pnpm --filter=./packages/** run build && pnpm run build:copy",
     "ci:publish": "pnpm run build && pnpm changeset publish",

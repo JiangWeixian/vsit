@@ -35,6 +35,7 @@ export default defineConfig({
   ],
   build: {
     minify: false,
+    outDir: 'dist-client',
   },
   resolve: {
     alias: [
