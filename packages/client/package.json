@@ -82,7 +82,6 @@
     "vite-plugin-pwa": "^0.16.4",
     "vite-plugin-solid": "2.8.0",
     "vsit": "workspace:*",
-    "vsit-shared": "workspace:*",
     "workbox-routing": "7.0.0",
     "workbox-strategies": "7.0.0",
     "workbox-window": "7.0.0"

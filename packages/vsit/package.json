@@ -3,9 +3,7 @@
   "version": "0.1.1",
   "packageManager": "pnpm@8.14.0",
   "description": "A Repl client based on vite",
-  "keywords": [
-    "vsit"
-  ],
+  "keywords": ["vsit"],
   "license": "MIT",
   "engines": {
     "node": ">=16"
@@ -37,15 +35,15 @@
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "browser": {
-        "require": "./dist/browser.cjs",
-        "import": "./dist/browser.mjs",
-        "types": "./dts/exports/browser.d.ts"
-      },
       "node": {
-        "require": "./dist/node.cjs",
         "import": "./dist/node.mjs",
+        "require": "./dist/node.cjs",
         "types": "./dts/exports/node.d.ts"
+      },
+      "browser": {
+        "import": "./dist/browser.mjs",
+        "require": "./dist/browser.cjs",
+        "types": "./dts/exports/browser.d.ts"
       }
     }
   },
@@ -112,7 +110,6 @@
     "typescript-transform-paths": "^3.4.6",
     "ufo": "^1.1.2",
     "vitest": "^0.22.1",
-    "vsit-shared": "workspace:*",
     "write-yaml-file": "5.0.0"
   }
 }

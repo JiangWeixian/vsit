@@ -1,0 +1,5 @@
+---
+"vsit": patch
+---
+
+exports constants

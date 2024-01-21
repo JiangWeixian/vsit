@@ -24,6 +24,7 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "suppressImplicitAnyIndexErrors": true,
+    "ignoreDeprecations": "5.0",
     "plugins": [
       { "transform": "typescript-transform-paths" },
       {

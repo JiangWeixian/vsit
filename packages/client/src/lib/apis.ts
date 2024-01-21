@@ -1,4 +1,4 @@
-import { WBE_API_PATH, NODE_API_PATH } from 'vsit-shared/constants'
+import { WBE_API_PATH, NODE_API_PATH } from 'vsit'
 import { unStripEsmsh } from "./strip-esmsh"
 import { withQuery } from "./utils"
 

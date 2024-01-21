@@ -4,9 +4,12 @@ import bodyparser from 'body-parser'
 import Hook from 'console-feed/lib/Hook'
 import { Encode } from 'console-feed/lib/Transform'
 import { parseURL } from 'ufo'
-import { NODE_API_PATH, WBE_API_PATH } from 'vsit-shared/constants'
 
-import { MESSAGE_EVENT_TYPE } from '@/common/events'
+import {
+  MESSAGE_EVENT_TYPE,
+  NODE_API_PATH,
+  WBE_API_PATH,
+} from '@/common/constants'
 import { debug } from '@/common/log'
 import { VIRUTAL_NODE_ID, VIRUTAL_WEB_ID } from '@/common/resolver/constants'
 import { isEsmSh } from '@/common/resolver/is'
@@ -28,7 +31,7 @@ const invalid = async (moduleName: string, server: ViteDevServer) => {
 }
 
 interface PluginVitProps {
-  rpc: {
+  rpc?: {
     send: (channel: string, ...args: any[]) => void
   }
 }
@@ -53,7 +56,7 @@ const inject = (viteDevServer: ViteDevServer, options: PluginVitProps) => {
   globalThis.__hook = Hook
 }
 
-export const PluginVit = (props: PluginVitProps): Plugin[] => {
+export const PluginVit = (props: PluginVitProps = {}): Plugin[] => {
   let nodeContent = ''
   let webContent = ''
   let store: AsyncReturnType<typeof createStore>

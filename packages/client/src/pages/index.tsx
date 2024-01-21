@@ -3,8 +3,7 @@ import clsx from 'clsx'
 import Hook from 'console-feed/lib/Hook'
 import { createSignal } from 'solid-js'
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { consolehook } from 'vsit'
-import { WBE_API_PATH } from 'vsit-shared/constants'
+import { consolehook, WBE_API_PATH } from 'vsit'
 
 import { VsitCmdk } from '@/components/cmdk'
 import { CodeMirror } from '@/components/console-feed/codemirror'
