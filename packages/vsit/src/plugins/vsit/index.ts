@@ -30,14 +30,13 @@ const invalid = async (moduleName: string, server: ViteDevServer) => {
   module && server.moduleGraph.invalidateModule(module)
 }
 
-interface PluginVitProps {
+interface PluginVsitProps {
   rpc?: {
     send: (channel: string, ...args: any[]) => void
   }
 }
 
-const inject = (viteDevServer: ViteDevServer, options: PluginVitProps) => {
-  globalThis.__viteDevServer = viteDevServer
+const inject = (viteDevServer: ViteDevServer, options: PluginVsitProps) => {
   globalThis.__rpc = {
     send: (log: any) => {
       if (options.rpc) {
@@ -56,7 +55,7 @@ const inject = (viteDevServer: ViteDevServer, options: PluginVitProps) => {
   globalThis.__hook = Hook
 }
 
-export const PluginVit = (props: PluginVitProps = {}): Plugin[] => {
+export const vsit = (props: PluginVsitProps = {}): Plugin[] => {
   let nodeContent = ''
   let webContent = ''
   let store: AsyncReturnType<typeof createStore>

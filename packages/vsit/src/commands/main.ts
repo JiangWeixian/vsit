@@ -1,7 +1,7 @@
 import { createServer } from 'vite'
 
 import { PluginPreview } from '@/plugins/preview'
-import { PluginVit } from '@/plugins/vsit'
+import { vsit } from '@/plugins/vsit'
 
 export const main = async () => {
   const server = await createServer({
@@ -11,7 +11,7 @@ export const main = async () => {
       cors: true,
     },
     plugins: [
-      PluginVit(),
+      vsit(),
       PluginPreview(),
     ],
   })

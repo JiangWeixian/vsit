@@ -5,12 +5,12 @@ import { defineConfig } from 'vite'
 import inspect from 'vite-plugin-inspect'
 // import { VitePWA } from 'vite-plugin-pwa'
 import solid from 'vite-plugin-solid'
-import { PluginVit } from 'vsit'
+import { vsit } from 'vsit'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    PluginVit(),
+    vsit(),
     solid(),
     // Use injectManifest just cache from esm.sh
     // VitePWA({

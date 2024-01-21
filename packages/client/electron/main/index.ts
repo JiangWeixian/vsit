@@ -10,7 +10,7 @@ import {
   shell,
 } from 'electron'
 import { createLogger, createServer } from 'vite'
-import { PluginVit } from 'vsit'
+import { vsit } from 'vsit'
 
 import { update } from './update'
 
@@ -120,7 +120,7 @@ app.on('ready', async () => {
       cors: true,
     },
     plugins: [
-      PluginVit({
+      vsit({
         rpc,
       }),
     ],

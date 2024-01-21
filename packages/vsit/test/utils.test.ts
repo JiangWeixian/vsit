@@ -1,4 +1,8 @@
-import { describe, expect, it } from 'vitest'
+import {
+  describe,
+  expect,
+  it,
+} from 'vitest'
 
 import { isEsmSh } from '@/common/resolver/is'
 import {
@@ -38,11 +42,7 @@ import stripAnsi from "https://esm.sh/strip-ansi@7.1.0"
     import { consolehook } from \\"vsit\\"
     globalThis.__hook(consolehook, (log) => {
       console.log(log)
-      globalThis.__viteDevServer.ws.send({
-        type: 'custom',
-        data: globalThis.__encode(log),
-        event: 'vsit:custom',
-      })
+      globalThis.__rpc.send(log)
     })
     console.log(\\"injected\\")
     "
@@ -56,11 +56,7 @@ import stripAnsi from "https://esm.sh/strip-ansi@7.1.0"
       import { consolehook } from \\"vsit\\"
       globalThis.__hook(consolehook, (log) => {
         console.log(log)
-        globalThis.__viteDevServer.ws.send({
-          type: 'custom',
-          data: globalThis.__encode(log),
-          event: 'vsit:custom',
-        })
+        globalThis.__rpc.send(log)
       })
       consolehook.log(\\"injected\\")
       "
