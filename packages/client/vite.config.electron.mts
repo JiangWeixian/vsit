@@ -21,6 +21,9 @@ export default defineConfig(({ command }) => {
         '@': path.join(__dirname, 'src'),
       },
     },
+    define: {
+      'process.env.IS_CLIENT': JSON.stringify(true),
+    },
     plugins: [
       solid(),
       electron({

@@ -44,4 +44,7 @@ export default defineConfig({
       },
     ],
   },
+  define: {
+    'process.env.IS_CLIENT': JSON.stringify(false),
+  },
 })

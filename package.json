@@ -22,6 +22,7 @@
     "test": "pnpm run build && pnpm --filter=./packages/** run test",
     "dev": "pnpm --filter=!./packages/client dev",
     "play": "pnpm --filter=./packages/client dev",
+    "play:electron": "pnpm --filter=./packages/client dev:electron",
     "preview": "pnpm --filter=./packages/vsit preview",
     "build:cli": "pnpm --filter=./packages/vsit build",
     "build:client": "pnpm --filter=./packages/client build",

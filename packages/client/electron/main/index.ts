@@ -1,9 +1,14 @@
+import http from 'node:http'
 import { release } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import http from 'http'
 
-import { app, BrowserWindow, ipcMain, shell } from 'electron'
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  shell,
+} from 'electron'
 import { createLogger, createServer } from 'vite'
 import { PluginVit } from 'vsit'
 
@@ -66,6 +71,8 @@ async function createWindow() {
       // Consider using contextBridge.exposeInMainWorld
       // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
       // contextIsolation: false,
+      // Load preload mjs with ipcRender API
+      sandbox: false,
     },
   })
 
@@ -96,6 +103,12 @@ async function createWindow() {
 
 app.whenReady().then(createWindow)
 
+const rpc = {
+  send(channel: string, message: string) {
+    win?.webContents.send(channel, message)
+  },
+}
+
 app.on('ready', async () => {
   const vite = await createServer({
     configFile: false,
@@ -107,8 +120,10 @@ app.on('ready', async () => {
       cors: true,
     },
     plugins: [
-      PluginVit(),
-    ]
+      PluginVit({
+        rpc,
+      }),
+    ],
   })
   const server = http.createServer(async (req, res) => {
     // if (req.url?.includes('/node')) {
@@ -117,15 +132,15 @@ app.on('ready', async () => {
     // } else {
     //   const remoteAddress = res.socket?.remoteAddress;
     //   const remotePort = res.socket?.remotePort;
-    //   res.end(`Your IP address is ${remoteAddress} and your source port is ${remotePort}.`);  
+    //   res.end(`Your IP address is ${remoteAddress} and your source port is ${remotePort}.`);
     // }
     // Set CORS headers
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
     if (vite.middlewares) {
-      await new Promise((resolve) =>
-        vite.middlewares(req, res, resolve)
-      );
+      await new Promise(resolve =>
+        vite.middlewares(req, res, resolve),
+      )
     }
   })
   server.listen(8080, () => {

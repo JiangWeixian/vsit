@@ -61,11 +61,7 @@ export const injectConsoleHook = (content: string) => {
 import { consolehook } from "${entryOfVit}"
 globalThis.__hook(consolehook, (log) => {
   console.log(log)
-  globalThis.__viteDevServer.ws.send({
-    type: 'custom',
-    data: globalThis.__encode(log),
-    event: 'vsit:custom',
-  })
+  globalThis.__rpc.send(log)
 })
 ${content}
 `

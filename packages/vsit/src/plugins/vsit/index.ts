@@ -6,6 +6,7 @@ import { Encode } from 'console-feed/lib/Transform'
 import { parseURL } from 'ufo'
 import { NODE_API_PATH, WBE_API_PATH } from 'vsit-shared/constants'
 
+import { MESSAGE_EVENT_TYPE } from '@/common/events'
 import { debug } from '@/common/log'
 import { VIRUTAL_NODE_ID, VIRUTAL_WEB_ID } from '@/common/resolver/constants'
 import { isEsmSh } from '@/common/resolver/is'
@@ -26,7 +27,33 @@ const invalid = async (moduleName: string, server: ViteDevServer) => {
   module && server.moduleGraph.invalidateModule(module)
 }
 
-export const PluginVit = (): Plugin[] => {
+interface PluginVitProps {
+  rpc: {
+    send: (channel: string, ...args: any[]) => void
+  }
+}
+
+const inject = (viteDevServer: ViteDevServer, options: PluginVitProps) => {
+  globalThis.__viteDevServer = viteDevServer
+  globalThis.__rpc = {
+    send: (log: any) => {
+      if (options.rpc) {
+        options.rpc.send(MESSAGE_EVENT_TYPE, Encode(log))
+        return
+      }
+      viteDevServer.ws.send({
+        type: 'custom',
+        data: Encode(log),
+        event: MESSAGE_EVENT_TYPE,
+      })
+    },
+  }
+  globalThis.__encode = Encode
+  // globalThis.__decode = Decode
+  globalThis.__hook = Hook
+}
+
+export const PluginVit = (props: PluginVitProps): Plugin[] => {
   let nodeContent = ''
   let webContent = ''
   let store: AsyncReturnType<typeof createStore>
@@ -38,10 +65,7 @@ export const PluginVit = (): Plugin[] => {
       },
       configureServer(server) {
         // TODO: common middlewares or standalone vite plugin
-        globalThis.__viteDevServer = server
-        globalThis.__encode = Encode
-        // globalThis.__decode = Decode
-        globalThis.__hook = Hook
+        inject(server, props)
         server.middlewares.use(bodyparser.json())
         server.middlewares.use(async (req, res, next) => {
           const url = parseURL(req.url)
