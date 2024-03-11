@@ -14,7 +14,7 @@ import { useWS } from '@/hooks/use-ws'
 import { apis } from '@/lib/apis'
 import { VIRUTAL_WEB_ID } from '@/lib/constants'
 import { format } from '@/lib/prettier'
-import { withQuery } from '@/lib/utils'
+import { normalizeUrl } from '@/lib/utils'
 
 import type { Decode } from 'console-feed/lib/Transform'
 
@@ -67,7 +67,7 @@ const Home = () => {
       // Should always create new script element make sure browser re-fetch script again
       script = document.createElement('script')
       script.type = 'module'
-      const url = withQuery(WBE_API_PATH)
+      const url = normalizeUrl({ pathname: WBE_API_PATH, port: window.vsit.port })
       script.src = url
       // script.innerHTML = unStripEsmsh(content)
       script.id = VIRUTAL_WEB_ID

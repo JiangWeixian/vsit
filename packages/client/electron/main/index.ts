@@ -16,6 +16,7 @@ import { update } from './update'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
+const port = 8080
 
 // The built directory structure
 //
@@ -87,6 +88,13 @@ async function createWindow() {
   // Test actively push message to the Electron-Renderer
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', new Date().toLocaleString())
+    win?.webContents.executeJavaScript(`
+      //Your script goes here
+      globalThis.vsit = {
+        port: ${port}
+      };
+      //Script end
+    `)
   })
 
   // Make all links open with the browser, not with the application
@@ -116,7 +124,8 @@ app.on('ready', async () => {
     root: __dirname,
     server: {
       middlewareMode: true,
-      port: 8080,
+      // TODO: maybe 8080 is not available, get valid one
+      port,
       cors: true,
     },
     plugins: [
@@ -143,8 +152,8 @@ app.on('ready', async () => {
       )
     }
   })
-  server.listen(8080, () => {
-    console.log('listen on http://localhost:8080')
+  server.listen(port, () => {
+    console.log(`listen on http://localhost:${port}`)
   })
 })
 
