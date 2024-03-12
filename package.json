@@ -28,7 +28,7 @@
     "build:web": "pnpm --filter=./packages/client build",
     "build:electron": "pnpm --filter=./packages/client build:electron",
     "build:copy": "esno ./scripts/client.ts",
-    "build": "pnpm --filter=./packages/** run build && pnpm run build:copy",
+    "build": "run-s build:*",
     "ci:publish:electron": "pnpm --filter=./packages/client publish:electron",
     "ci:publish": "pnpm run build && pnpm changeset publish",
     "ci:version": "pnpm changeset version",

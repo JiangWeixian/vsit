@@ -2,7 +2,11 @@ import path, { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { execaNode } from 'execa'
-import { describe, expect, it } from 'vitest'
+import {
+  describe,
+  expect,
+  it,
+} from 'vitest'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
