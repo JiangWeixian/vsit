@@ -91,7 +91,7 @@
     "productName": "vsit",
     "publish": {
       "provider": "github",
-      "owner": "vsit",
+      "owner": "jiangweixian",
       "repo": "vsit"
     }
   }
