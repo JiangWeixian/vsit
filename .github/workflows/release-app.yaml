@@ -10,6 +10,7 @@ on:
       - main
 env:
   CI: true
+  PUBLISH_FOR_PULL_REQUEST: true
 jobs:
   release-app:
     runs-on: ${{ matrix.os }}
