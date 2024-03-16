@@ -47,6 +47,9 @@ importers:
 
   packages/client:
     dependencies:
+      electron-log:
+        specifier: 5.1.2
+        version: 5.1.2
       electron-updater:
         specifier: 6.1.7
         version: 6.1.7
@@ -5484,6 +5487,11 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /electron-log@5.1.2:
+    resolution: {integrity: sha512-Cpg4hAZ27yM9wzE77c4TvgzxzavZ+dVltCczParXN+Vb3jocojCSAuSMCVOI9fhFuuOR+iuu3tZLX1cu0y0kgQ==}
+    engines: {node: '>= 14'}
+    dev: false
 
   /electron-publish@24.8.1:
     resolution: {integrity: sha512-IFNXkdxMVzUdweoLJNXSupXkqnvgbrn3J4vognuOY06LaS/m0xvfFYIf+o1CM8if6DuWYWoQFKPcWZt/FUjZPw==}

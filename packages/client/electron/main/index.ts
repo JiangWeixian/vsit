@@ -9,7 +9,8 @@ import {
   ipcMain,
   shell,
 } from 'electron'
-import { createLogger, createServer } from 'vite'
+import Log from 'electron-log/main'
+import { createServer } from 'vite'
 import { vsit } from 'vsit'
 
 import { update } from './update'
@@ -17,6 +18,8 @@ import { update } from './update'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const port = 8080
+Log.initialize()
+console.log = Log.log
 
 // The built directory structure
 //
@@ -135,14 +138,6 @@ app.on('ready', async () => {
     ],
   })
   const server = http.createServer(async (req, res) => {
-    // if (req.url?.includes('/node')) {
-    //   res.end(`ah, you send 123.`);
-    //   return
-    // } else {
-    //   const remoteAddress = res.socket?.remoteAddress;
-    //   const remotePort = res.socket?.remotePort;
-    //   res.end(`Your IP address is ${remoteAddress} and your source port is ${remotePort}.`);
-    // }
     // Set CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*')
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
@@ -198,8 +193,4 @@ ipcMain.handle('open-win', (_, arg) => {
   } else {
     childWindow.loadFile(indexHtml, { hash: arg })
   }
-})
-
-ipcMain.on('vite', () => {
-  console.log(createLogger())
 })
