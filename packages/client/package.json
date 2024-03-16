@@ -26,9 +26,10 @@
   "scripts": {
     "test": "echo test",
     "vitest": "echo test",
+    "clean": "rimraf dist-client dist dist-electron",
     "dev": "vite",
     "dev:electron": "vite --config ./vite.config.electron.mts",
-    "build": "vite build",
+    "build": "pnpm run clean && vite build",
     "build:electron": "vite build --config ./vite.config.electron.mts && electron-builder",
     "publish:electron": "vite build --config ./vite.config.electron.mts && electron-builder --publish=always",
     "preview": "vite preview",
@@ -69,6 +70,7 @@
     "prettier": "^3.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "rimraf": "^3.0.2",
     "solid-js": "1.8.8",
     "tailwind-cssgg": "^0.0.1",
     "tailwindcss": "3.3.3",
@@ -97,19 +99,30 @@
       "repo": "vsit"
     },
     "files": [
-      "**/*",
-      "**/node_modules/rollup/**",
-      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
-      "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
-      "!**/node_modules/*.d.ts",
-      "!**/node_modules/.bin",
-      "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
-      "!.editorconfig",
-      "!**/._*",
-      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}",
-      "!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}",
-      "!**/{appveyor.yml,.travis.yml,circle.yml}",
-      "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}"
-    ]
+      "dist-electron",
+      "dist"
+    ],
+    "mac": {
+      "artifactName": "${productName}_${version}.${ext}",
+      "target": [
+        "dmg",
+        "zip"
+      ]
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "artifactName": "${productName}_${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false
+    }
   }
 }
