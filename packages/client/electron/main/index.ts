@@ -19,7 +19,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const port = 8080
 Log.initialize()
-console.log = Log.log
+Object.assign(console, Log.functions)
 
 // The built directory structure
 //
