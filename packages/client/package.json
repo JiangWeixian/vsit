@@ -36,9 +36,9 @@
     "preview:electron": "vite preview --config ./vite.config.electron.mts"
   },
   "dependencies": {
-    "electron-updater": "^6.1.1",
-    "rollup": "^4.2.0",
-    "vite": "^5.0.10",
+    "electron-updater": "6.1.7",
+    "rollup": "4.9.4",
+    "vite": "5.0.11",
     "vsit": "workspace:*"
   },
   "devDependencies": {
@@ -99,8 +99,9 @@
       "repo": "vsit"
     },
     "files": [
-      "dist-electron",
-      "dist"
+      "**/node_modules/rollup/**",
+      "dist",
+      "dist-electron"
     ],
     "mac": {
       "artifactName": "${productName}_${version}.${ext}",
