@@ -50,9 +50,15 @@ importers:
       electron-updater:
         specifier: ^6.1.1
         version: 6.1.7
+      rollup:
+        specifier: ^4.2.0
+        version: 4.9.4
       vite:
         specifier: ^5.0.10
         version: 5.0.11(@types/node@20.3.1)
+      vsit:
+        specifier: workspace:*
+        version: link:../vsit
     devDependencies:
       '@codemirror/autocomplete':
         specifier: 6.7.1
@@ -83,7 +89,7 @@ importers:
         version: 1.1.6
       '@svgr-rs/svgrs-plugin':
         specifier: ^0.1.0
-        version: 0.1.0(rollup@2.79.1)(vite@5.0.11)
+        version: 0.1.0(rollup@4.9.4)(vite@5.0.11)
       '@tailwindcss/typography':
         specifier: 0.5.7
         version: 0.5.7(tailwindcss@3.3.3)
@@ -161,7 +167,7 @@ importers:
         version: 0.14.5
       vite-plugin-inspect:
         specifier: ^0.7.26
-        version: 0.7.26(rollup@2.79.1)(vite@5.0.11)
+        version: 0.7.26(rollup@4.9.4)(vite@5.0.11)
       vite-plugin-pages:
         specifier: ^0.30.1
         version: 0.30.1(vite@5.0.11)
@@ -171,9 +177,6 @@ importers:
       vite-plugin-solid:
         specifier: 2.8.0
         version: 2.8.0(solid-js@1.8.8)(vite@5.0.11)
-      vsit:
-        specifier: workspace:*
-        version: link:../vsit
       workbox-routing:
         specifier: 7.0.0
         version: 7.0.0
@@ -3223,21 +3226,6 @@ packages:
       picomatch: 2.3.1
     dev: true
 
-  /@rollup/pluginutils@5.0.2(rollup@2.79.1):
-    resolution: {integrity: sha512-pTd9rIsP92h+B6wWwFbW8RkZv4hiR/xKsqre4SIuAOaOEQRxi0lqLke9k2/7WegC85GgUs9pjmOjCUi3In4vwA==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      rollup: ^1.20.0||^2.0.0||^3.0.0
-    peerDependenciesMeta:
-      rollup:
-        optional: true
-    dependencies:
-      '@types/estree': 1.0.1
-      estree-walker: 2.0.2
-      picomatch: 2.3.1
-      rollup: 2.79.1
-    dev: true
-
   /@rollup/pluginutils@5.0.2(rollup@3.19.1):
     resolution: {integrity: sha512-pTd9rIsP92h+B6wWwFbW8RkZv4hiR/xKsqre4SIuAOaOEQRxi0lqLke9k2/7WegC85GgUs9pjmOjCUi3In4vwA==}
     engines: {node: '>=14.0.0'}
@@ -3247,10 +3235,25 @@ packages:
       rollup:
         optional: true
     dependencies:
-      '@types/estree': 1.0.1
+      '@types/estree': 1.0.5
       estree-walker: 2.0.2
       picomatch: 2.3.1
       rollup: 3.19.1
+    dev: true
+
+  /@rollup/pluginutils@5.0.2(rollup@4.9.4):
+    resolution: {integrity: sha512-pTd9rIsP92h+B6wWwFbW8RkZv4hiR/xKsqre4SIuAOaOEQRxi0lqLke9k2/7WegC85GgUs9pjmOjCUi3In4vwA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      '@types/estree': 1.0.1
+      estree-walker: 2.0.2
+      picomatch: 2.3.1
+      rollup: 4.9.4
     dev: true
 
   /@rollup/rollup-android-arm-eabi@4.9.4:
@@ -3479,7 +3482,7 @@ packages:
       '@svgr-rs/core-win32-x64-msvc': 0.0.8
     dev: true
 
-  /@svgr-rs/svgrs-plugin@0.1.0(rollup@2.79.1)(vite@5.0.11):
+  /@svgr-rs/svgrs-plugin@0.1.0(rollup@4.9.4)(vite@5.0.11):
     resolution: {integrity: sha512-+vgEw3cpQUBSPpC+2YdgfK8W8xbLsvQb+xASD+xhPKwA9Qjudi32JvZzuc5Oec9L+6013xDWwfLxX5KLxTFIrA==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -3491,7 +3494,7 @@ packages:
       webpack:
         optional: true
     dependencies:
-      '@rollup/pluginutils': 5.0.2(rollup@2.79.1)
+      '@rollup/pluginutils': 5.0.2(rollup@4.9.4)
       '@svgr-rs/core': 0.0.8
       vite: 5.0.11(@types/node@20.3.1)
     transitivePeerDependencies:
@@ -7536,7 +7539,7 @@ packages:
   /is-reference@1.2.1:
     resolution: {integrity: sha512-U82MsXXiFIrjCK4otLT+o2NA2Cd2g5MLoOVXUZjIOhLurrRxpEXzI8O0KZHr3IjLvlAH1kTPYSuqer5T9ZVBKQ==}
     dependencies:
-      '@types/estree': 1.0.1
+      '@types/estree': 1.0.5
     dev: true
 
   /is-regex@1.1.4:
@@ -10591,14 +10594,14 @@ packages:
       vite-plugin-electron-renderer: 0.14.5
     dev: true
 
-  /vite-plugin-inspect@0.7.26(rollup@2.79.1)(vite@5.0.11):
+  /vite-plugin-inspect@0.7.26(rollup@4.9.4)(vite@5.0.11):
     resolution: {integrity: sha512-gRjBay+OxLr/Dr+HXlfJVXZH0cqhE5hkkBvo2du2cA1LGUBnV8Aym89AdPrURkSpTk3Rvw9dNWM2VLIuw6RKJg==}
     engines: {node: '>=14'}
     peerDependencies:
       vite: ^3.1.0 || ^4.0.0
     dependencies:
       '@antfu/utils': 0.7.2
-      '@rollup/pluginutils': 5.0.2(rollup@2.79.1)
+      '@rollup/pluginutils': 5.0.2(rollup@4.9.4)
       debug: 4.3.4
       fs-extra: 11.1.1
       picocolors: 1.0.0
