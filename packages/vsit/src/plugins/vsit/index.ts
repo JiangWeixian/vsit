@@ -4,8 +4,12 @@ import bodyparser from 'body-parser'
 import Hook from 'console-feed/lib/Hook'
 import { Encode } from 'console-feed/lib/Transform'
 import { parseURL } from 'ufo'
-import { NODE_API_PATH, WBE_API_PATH } from 'vsit-shared/constants'
 
+import {
+  MESSAGE_EVENT_TYPE,
+  NODE_API_PATH,
+  WBE_API_PATH,
+} from '@/common/constants'
 import { debug } from '@/common/log'
 import { VIRUTAL_NODE_ID, VIRUTAL_WEB_ID } from '@/common/resolver/constants'
 import { isEsmSh } from '@/common/resolver/is'
@@ -26,7 +30,32 @@ const invalid = async (moduleName: string, server: ViteDevServer) => {
   module && server.moduleGraph.invalidateModule(module)
 }
 
-export const PluginVit = (): Plugin[] => {
+interface PluginVsitProps {
+  rpc?: {
+    send: (channel: string, ...args: any[]) => void
+  }
+}
+
+const inject = (viteDevServer: ViteDevServer, options: PluginVsitProps) => {
+  globalThis.__rpc = {
+    send: (log: any) => {
+      if (options.rpc) {
+        options.rpc.send(MESSAGE_EVENT_TYPE, Encode(log))
+        return
+      }
+      viteDevServer.ws.send({
+        type: 'custom',
+        data: Encode(log),
+        event: MESSAGE_EVENT_TYPE,
+      })
+    },
+  }
+  globalThis.__encode = Encode
+  // globalThis.__decode = Decode
+  globalThis.__hook = Hook
+}
+
+export const vsit = (props: PluginVsitProps = {}): Plugin[] => {
   let nodeContent = ''
   let webContent = ''
   let store: AsyncReturnType<typeof createStore>
@@ -38,10 +67,7 @@ export const PluginVit = (): Plugin[] => {
       },
       configureServer(server) {
         // TODO: common middlewares or standalone vite plugin
-        globalThis.__viteDevServer = server
-        globalThis.__encode = Encode
-        // globalThis.__decode = Decode
-        globalThis.__hook = Hook
+        inject(server, props)
         server.middlewares.use(bodyparser.json())
         server.middlewares.use(async (req, res, next) => {
           const url = parseURL(req.url)
@@ -72,7 +98,6 @@ export const PluginVit = (): Plugin[] => {
               const module = await server.moduleGraph.getModuleByUrl(VIRUTAL_NODE_ID)
               const packages = parseModulesDeps(module)
               store.cache.writePackages(packages)
-              // console.log([...module?.ssrTransformResult?.values()][1], [...module?.importedModules?.values()][1].ssrTransformResult?.deps)
               if (module) {
                 res.setHeader('Content-Type', 'text/javascript')
                 res.end(module.ssrTransformResult?.code ?? '')

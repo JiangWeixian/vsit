@@ -163,5 +163,6 @@ dist
 dts
 dist
 dist-client
+dist-electron
 dev-dist
 vendors

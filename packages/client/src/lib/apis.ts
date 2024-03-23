@@ -1,11 +1,12 @@
-import { WBE_API_PATH, NODE_API_PATH } from 'vsit-shared/constants'
+import { WBE_API_PATH, NODE_API_PATH } from 'vsit'
 import { unStripEsmsh } from "./strip-esmsh"
-import { withQuery } from "./utils"
+import { normalizeUrl, withQuery } from "./utils"
+import { DEFAULT_PORT } from './constants'
 
 export const apis = {
   web: {
     async update(content: string) {
-      const url = withQuery(WBE_API_PATH)
+      const url = normalizeUrl({ pathname: WBE_API_PATH, port: window.vsit.port })
       await fetch(url, {
         method: 'POST',
         body: JSON.stringify({
@@ -19,7 +20,7 @@ export const apis = {
   },
   node: {
     async update(content: string) {
-      const url = withQuery(NODE_API_PATH)
+      const url = normalizeUrl({ pathname: WBE_API_PATH, port: window.vsit.port })
       await fetch(url, {
         method: 'POST',
         body: JSON.stringify({
@@ -31,7 +32,7 @@ export const apis = {
       })
     },
     async get() {
-      const url = withQuery(NODE_API_PATH)
+      const url = normalizeUrl({ pathname: NODE_API_PATH, port: window.vsit.port })
       fetch(url, { method: 'GET' })
     }
   }

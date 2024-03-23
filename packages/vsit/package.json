@@ -1,8 +1,8 @@
 {
   "name": "vsit",
   "version": "0.1.1",
-  "packageManager": "pnpm@7.33.0",
-  "description": "todo",
+  "packageManager": "pnpm@8.14.0",
+  "description": "A Repl client based on vite",
   "keywords": ["vsit"],
   "license": "MIT",
   "engines": {
@@ -51,8 +51,8 @@
   "module": "dist/node.mjs",
   "types": "dts/exports/node.d.ts",
   "scripts": {
-    "build:dts": "rimraf dts && ttsc -p tsconfig.dts.json",
-    "build:lib": "rimraf dist && rollup -c --silent --environment BUILD:production",
+    "build:dts": "rimraf dts && tspc -p tsconfig.dts.json",
+    "build:lib": "rimraf dist && rollup -c --silent",
     "build": "run-s build:*",
     "dev": "rollup -c -w",
     "preview": "node ./bin/index.mjs",
@@ -66,7 +66,7 @@
   },
   "dependencies": {
     "sirv": "^2.0.3",
-    "vite": "^4.3.8"
+    "vite": "^5.0.10"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.0",
@@ -99,19 +99,17 @@
     "read-yaml-file": "2.1.0",
     "rimraf": "^3.0.2",
     "rollup": "3.19.1",
-    "rollup-plugin-condition-exports": "2.0.0-next.3",
+    "rollup-plugin-condition-exports": "2.0.0-next.4",
     "rollup-plugin-esbuild": "^5.0.0",
     "rollup-plugin-node-externals": "5.1.2",
     "rollup-plugin-size": "^0.3.1",
     "source-map-support": "^0.5.21",
     "tempy": "^3.1.0",
-    "ttypescript": "^1.5.15",
+    "ts-patch": "3.1.1",
     "type-fest": "^3.12.0",
-    "typescript": "^4.6.4",
     "typescript-transform-paths": "^3.4.6",
     "ufo": "^1.1.2",
     "vitest": "^0.22.1",
-    "vsit-shared": "workspace:*",
     "write-yaml-file": "5.0.0"
   }
 }

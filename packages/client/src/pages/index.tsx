@@ -1,73 +1,22 @@
 /* eslint-disable react/jsx-key */
 import clsx from 'clsx'
 import Hook from 'console-feed/lib/Hook'
-import { Decode } from 'console-feed/lib/Transform'
 import { createSignal } from 'solid-js'
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { consolehook, MESSAGE_EVENT_TYPE } from 'vsit'
-import { WBE_API_PATH } from 'vsit-shared/constants'
+import { consolehook, WBE_API_PATH } from 'vsit'
 
 import { VsitCmdk } from '@/components/cmdk'
 import { CodeMirror } from '@/components/console-feed/codemirror'
 import { fromConsoleToString, removeRemainKeys } from '@/components/console-feed/from-code-to-string'
 import { VsitProvider } from '@/components/vsit-context'
+import { useRPC } from '@/hooks/use-rpc'
+import { useWS } from '@/hooks/use-ws'
 import { apis } from '@/lib/apis'
 import { VIRUTAL_WEB_ID } from '@/lib/constants'
 import { format } from '@/lib/prettier'
-import { withQuery } from '@/lib/utils'
+import { normalizeUrl } from '@/lib/utils'
 
-import type { Setter } from 'solid-js'
-
-interface UseWSProps {
-  onMessageUpdate: Setter<Message[]>
-}
-
-const useWS = (props: UseWSProps) => {
-  let socket
-  const importMetaUrl = new URL(import.meta.url)
-  // use server configuration, then fallback to inference
-  const socketProtocol = null || (importMetaUrl.protocol === 'https:' ? 'wss' : 'ws')
-  const hmrPort = null
-  const socketHost = `${null || importMetaUrl.hostname}:${hmrPort || importMetaUrl.port}${'/'}`
-  try {
-    let fallback
-    // only use fallback when port is inferred to prevent confusion
-    // eslint-disable-next-line unused-imports/no-unused-vars
-    socket = setupWebSocket(socketProtocol, socketHost, fallback)
-  } catch (error) {
-    console.error(error)
-  }
-  function setupWebSocket(protocol: string, hostAndPath: string, onCloseWithoutOpen?: () => void) {
-    const socket = new WebSocket(`${protocol}://${hostAndPath}`, 'vite-hmr')
-    let isOpened = false
-    socket.addEventListener('open', () => {
-      console.log('[vit] websocket opened')
-      isOpened = true
-    }, { once: true })
-    // Listen for messages
-    socket.addEventListener('message', async ({ data }) => {
-      const result = JSON.parse(data)
-      if (result.event === MESSAGE_EVENT_TYPE) {
-        const encodeMessage = Decode(Array.isArray(result.data) ? result.data[0] : result.data)
-        props.onMessageUpdate?.([encodeMessage])
-      }
-    })
-    // ping server
-    socket.addEventListener('close', async ({ wasClean }) => {
-      if (wasClean) {
-        return
-      }
-      if (!isOpened && onCloseWithoutOpen) {
-        onCloseWithoutOpen()
-        return
-      }
-      console.log('server connection lost. polling for restart...')
-      // await waitForSuccessfulPing(protocol, hostAndPath);
-      location.reload()
-    })
-    return socket
-  }
-}
+import type { Decode } from 'console-feed/lib/Transform'
 
 globalThis.consolehook = consolehook
 type Message = ReturnType<typeof Decode>
@@ -80,7 +29,11 @@ const Home = () => {
   const [type, setType] = createSignal<'node' | 'web'>('web')
   const [code, setCode] = createSignal(InitialCode)
   const [logState, setLogState] = createSignal<Message[]>([])
-  useWS({ onMessageUpdate: setLogState })
+  process.env.IS_CLIENT
+    // eslint-disable-next-line react-hooks/rules-of-hooks -- IS_CLIENT is always be true in electron dist
+    ? useRPC({ onMessageUpdate: setLogState })
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    : useWS({ onMessageUpdate: setLogState })
   const editorRef: {
     setCode?: (code: string) => void
   } = {}
@@ -114,7 +67,7 @@ const Home = () => {
       // Should always create new script element make sure browser re-fetch script again
       script = document.createElement('script')
       script.type = 'module'
-      const url = withQuery(WBE_API_PATH)
+      const url = normalizeUrl({ pathname: WBE_API_PATH, port: window.vsit.port })
       script.src = url
       // script.innerHTML = unStripEsmsh(content)
       script.id = VIRUTAL_WEB_ID
