@@ -131,6 +131,12 @@ app.on('ready', async () => {
       port,
       cors: true,
     },
+    mode: import.meta.env.PROD ? 'production' : 'development',
+    optimizeDeps: {
+      noDiscovery: true,
+      include: [],
+      disabled: import.meta.env.PROD,
+    },
     plugins: [
       vsit({
         rpc,

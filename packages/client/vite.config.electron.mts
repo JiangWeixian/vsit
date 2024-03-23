@@ -1,6 +1,7 @@
 import { rmSync } from 'node:fs'
 import path from 'node:path'
 
+import fse from 'fs-extra'
 import { defineConfig } from 'vite'
 import electron from 'vite-plugin-electron/simple'
 import solid from 'vite-plugin-solid'
@@ -26,6 +27,12 @@ export default defineConfig(({ command }) => {
     },
     plugins: [
       solid(),
+      {
+        name: 'mv:setup',
+        writeBundle() {
+          fse.copySync('electron/setup/index.js', 'dist-electron/main/setup.js')
+        },
+      },
       electron({
         main: {
           // Shortcut of `build.lib.entry`
@@ -47,6 +54,9 @@ export default defineConfig(({ command }) => {
               outDir: 'dist-electron/main',
               rollupOptions: {
                 external: Object.keys('dependencies' in pkg ? pkg.dependencies : {}),
+                output: {
+                  banner: 'import "./setup.js"',
+                },
               },
             },
           },

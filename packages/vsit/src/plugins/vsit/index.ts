@@ -98,7 +98,6 @@ export const vsit = (props: PluginVsitProps = {}): Plugin[] => {
               const module = await server.moduleGraph.getModuleByUrl(VIRUTAL_NODE_ID)
               const packages = parseModulesDeps(module)
               store.cache.writePackages(packages)
-              // console.log([...module?.ssrTransformResult?.values()][1], [...module?.importedModules?.values()][1].ssrTransformResult?.deps)
               if (module) {
                 res.setHeader('Content-Type', 'text/javascript')
                 res.end(module.ssrTransformResult?.code ?? '')
