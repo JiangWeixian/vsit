@@ -10,6 +10,7 @@ import { WBE_API_PATH } from 'vsit-shared/constants'
 import { VsitCmdk } from '@/components/cmdk'
 import { CodeMirror } from '@/components/console-feed/codemirror'
 import { fromConsoleToString, removeRemainKeys } from '@/components/console-feed/from-code-to-string'
+import { Resizer } from '@/components/resizeable/resizer'
 import { VsitProvider } from '@/components/vsit-context'
 import { apis } from '@/lib/apis'
 import { VIRUTAL_WEB_ID } from '@/lib/constants'
@@ -79,6 +80,7 @@ console.log(a, b, uniq)
 const Home = () => {
   const [type, setType] = createSignal<'node' | 'web'>('web')
   const [code, setCode] = createSignal(InitialCode)
+  const [width, setWidth] = createSignal('50%')
   const [logState, setLogState] = createSignal<Message[]>([])
   useWS({ onMessageUpdate: setLogState })
   const editorRef: {
@@ -134,8 +136,8 @@ const Home = () => {
   }
   return (
     <VsitProvider value={{ handleFormat, handleExec }}>
-      <div class="bg-base-200 h-full">
-        <div class="flex items-center justify-between p-2">
+      <div class="bg-base-200 flex h-full flex-col">
+        <div class="flex flex-none items-center justify-between p-2">
           <button
             class="btn btn-sm"
           >
@@ -149,24 +151,31 @@ const Home = () => {
             <a class={clsx('tab', { 'tab-active': type() === 'node' })} onClick={() => handleSwitchType('node')}>Node</a>
           </div>
         </div>
-        <div class="items-top vitcode grid">
-          <div class="codeeditor w-1/2 min-w-[25vw] max-w-[75vw] resize-x overflow-auto">
-            <CodeMirror
-              code={InitialCode}
-              showLineNumbers={false}
-              fileType="ts"
-              readOnly={false}
-              apis={{
-                format,
-                exec: handleExec,
+        <div class="items-top border-neutral flex grow overflow-y-hidden border">
+          <div class="bg-base-100 h-full w-1/2 min-w-[25vw] max-w-[75vw] overflow-auto" style={{ width: `${width()}` }}>
+            <Resizer
+              side="right"
+              onResize={(x, _y) => {
+                setWidth(`${x}px`)
               }}
-              onCodeUpdate={code => setCode(code)}
-              onImperativehandle={(ref) => {
-                editorRef.setCode = ref.setCode
-              }}
-            />
+            >
+              <CodeMirror
+                code={InitialCode}
+                showLineNumbers={false}
+                fileType="ts"
+                readOnly={false}
+                apis={{
+                  format,
+                  exec: handleExec,
+                }}
+                onCodeUpdate={code => setCode(code)}
+                onImperativehandle={(ref) => {
+                  editorRef.setCode = ref.setCode
+                }}
+              />
+            </Resizer>
           </div>
-          <div class="codeconsole">
+          <div class="bg-base-100 grow">
             {logState().map(({ data }, logIndex, references) => {
               return removeRemainKeys(data)?.map((msg) => {
                 const fixReferences = references.slice(

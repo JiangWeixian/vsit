@@ -38,6 +38,7 @@
     "@codemirror/state": "6.2.1",
     "@codemirror/view": "6.13.0",
     "@lezer/highlight": "1.1.6",
+    "@solid-primitives/scheduled": "^1.4.3",
     "@tailwindcss/typography": "0.5.7",
     "@uiw/codemirror-theme-atomone": "^4.21.2",
     "clsx": "1.2.1",
