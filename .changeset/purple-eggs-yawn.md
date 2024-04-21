@@ -1,0 +1,5 @@
+---
+"vsit": minor
+---
+
+resizeable commands
