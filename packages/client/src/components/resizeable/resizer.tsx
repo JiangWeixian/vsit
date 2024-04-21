@@ -9,11 +9,7 @@ import {
   splitProps,
 } from 'solid-js'
 
-import type {
-  Component,
-  ComponentProps,
-  JSXElement,
-} from 'solid-js'
+import type { Component, ComponentProps, JSXElement } from 'solid-js'
 
 type SolidRef = (el: HTMLDivElement) => void
 
