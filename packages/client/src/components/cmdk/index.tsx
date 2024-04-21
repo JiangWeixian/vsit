@@ -66,6 +66,8 @@ export const VsitCmdk = () => {
         vsit?.handleFormat()
         break
     }
+    // Close modal after command
+    modalBtnRef?.click()
   }
   return (
     <>
