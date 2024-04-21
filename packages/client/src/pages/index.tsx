@@ -77,8 +77,11 @@ const Home = () => {
     const formattedCode = await format(code())
     editorRef.setCode?.(formattedCode)
   }
+  const handleResize = async (v: string) => {
+    setWidth(v)
+  }
   return (
-    <VsitProvider value={{ handleFormat, handleExec }}>
+    <VsitProvider value={{ handleFormat, handleExec, handleResize }}>
       <div class="bg-base-200 flex h-full flex-col">
         <div class="flex flex-none items-center justify-between p-2">
           <button
@@ -95,7 +98,7 @@ const Home = () => {
           </div>
         </div>
         <div class="items-top border-neutral flex grow overflow-y-hidden border">
-          <div class="bg-base-100 h-full w-1/2 min-w-[25vw] max-w-[75vw] overflow-auto" style={{ width: `${width()}` }}>
+          <div class="bg-base-100 h-full w-1/2 min-w-[25vw] max-w-[90vw] overflow-auto" style={{ width: `${width()}` }}>
             <Resizer
               side="right"
               onResize={(x, _y) => {

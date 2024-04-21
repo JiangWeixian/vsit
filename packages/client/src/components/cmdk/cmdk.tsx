@@ -18,6 +18,7 @@ import {
   Show,
   useContext,
 } from 'solid-js'
+import { createStore } from 'solid-js/store'
 
 import { commandScore } from './command-score'
 
@@ -131,6 +132,7 @@ interface Context {
 interface State {
   search: string
   value: string
+  enter: string
   filtered: { count: number; items: Map<string, number>; groups: Set<string> }
 }
 interface Store {
@@ -150,7 +152,6 @@ const GROUP_ITEMS_SELECTOR = '[cmdk-group-items=""]'
 const GROUP_HEADING_SELECTOR = '[cmdk-group-heading=""]'
 const ITEM_SELECTOR = '[cmdk-item=""]'
 const VALID_ITEM_SELECTOR = `${ITEM_SELECTOR}:not([aria-disabled="true"])`
-const SELECT_EVENT = 'cmdk-item-select'
 const VALUE_ATTR = 'data-value'
 const defaultFilter: CommandProps['filter'] = (value, search) => commandScore(value, search)
 
@@ -163,6 +164,8 @@ const StoreContext = createContext<Store>({
       search: '',
       /** Currently selected item value. */
       value: '',
+      /** Currently item value when press key enter. */
+      enter: '',
       filtered: {
         /** The count of all visible items. */
         count: 0,
@@ -216,6 +219,7 @@ export const Command = (props: CommandProps) => {
     search: '',
     /** Currently selected item value. */
     value: props.value ?? props.defaultValue?.toLowerCase() ?? '',
+    enter: '',
     filtered: {
       /** The count of all visible items. */
       count: 0,
@@ -240,7 +244,7 @@ export const Command = (props: CommandProps) => {
   const schedule = useScheduleLayoutEffect()
 
   // TODO
-  const [store] = createSignal<Store>({
+  const [store] = createStore<Store>({
     subscribe: (cb) => {
       listeners.current?.add(cb)
       return () => listeners.current?.delete(cb)
@@ -273,7 +277,7 @@ export const Command = (props: CommandProps) => {
       }
 
       // Notify subscribers that state has changed
-      store().emit()
+      store.emit()
     },
     emit: () => {
       listeners.current.forEach(l => l())
@@ -286,11 +290,11 @@ export const Command = (props: CommandProps) => {
       const v = value.trim().toLowerCase()
       state.current.value = v
       schedule(6, scrollSelectedIntoView)
-      store().emit()
+      store.emit()
     }
   }, [value])
 
-  const [context] = createSignal<Context>({
+  const [context] = createStore<Context>({
     // Keep id → value mapping up-to-date
     value: (id, value) => {
       if (value !== ids.current.get(id)) {
@@ -298,7 +302,7 @@ export const Command = (props: CommandProps) => {
         state.current.filtered.items.set(id, score(value))
         schedule(2, () => {
           sort()
-          store().emit()
+          store.emit()
         })
       }
     },
@@ -326,7 +330,7 @@ export const Command = (props: CommandProps) => {
           selectFirstItem()
         }
 
-        store().emit()
+        store.emit()
       })
 
       return () => {
@@ -345,7 +349,7 @@ export const Command = (props: CommandProps) => {
             selectFirstItem()
           }
 
-          store().emit()
+          store.emit()
         })
       }
     },
@@ -436,7 +440,7 @@ export const Command = (props: CommandProps) => {
   function selectFirstItem() {
     const item = getValidItems().find(item => !item.ariaDisabled)!
     const value = item.getAttribute(VALUE_ATTR)!
-    store().setState('value', value || undefined)
+    store.setState('value', value || undefined)
   }
 
   /** Filters the current items. */
@@ -508,7 +512,7 @@ export const Command = (props: CommandProps) => {
     const items = getValidItems()
     const item = items[index]
     if (item) {
-      store().setState('value', item.getAttribute(VALUE_ATTR))
+      store.setState('value', item.getAttribute(VALUE_ATTR))
     }
   }
 
@@ -530,7 +534,7 @@ export const Command = (props: CommandProps) => {
     }
 
     if (newSelected) {
-      store().setState('value', newSelected.getAttribute(VALUE_ATTR))
+      store.setState('value', newSelected.getAttribute(VALUE_ATTR))
     }
   }
 
@@ -545,7 +549,7 @@ export const Command = (props: CommandProps) => {
     }
 
     if (item) {
-      store().setState('value', item.getAttribute(VALUE_ATTR)!)
+      store.setState('value', item.getAttribute(VALUE_ATTR)!)
     } else {
       updateSelectedByChange(change)
     }
@@ -634,8 +638,8 @@ export const Command = (props: CommandProps) => {
               e.preventDefault()
               const item = getSelectedItem()
               if (item) {
-                const event = new Event(SELECT_EVENT)
-                item.dispatchEvent(event)
+                const value = item.getAttribute(VALUE_ATTR)!
+                store.setState('enter', value)
               }
             }
           }
@@ -644,15 +648,15 @@ export const Command = (props: CommandProps) => {
     >
       <label
         cmdk-label=""
-        for={context().inputId}
-        id={context().labelId}
+        for={context.inputId}
+        id={context.labelId}
         // Screen reader only
         style={srOnlyStyles}
       >
         {label}
       </label>
-      <StoreContext.Provider value={store()}>
-        <CommandContext.Provider value={context()}>{props.children}</CommandContext.Provider>
+      <StoreContext.Provider value={store}>
+        <CommandContext.Provider value={context}>{props.children}</CommandContext.Provider>
       </StoreContext.Provider>
     </div>
   )
@@ -678,27 +682,34 @@ export const CommandItem = (props: ItemProps) => {
   const value = useValue(id, ref, [props.value, props.children, ref])
 
   const store = useStore()!
-  const selected = useCmdk(state => state?.value && state?.value === value.current)
-  const render = useCmdk(state =>
-    forceMount ? true : context.filter?.() === false ? true : !state.search ? true : (state.filtered?.items?.get?.(id) as number) > 0,
-  )
+  const selected = useCmdk((state) => {
+    return state?.value && state?.value === value()
+  })
+  const entered = useCmdk(state => state?.enter)
+  const render = useCmdk((state) => {
+    return forceMount
+      ? true
+      : context.filter?.() === false
+        ? true
+        : !state.search
+            ? true
+            : (state.filtered?.items?.get?.(id) as number) > 0
+  })
 
   createEffect(() => {
-    const element = ref.current
-    if (!element || props.disabled) {
-      return
+    if (entered() === value()) {
+      onSelect()
+      store.setState('enter', '')
     }
-    element.addEventListener(SELECT_EVENT, onSelect)
-    onCleanup(() => element.removeEventListener(SELECT_EVENT, onSelect))
   })
 
   function onSelect() {
     select()
-    propsRef.current?.onSelect?.(value.current!)
+    propsRef.current?.onSelect?.(value()!)
   }
 
   function select() {
-    store.setState('value', value.current!, true)
+    store.setState('value', value()!, true)
   }
 
   const { disabled, value: _, onSelect: __, forwardedRef, ...etc } = props
@@ -717,6 +728,7 @@ export const CommandItem = (props: ItemProps) => {
         data-selected={selected() || undefined}
         onPointerMove={disabled ? undefined : select}
         onClick={disabled ? undefined : onSelect}
+        data-value={value()}
       >
         {props.children}
       </div>
@@ -1016,7 +1028,7 @@ function useValue(
   ref: ReactRef<HTMLElement>,
   deps: (JSX.Element | ReactRef<HTMLElement> | string)[],
 ) {
-  const valueRef: ReactRef<string> = {}
+  const [v, setValue] = createSignal<string>()
   const context = useCommand()
 
   onMount(() => {
@@ -1033,9 +1045,10 @@ function useValue(
     })()
 
     context.value?.(id, value!)
+    // TODO: looks like we do not need update ref data-value
     ref.current?.setAttribute(VALUE_ATTR, value!)
-    valueRef.current = value
+    setValue(value)
   })
 
-  return valueRef
+  return v
 }
