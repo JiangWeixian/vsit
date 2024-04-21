@@ -9,3 +9,16 @@
 .cm-editor .cm-scroller {
   @apply font-mono;
 }
+
+/* Container of .codeeditor and .codeconsole */
+.vitcode {
+  grid-template: "codeeditor codeconsole" 1fr / 1fr;;
+}
+
+.codeeditor {
+  grid-area: codeeditor;
+}
+
+.codeconsole {
+  grid-area: codeconsole;
+}

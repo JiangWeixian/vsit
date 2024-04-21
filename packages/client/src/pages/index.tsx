@@ -149,8 +149,8 @@ const Home = () => {
             <a class={clsx('tab', { 'tab-active': type() === 'node' })} onClick={() => handleSwitchType('node')}>Node</a>
           </div>
         </div>
-        <div class="items-top flex">
-          <div class="max-w-[50%] flex-1">
+        <div class="items-top vitcode grid">
+          <div class="codeeditor w-1/2 min-w-[25vw] max-w-[75vw] resize-x overflow-auto">
             <CodeMirror
               code={InitialCode}
               showLineNumbers={false}
@@ -166,7 +166,7 @@ const Home = () => {
               }}
             />
           </div>
-          <div class="flex-1">
+          <div class="codeconsole">
             {logState().map(({ data }, logIndex, references) => {
               return removeRemainKeys(data)?.map((msg) => {
                 const fixReferences = references.slice(
