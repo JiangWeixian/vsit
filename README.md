@@ -10,7 +10,7 @@
 
 
 
-![vsit-screenshot](./assets/vsit.png)
+![vsit-screenshot](https://raw.githubusercontent.com/JiangWeixian/vsit/main/assets/vsit.png)
 
 
 ```
