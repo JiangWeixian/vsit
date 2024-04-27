@@ -99,7 +99,7 @@ export const VsitCmdk = () => {
       <label for="command_modal" ref={ref => modalBtnRef = ref} class="btn hidden" id="command_modal_btn">open modal</label>
       <input type="checkbox" id="command_modal" class="modal-toggle" />
       <div id="command_modal" class="modal bg-base-200 rounded bg-transparent p-0">
-        <form method="dialog" class="modal-box flex min-w-[250px] flex-col p-0 py-2">
+        <form method="dialog" class="modal-box border-neutral flex min-w-[250px] flex-col rounded border p-0 py-2 shadow-md">
           <Command shouldFilter={true} loop={true} label="Command Menu">
             <CommandInput forwardedRef={inputRef} placeholder="Type here" class="input input-ghost w-full border-0 focus:outline-none" />
             <div class="bg-base-content my-2 h-[1px] w-full opacity-10" />

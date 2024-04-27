@@ -65,6 +65,7 @@
     "ci:prerelease": "pnpm run build && pnpm changeset publish --tag beta"
   },
   "dependencies": {
+    "rs-module-lexer": "^2.3.0",
     "sirv": "^2.0.3",
     "vite": "^4.3.8"
   },
