@@ -4,7 +4,7 @@ module.exports = {
   content: ['./src/**/*.{js,ts,jsx,tsx}'],
   plugins: [require('@tailwindcss/typography'), require('daisyui'), cssgg],
   daisyui: {
-    themes: ['night', 'light'],
+    themes: ['black', 'night', 'light'],
     logs: false,
   },
 }

@@ -3,13 +3,19 @@ import '@/lib/polyfill'
 
 import clsx from 'clsx'
 import Hook from 'console-feed/lib/Hook'
-import { createSignal } from 'solid-js'
+import {
+  createSignal,
+  Match,
+  Show,
+  Switch,
+} from 'solid-js'
 // @ts-expect-error -- TODO: Fix this type
 import { WBE_API_PATH } from 'vsit-shared/constants'
 
 import { VsitCmdk } from '@/components/cmdk'
 import { CodeMirror } from '@/components/console-feed/codemirror'
 import { fromConsoleToString, removeRemainKeys } from '@/components/console-feed/from-code-to-string'
+import { Readme } from '@/components/markdown'
 import { Resizer } from '@/components/resizeable/resizer'
 import { VsitProvider } from '@/components/vsit-context'
 import { useWS } from '@/hooks/use-ws'
@@ -18,6 +24,7 @@ import { InitialCode, VIRUTAL_WEB_ID } from '@/lib/constants'
 import { format } from '@/lib/prettier'
 import { withQuery } from '@/lib/utils'
 
+import type { Pkg } from '@/components/markdown'
 import type { Message } from '@/hooks/use-ws'
 
 const Home = () => {
@@ -25,6 +32,8 @@ const Home = () => {
   const [code, setCode] = createSignal(InitialCode)
   const [width, setWidth] = createSignal('50%')
   const [logState, setLogState] = createSignal<Message[]>([])
+  const [dir, setDir] = createSignal('left')
+  const [pkgs, setPkgs] = createSignal<Pkg[]>([])
   useWS({ onMessageUpdate: setLogState })
   const editorRef: {
     setCode?: (code: string) => void
@@ -79,6 +88,10 @@ const Home = () => {
   }
   const handleResize = async (v: string) => {
     setWidth(v)
+  }
+  const handleParseImports = async () => {
+    const imports = await apis.third.parseImports(code(), 'index.ts')
+    setPkgs(imports)
   }
   return (
     <VsitProvider value={{ handleFormat, handleExec, handleResize }}>
@@ -141,6 +154,27 @@ const Home = () => {
           </div>
         </div>
         <VsitCmdk />
+        <div class={clsx('absolute right-0 z-50 h-full w-1/2', { 'translate-x-full': dir() === 'left', 'translate-x-0': dir() === 'right' })}>
+          <div class="absolute -left-8 top-1/2 cursor-pointer opacity-50 hover:opacity-100">
+            <Switch>
+              <Match when={dir() === 'left'}>
+                <i
+                  class="gg-push-chevron-left"
+                  onClick={() => {
+                    handleParseImports()
+                    setDir('right')
+                  }}
+                />
+              </Match>
+              <Match when={dir() === 'right'}>
+                <i class="gg-push-chevron-right" onClick={() => setDir('left')} />
+              </Match>
+            </Switch>
+          </div>
+          <Show when={pkgs().length !== 0}>
+            <Readme pkgs={pkgs()} />
+          </Show>
+        </div>
       </div>
     </VsitProvider>
   )
