@@ -9,7 +9,11 @@ import {
   splitProps,
 } from 'solid-js'
 
-import type { Component, ComponentProps, JSXElement } from 'solid-js'
+import type {
+  Component,
+  ComponentProps,
+  JSXElement,
+} from 'solid-js'
 
 type SolidRef = (el: HTMLDivElement) => void
 
@@ -101,7 +105,7 @@ export const Resizer: Component<ResizeProps> = (props) => {
   }
 
   // Handler elements
-  const edgeHandler = <div class={clsx(edgeHandlerStyles[props.side], 'bg-neutral hover:bg-primary active:bg-primary round-md rounded')} onMouseDown={onResizeStart} />
+  const edgeHandler = <div class={clsx(edgeHandlerStyles[props.side], 'bg-neutral round-md rounded hover:bg-cyan-500 active:bg-cyan-500')} onMouseDown={onResizeStart} />
 
   return (
     <div
