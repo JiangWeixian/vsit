@@ -1,85 +1,39 @@
 /* eslint-disable react/jsx-key */
+import '@/lib/polyfill'
+
 import clsx from 'clsx'
 import Hook from 'console-feed/lib/Hook'
-import { Decode } from 'console-feed/lib/Transform'
-import { createSignal } from 'solid-js'
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { consolehook, MESSAGE_EVENT_TYPE } from 'vsit'
+import {
+  createSignal,
+  Match,
+  Show,
+  Switch,
+} from 'solid-js'
+// @ts-expect-error -- TODO: Fix this type
 import { WBE_API_PATH } from 'vsit-shared/constants'
 
 import { VsitCmdk } from '@/components/cmdk'
 import { CodeMirror } from '@/components/console-feed/codemirror'
 import { fromConsoleToString, removeRemainKeys } from '@/components/console-feed/from-code-to-string'
+import { Readme } from '@/components/markdown'
+import { Resizer } from '@/components/resizeable/resizer'
 import { VsitProvider } from '@/components/vsit-context'
+import { useWS } from '@/hooks/use-ws'
 import { apis } from '@/lib/apis'
-import { VIRUTAL_WEB_ID } from '@/lib/constants'
+import { InitialCode, VIRUTAL_WEB_ID } from '@/lib/constants'
 import { format } from '@/lib/prettier'
 import { withQuery } from '@/lib/utils'
 
-import type { Setter } from 'solid-js'
+import type { Pkg } from '@/components/markdown'
+import type { Message } from '@/hooks/use-ws'
 
-interface UseWSProps {
-  onMessageUpdate: Setter<Message[]>
-}
-
-const useWS = (props: UseWSProps) => {
-  let socket
-  const importMetaUrl = new URL(import.meta.url)
-  // use server configuration, then fallback to inference
-  const socketProtocol = null || (importMetaUrl.protocol === 'https:' ? 'wss' : 'ws')
-  const hmrPort = null
-  const socketHost = `${null || importMetaUrl.hostname}:${hmrPort || importMetaUrl.port}${'/'}`
-  try {
-    let fallback
-    // only use fallback when port is inferred to prevent confusion
-    // eslint-disable-next-line unused-imports/no-unused-vars
-    socket = setupWebSocket(socketProtocol, socketHost, fallback)
-  } catch (error) {
-    console.error(error)
-  }
-  function setupWebSocket(protocol: string, hostAndPath: string, onCloseWithoutOpen?: () => void) {
-    const socket = new WebSocket(`${protocol}://${hostAndPath}`, 'vite-hmr')
-    let isOpened = false
-    socket.addEventListener('open', () => {
-      console.log('[vit] websocket opened')
-      isOpened = true
-    }, { once: true })
-    // Listen for messages
-    socket.addEventListener('message', async ({ data }) => {
-      const result = JSON.parse(data)
-      if (result.event === MESSAGE_EVENT_TYPE) {
-        const encodeMessage = Decode(Array.isArray(result.data) ? result.data[0] : result.data)
-        props.onMessageUpdate?.([encodeMessage])
-      }
-    })
-    // ping server
-    socket.addEventListener('close', async ({ wasClean }) => {
-      if (wasClean) {
-        return
-      }
-      if (!isOpened && onCloseWithoutOpen) {
-        onCloseWithoutOpen()
-        return
-      }
-      console.log('server connection lost. polling for restart...')
-      // await waitForSuccessfulPing(protocol, hostAndPath);
-      location.reload()
-    })
-    return socket
-  }
-}
-
-globalThis.consolehook = consolehook
-type Message = ReturnType<typeof Decode>
-const InitialCode = `import { uniq } from "esm.sh:lodash-es@4.17.21"
-const a = uniq([1, 2, 3, 3])
-const b: number = 1
-console.log(a, b, uniq)
-`
 const Home = () => {
   const [type, setType] = createSignal<'node' | 'web'>('web')
   const [code, setCode] = createSignal(InitialCode)
+  const [width, setWidth] = createSignal('50%')
   const [logState, setLogState] = createSignal<Message[]>([])
+  const [dir, setDir] = createSignal('left')
+  const [pkgs, setPkgs] = createSignal<Pkg[]>([])
   useWS({ onMessageUpdate: setLogState })
   const editorRef: {
     setCode?: (code: string) => void
@@ -132,10 +86,17 @@ const Home = () => {
     const formattedCode = await format(code())
     editorRef.setCode?.(formattedCode)
   }
+  const handleResize = async (v: string) => {
+    setWidth(v)
+  }
+  const handleParseImports = async () => {
+    const imports = await apis.third.parseImports(code(), 'index.ts')
+    setPkgs(imports)
+  }
   return (
-    <VsitProvider value={{ handleFormat, handleExec }}>
-      <div class="bg-base-200 h-full">
-        <div class="flex items-center justify-between p-2">
+    <VsitProvider value={{ handleFormat, handleExec, handleResize }}>
+      <div class="bg-base-200 flex h-full flex-col">
+        <div class="flex flex-none items-center justify-between p-2">
           <button
             class="btn btn-sm"
           >
@@ -149,24 +110,31 @@ const Home = () => {
             <a class={clsx('tab', { 'tab-active': type() === 'node' })} onClick={() => handleSwitchType('node')}>Node</a>
           </div>
         </div>
-        <div class="items-top flex">
-          <div class="max-w-[50%] flex-1">
-            <CodeMirror
-              code={InitialCode}
-              showLineNumbers={false}
-              fileType="ts"
-              readOnly={false}
-              apis={{
-                format,
-                exec: handleExec,
+        <div class="items-top border-neutral flex grow overflow-y-hidden border">
+          <div class="bg-base-100 h-full w-1/2 min-w-[25vw] max-w-[90vw] overflow-auto" style={{ width: `${width()}` }}>
+            <Resizer
+              side="right"
+              onResize={(x, _y) => {
+                setWidth(`${x}px`)
               }}
-              onCodeUpdate={code => setCode(code)}
-              onImperativehandle={(ref) => {
-                editorRef.setCode = ref.setCode
-              }}
-            />
+            >
+              <CodeMirror
+                code={InitialCode}
+                showLineNumbers={false}
+                fileType="ts"
+                readOnly={false}
+                apis={{
+                  format,
+                  exec: handleExec,
+                }}
+                onCodeUpdate={code => setCode(code)}
+                onImperativehandle={(ref) => {
+                  editorRef.setCode = ref.setCode
+                }}
+              />
+            </Resizer>
           </div>
-          <div class="flex-1">
+          <div class="bg-base-100 grow">
             {logState().map(({ data }, logIndex, references) => {
               return removeRemainKeys(data)?.map((msg) => {
                 const fixReferences = references.slice(
@@ -186,6 +154,27 @@ const Home = () => {
           </div>
         </div>
         <VsitCmdk />
+        <div class={clsx('absolute right-0 z-50 h-full w-1/2', { 'translate-x-full': dir() === 'left', 'translate-x-0': dir() === 'right' })}>
+          <div class="absolute -left-8 top-1/2 cursor-pointer opacity-50 hover:opacity-100">
+            <Switch>
+              <Match when={dir() === 'left'}>
+                <i
+                  class="gg-push-chevron-left"
+                  onClick={() => {
+                    handleParseImports()
+                    setDir('right')
+                  }}
+                />
+              </Match>
+              <Match when={dir() === 'right'}>
+                <i class="gg-push-chevron-right" onClick={() => setDir('left')} />
+              </Match>
+            </Switch>
+          </div>
+          <Show when={pkgs().length !== 0}>
+            <Readme pkgs={pkgs()} />
+          </Show>
+        </div>
       </div>
     </VsitProvider>
   )

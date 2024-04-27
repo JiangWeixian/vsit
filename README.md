@@ -10,7 +10,7 @@
 
 
 
-![vsit-screenshot](https://user-images.githubusercontent.com/6839576/283995715-d376f1d5-03be-494d-8b80-15cd6239e442.png)
+![vsit-screenshot](https://raw.githubusercontent.com/JiangWeixian/vsit/main/assets/vsit.png)
 
 
 ```
@@ -21,6 +21,9 @@ vsit
 ## features
 
 - 💞 Import packages from [`esm.sh`](https://esm.sh/) without installed
+- 🎹 Manage window, run code, format code with commands
+- 💪 Typescript support
+
 ## development
 
 - **Setup** - `pnpm i`

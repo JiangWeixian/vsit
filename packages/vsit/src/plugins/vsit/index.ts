@@ -4,9 +4,14 @@ import bodyparser from 'body-parser'
 import Hook from 'console-feed/lib/Hook'
 import { Encode } from 'console-feed/lib/Transform'
 import { parseURL } from 'ufo'
-import { NODE_API_PATH, WBE_API_PATH } from 'vsit-shared/constants'
+import {
+  API_PARSE_IMPORTS,
+  NODE_API_PATH,
+  WBE_API_PATH,
+} from 'vsit-shared/constants'
 
 import { debug } from '@/common/log'
+import { parseImports } from '@/common/parse'
 import { VIRUTAL_NODE_ID, VIRUTAL_WEB_ID } from '@/common/resolver/constants'
 import { isEsmSh } from '@/common/resolver/is'
 import { createStore } from '@/common/store'
@@ -45,6 +50,12 @@ export const PluginVit = (): Plugin[] => {
         server.middlewares.use(bodyparser.json())
         server.middlewares.use(async (req, res, next) => {
           const url = parseURL(req.url)
+          if (url.pathname === API_PARSE_IMPORTS && req.method === 'POST') {
+            const body = req.body as unknown as { code: string; filename: string }
+            const imports = parseImports(body.code, body.filename)
+            res.end(JSON.stringify(imports))
+            return
+          }
           if (url.pathname === WBE_API_PATH && req.method === 'POST') {
             webContent = req.body.content
             res.end('ok')
