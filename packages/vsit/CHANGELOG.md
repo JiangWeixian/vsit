@@ -1,5 +1,15 @@
 # vsit
 
+## 0.2.0
+
+### Minor Changes
+
+- ea75c92: resizeable commands
+
+### Patch Changes
+
+- f117a42: display npm docs
+
 ## 0.1.1
 
 ### Patch Changes
