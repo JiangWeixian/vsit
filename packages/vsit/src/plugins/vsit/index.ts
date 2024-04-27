@@ -99,8 +99,7 @@ export const PluginVit = (): Plugin[] => {
           next()
         })
       },
-      resolveId(id, importer) {
-        console.log('importer', importer)
+      resolveId(id) {
         // Should not add \0 to id, tell vite to transform it to js(if VIRUTAL_NODE_ID is ts)
         if (id === VIRUTAL_NODE_ID) {
           return VIRUTAL_NODE_ID
