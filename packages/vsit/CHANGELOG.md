@@ -1,5 +1,11 @@
 # vsit
 
+## 0.2.1
+
+### Patch Changes
+
+- f63ecad: rs-module-lexer is esm package
+
 ## 0.2.0
 
 ### Minor Changes
