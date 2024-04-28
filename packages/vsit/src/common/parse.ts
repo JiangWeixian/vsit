@@ -1,5 +1,5 @@
 import { compact } from 'lodash-es'
-import { parse } from 'rs-module-lexer'
+import rs from 'rs-module-lexer'
 
 import { ESM_PROTOCOL_PKG_RE } from './resolver/constants'
 
@@ -19,7 +19,7 @@ const parsePkgInfo = (id?: string) => {
 }
 
 export const parseImports = (code: string, filename: string) => {
-  const result = parse({
+  const result = rs.parse({
     input: [
       {
         filename,
