@@ -95,66 +95,68 @@ const Home = () => {
   }
   return (
     <VsitProvider value={{ handleFormat, handleExec, handleResize }}>
-      <div class="bg-base-200 flex h-full flex-col">
-        <div class="flex flex-none items-center justify-between p-2">
-          <button
-            class="btn btn-sm"
-          >
-            <span class="mr-2 capitalize">
-              Open Command
-            </span>
-            <kbd class="kbd kbd-xs">⌘</kbd> <kbd class="kbd kbd-xs">j</kbd>
-          </button>
-          <div class="tabs tabs-boxed p-2">
-            <a class={clsx('tab', { 'tab-active': type() === 'web' })} onClick={() => handleSwitchType('web')}>Web</a>
-            <a class={clsx('tab', { 'tab-active': type() === 'node' })} onClick={() => handleSwitchType('node')}>Node</a>
-          </div>
-        </div>
-        <div class="items-top border-neutral flex grow overflow-y-hidden border">
-          <div class="bg-base-100 h-full w-1/2 min-w-[25vw] max-w-[90vw] overflow-auto" style={{ width: `${width()}` }}>
-            <Resizer
-              side="right"
-              onResize={(x, _y) => {
-                setWidth(`${x}px`)
-              }}
+      <div class="bg-base-200 relative h-full w-full overflow-x-hidden">
+        <div class="flex h-full flex-col">
+          <div class="flex flex-none items-center justify-between p-2">
+            <button
+              class="btn btn-sm"
             >
-              <CodeMirror
-                code={InitialCode}
-                showLineNumbers={false}
-                fileType="ts"
-                readOnly={false}
-                apis={{
-                  format,
-                  exec: handleExec,
-                }}
-                onCodeUpdate={code => setCode(code)}
-                onImperativehandle={(ref) => {
-                  editorRef.setCode = ref.setCode
-                }}
-              />
-            </Resizer>
+              <span class="mr-2 capitalize">
+                Open Command
+              </span>
+              <kbd class="kbd kbd-xs">⌘</kbd> <kbd class="kbd kbd-xs">j</kbd>
+            </button>
+            <div class="tabs tabs-boxed p-2">
+              <a class={clsx('tab', { 'tab-active': type() === 'web' })} onClick={() => handleSwitchType('web')}>Web</a>
+              <a class={clsx('tab', { 'tab-active': type() === 'node' })} onClick={() => handleSwitchType('node')}>Node</a>
+            </div>
           </div>
-          <div class="bg-base-100 grow">
-            {logState().map(({ data }, logIndex, references) => {
-              return removeRemainKeys(data)?.map((msg) => {
-                const fixReferences = references.slice(
-                  logIndex,
-                  references.length,
-                )
-                return (
-                  <CodeMirror
-                    code={fromConsoleToString(msg, fixReferences)}
-                    showLineNumbers={false}
-                    fileType="ts"
-                    readOnly={true}
-                  />
-                )
-              })
-            })}
+          <div class="items-top border-neutral flex grow overflow-y-hidden border">
+            <div class="bg-base-100 h-full w-1/2 min-w-[25vw] max-w-[90vw] overflow-auto" style={{ width: `${width()}` }}>
+              <Resizer
+                side="right"
+                onResize={(x, _y) => {
+                  setWidth(`${x}px`)
+                }}
+              >
+                <CodeMirror
+                  code={InitialCode}
+                  showLineNumbers={false}
+                  fileType="ts"
+                  readOnly={false}
+                  apis={{
+                    format,
+                    exec: handleExec,
+                  }}
+                  onCodeUpdate={code => setCode(code)}
+                  onImperativehandle={(ref) => {
+                    editorRef.setCode = ref.setCode
+                  }}
+                />
+              </Resizer>
+            </div>
+            <div class="bg-base-100 grow">
+              {logState().map(({ data }, logIndex, references) => {
+                return removeRemainKeys(data)?.map((msg) => {
+                  const fixReferences = references.slice(
+                    logIndex,
+                    references.length,
+                  )
+                  return (
+                    <CodeMirror
+                      code={fromConsoleToString(msg, fixReferences)}
+                      showLineNumbers={false}
+                      fileType="ts"
+                      readOnly={true}
+                    />
+                  )
+                })
+              })}
+            </div>
           </div>
         </div>
         <VsitCmdk />
-        <div class={clsx('absolute right-0 z-50 h-full w-1/2', { 'translate-x-full': dir() === 'left', 'translate-x-0': dir() === 'right' })}>
+        <div class={clsx('absolute right-0 top-0 z-50 h-full w-1/2 justify-self-end', { 'translate-x-full': dir() === 'left', 'translate-x-0': dir() === 'right' })}>
           <div class="absolute -left-8 top-1/2 cursor-pointer opacity-50 hover:opacity-100">
             <Switch>
               <Match when={dir() === 'left'}>
