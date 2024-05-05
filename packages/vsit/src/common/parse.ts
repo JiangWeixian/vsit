@@ -19,21 +19,26 @@ const parsePkgInfo = (id?: string) => {
 }
 
 export const parseImports = (code: string, filename: string) => {
-  const result = rs.parse({
-    input: [
-      {
-        filename,
-        code,
-      },
-    ],
-  })
-  const imports = compact(
-    result.output
-      .map((output) => {
-        return output.imports.map(i => i.n)
-      })
-      .flat()
-      .map(id => parsePkgInfo(id)),
-  )
-  return imports
+  try {
+    const result = rs.parse({
+      input: [
+        {
+          filename,
+          code,
+        },
+      ],
+    })
+    const imports = compact(
+      result.output
+        .map((output) => {
+          return output.imports.map(i => i.n)
+        })
+        .flat()
+        .map(id => parsePkgInfo(id)),
+    )
+    return imports
+  } catch (err) {
+    console.log('parse error: ', err)
+    return []
+  }
 }

@@ -3,7 +3,9 @@
   "version": "0.2.1",
   "packageManager": "pnpm@7.33.0",
   "description": "todo",
-  "keywords": ["vsit"],
+  "keywords": [
+    "vsit"
+  ],
   "license": "MIT",
   "engines": {
     "node": ">=16"
@@ -35,15 +37,15 @@
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "node": {
-        "import": "./dist/node.mjs",
-        "require": "./dist/node.cjs",
-        "types": "./dts/exports/node.d.ts"
-      },
       "browser": {
-        "import": "./dist/browser.mjs",
         "require": "./dist/browser.cjs",
+        "import": "./dist/browser.mjs",
         "types": "./dts/exports/browser.d.ts"
+      },
+      "node": {
+        "require": "./dist/node.cjs",
+        "import": "./dist/node.mjs",
+        "types": "./dts/exports/node.d.ts"
       }
     }
   },
@@ -110,7 +112,7 @@
     "tempy": "^3.1.0",
     "ttypescript": "^1.5.15",
     "type-fest": "^3.12.0",
-    "typescript": "^4.6.4",
+    "typescript": "5.1.6",
     "typescript-transform-paths": "^3.4.6",
     "ufo": "^1.1.2",
     "vitest": "^0.22.1",

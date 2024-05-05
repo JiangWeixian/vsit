@@ -5,3 +5,7 @@ const a = uniq([1, 2, 3, 3])
 const b: number = 1
 console.log(a, b, uniq)
 `
+export const FILE_PATH = '/fake.ts'
+export const PKG_JSON_PATH = '/package.json'
+export const NPM_ORIGIN = 'https://registry.npmjs.org'
+export const ESM_SH_ORIGIN = 'https://esm.sh'
