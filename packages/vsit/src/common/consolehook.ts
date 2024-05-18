@@ -29,10 +29,11 @@ let length = methods.length
 const consolehook: Console = {} as Console
 
 while (length--) {
-  method = methods[length]
+  method = methods[length] as keyof Console
 
   // Only stub undefined methods.
   if (!consolehook[method]) {
+    // @ts-expect-error -- ignore
     consolehook[method] = noop
   }
 }

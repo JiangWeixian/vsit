@@ -3,9 +3,7 @@
   "version": "0.0.0",
   "packageManager": "pnpm@7.33.0",
   "description": "todo",
-  "keywords": [
-    "vsit"
-  ],
+  "keywords": ["vsit"],
   "license": "MIT",
   "engines": {
     "node": ">=16"
@@ -36,13 +34,13 @@
   "exports": {
     "./package.json": "./package.json",
     "./constants": {
-      "require": "./dist/constants.cjs",
       "import": "./dist/constants.mjs",
+      "require": "./dist/constants.cjs",
       "types": "./dts/exports/constants.d.ts"
     }
   },
   "scripts": {
-    "build:dts": "rimraf dts && ttsc",
+    "build:dts": "rimraf dts && tspc",
     "build:lib": "rimraf dist && rollup -c --silent --environment BUILD:production",
     "build": "run-s build:*",
     "dev": "rollup -c"
@@ -63,16 +61,14 @@
     "rollup-plugin-esbuild": "^5.0.0",
     "rollup-plugin-node-externals": "5.1.2",
     "rollup-plugin-size": "^0.3.1",
-    "ttypescript": "^1.5.15",
+    "ts-patch": "^3.1.2",
     "typescript": "5.1.6",
     "typescript-transform-paths": "^3.4.6",
     "vitest": "^0.22.1"
   },
   "typesVersions": {
     "*": {
-      "constants": [
-        "dts/exports/constants.d.ts"
-      ]
+      "constants": ["dts/exports/constants.d.ts"]
     }
   }
 }

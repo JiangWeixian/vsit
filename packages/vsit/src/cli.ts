@@ -14,9 +14,10 @@ const commands = {
 
 const cli = cac('vsit').version(version)
 
-const handler = (cmdName: string) => {
+const handler = (cmdName: 'main') => {
   return async function (...args: any[]) {
     const cmd = await commands[cmdName]()
+    // @ts-expect-error -- ignore
     await cmd(...args)
   }
 }
