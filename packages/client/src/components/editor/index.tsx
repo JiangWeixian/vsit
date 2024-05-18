@@ -25,6 +25,15 @@ import type { KeyBinding } from '@codemirror/view'
 import type { Accessor, Component } from 'solid-js'
 import type { Files } from './extensions/autocompletion/tsserver.worker'
 
+const theme = EditorView.theme({
+  '.cm-content': {
+    caretColor: '#0e9',
+  },
+  '.cm-cursor': {
+    borderLeftColor: '#0e9',
+  },
+}, { dark: true })
+
 export type Decorators = Array<{
   className?: string
   line: number
@@ -200,6 +209,7 @@ export const CodeMirror: Component<CodeMirrorProps>
       ]
 
       const extensionList = () => [
+        theme,
         highlightSpecialChars(),
         history(),
         closeBrackets(),
