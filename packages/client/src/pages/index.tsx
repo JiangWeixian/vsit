@@ -10,7 +10,6 @@ import {
   Show,
   Switch,
 } from 'solid-js'
-// @ts-expect-error -- TODO: Fix this type
 import { WBE_API_PATH } from 'vsit-shared/constants'
 
 import { VsitCmdk } from '@/components/cmdk'

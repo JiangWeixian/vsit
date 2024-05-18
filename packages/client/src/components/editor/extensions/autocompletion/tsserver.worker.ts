@@ -3,8 +3,6 @@ import {
   createSystem,
   createVirtualTypeScriptEnvironment,
 } from '@typescript/vfs'
-import babelParser from 'prettier/parser-babel'
-import { formatWithCursor } from 'prettier/standalone'
 import ts from 'typescript'
 
 import { ChannelClient, ChannelServer } from './channel-bridge'
@@ -228,7 +226,7 @@ class TSServerWorker {
         tsconfig = content
       } else if (filePath === '/package.json') {
         packageJson = content
-      } else if (/^[^.]+.(t|j)sx?$/.test(filePath)) {
+      } else if (/^[^.]+.(?:t|j)sx?$/.test(filePath)) {
         // Only ts files
         tsFiles.set(filePath, content)
         rootPaths.push(filePath)
@@ -283,10 +281,6 @@ class TSServerWorker {
     for (const [key, value] of Object.entries(dependencyFiles)) {
       fsMap.set(key, value.module.code)
     }
-    // FIXME:
-    console.log(fsMap.keys())
-    console.log(fsMap.get('/node_modules/@types/lodash-es/reverse.d.ts'))
-    console.log(fsMap.get('/shim.d.ts'))
 
     const system = createSystem(fsMap)
 
@@ -561,7 +555,7 @@ class TSServerWorker {
     envId: number,
     filePath: string,
     content: string,
-    formatOutput: 'prettier' | 'typescript',
+    formatOutput: 'typescript',
   ) {
     const env = this.getEnv(envId)
     if (!env) {
@@ -582,9 +576,7 @@ class TSServerWorker {
 
     // Format the emitted file before we return it, so it's as pretty as
     // possible before the user sees it.
-    if (formatOutput === 'prettier') {
-      return this.formatWithPrettier(emittedFile.text, 0).formatted
-    } else if (formatOutput === 'typescript') {
+    if (formatOutput === 'typescript') {
       const restoreContents = env.getSourceFile(emittedFile.name)?.getText()
       try {
         this.updateFile(envId, emittedFile.name, emittedFile.text)
@@ -648,15 +640,6 @@ class TSServerWorker {
     } finally {
       this.updateFile(args.envId, filePath, restoreContents)
     }
-  }
-
-  formatWithPrettier(fileContents: string, cursorOffset: number) {
-    return formatWithCursor(fileContents, {
-      cursorOffset,
-      parser: 'babel-ts',
-      plugins: [babelParser],
-      printWidth: 40,
-    })
   }
 }
 

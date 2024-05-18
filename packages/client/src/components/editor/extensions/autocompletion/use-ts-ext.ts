@@ -1,3 +1,4 @@
+// refs: https://github.com/reactjs/react.dev/pull/4720/files
 import { EditorView } from '@codemirror/view'
 import {
   createEffect,
@@ -61,7 +62,6 @@ export const useTsExt = ({ initOn, files }: UseTsExtProps) => {
       return
     }
 
-    console.log(files?.())
     tsServer()!.workerClient
       .call('createEnv', {
         envId: envId(),
