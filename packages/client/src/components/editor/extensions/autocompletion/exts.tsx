@@ -6,7 +6,6 @@ import {
 } from '@codemirror/autocomplete'
 import { renderToString } from 'solid-js/web'
 
-// import { ensurePathStartsWithSlash } from './ensurePathBeginsWithSlash'
 import type {
   Completion,
   CompletionContext,
@@ -157,9 +156,9 @@ function autocompleteExtension({
             }
 
             return completeFromList(
-              completions.entries.map((c, i) => {
+              completions.entries.map((c, _i) => {
                 const details = c.details
-                const description = details?.codeActions?.at(0)?.description
+                // const description = details?.codeActions?.at(0)?.description
                 const source
                   = details?.sourceDisplay?.map(token => token.text).join('')
                   || c.sourceDisplayString
@@ -210,39 +209,39 @@ function autocompleteExtension({
                         })
                       }
                     : undefined,
-                  info:
-                    details || config.debugCompletions
-                      ? function () {
-                        const container = document.createElement('div')
-                        renderIntoNode(
-                          container,
+                  // info:
+                  //   details || config.debugCompletions
+                  //     ? function () {
+                  //       const container = document.createElement('div')
+                  //       renderIntoNode(
+                  //         container,
 
-                          () => (
-                            <>
-                              {description && (
-                                <div class="quickinfo-documentation cm-tooltip-section">
-                                  {description}
-                                </div>
-                              )}
-                              {details && (
-                              // TODO:
-                              // <QuickInfo
-                              //   {...config}
-                              //   state={ctx.state}
-                              //   info={details}
-                              //   truncateDisplayParts={true}
-                              // />
-                                <></>
-                              )}
-                              {config.debugCompletions && (
-                                <pre>{JSON.stringify(c, null, 2)}</pre>
-                              )}
-                            </>
-                          ),
-                        )
-                        return container
-                      }
-                      : undefined,
+                  //         () => (
+                  //           <>
+                  //             {description && (
+                  //               <div class="quickinfo-documentation cm-tooltip-section">
+                  //                 {description}
+                  //               </div>
+                  //             )}
+                  //             {details && (
+                  //             // TODO:
+                  //             // <QuickInfo
+                  //             //   {...config}
+                  //             //   state={ctx.state}
+                  //             //   info={details}
+                  //             //   truncateDisplayParts={true}
+                  //             // />
+                  //               <></>
+                  //             )}
+                  //             {config.debugCompletions && (
+                  //               <pre>{JSON.stringify(c, null, 2)}</pre>
+                  //             )}
+                  //           </>
+                  //         ),
+                  //       )
+                  //       return container
+                  //     }
+                  //     : undefined,
                   // TODO: double-check ranking makes sense.
                   boost: 1 / Number(c.sortText),
                 }
