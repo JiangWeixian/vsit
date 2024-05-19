@@ -122,10 +122,11 @@ const getCompileOptions = (
  */
 const fetchDependencyTypesFromCDN = async (
   dependenciesMap: Map<string, string>,
+  cachedDependencyFiles: Map<string, FetchedTypes>,
 ): Promise<FetchedTypes> => {
   let typeRegistryFetchPromise: Promise<Record<string, { latest: string }>>
   const requiredTypeFiles: FetchedTypes = {}
-  const mergeValidTypes = (files: FetchedTypes) => {
+  const mergeValidTypes = (files: FetchedTypes, options: { name: string; version: string }) => {
     Object.entries(files).forEach(([key, value]) => {
       const isTypeModule
         = key.endsWith('.d.ts')
@@ -135,9 +136,14 @@ const fetchDependencyTypesFromCDN = async (
         requiredTypeFiles[fileName] = value
       }
     })
+    cachedDependencyFiles.set(`${options.name}@${options.version}`, files)
   }
   await Promise.all(
     Array.from(dependenciesMap).map(async ([name, version]) => {
+      if (cachedDependencyFiles.get(`${name}@${version}`)) {
+        mergeValidTypes(cachedDependencyFiles.get(`${name}@${version}`)!, { name, version })
+        return
+      }
       // Try to fetch types of current version directly from the CDN.
       // This will work if the package contains .d.ts files.
       const files = await fetchTypesFromCodeSandboxBucket({ name, version })
@@ -147,7 +153,7 @@ const fetchDependencyTypesFromCDN = async (
 
       // Types found at current version - add them to the filesystem.
       if (hasTypes) {
-        mergeValidTypes(files)
+        mergeValidTypes(files, { name, version })
         return
       }
 
@@ -165,7 +171,7 @@ const fetchDependencyTypesFromCDN = async (
           name: typingName,
           version: registryEntries[name].latest,
         })
-        mergeValidTypes(atTypeFiles)
+        mergeValidTypes(atTypeFiles, { name, version })
       }
     }),
   )
@@ -196,6 +202,8 @@ class TSServerWorker {
     requestPort: { postMessage: wrappedPostMessage },
     listenPort: globalThis,
   })[0]
+
+  cachedDependencyFiles = new Map<string, FetchedTypes>()
 
   createEnv = async (args: {
     envId: number
@@ -277,7 +285,7 @@ class TSServerWorker {
       }
     }
 
-    const dependencyFiles = await fetchDependencyTypesFromCDN(dependenciesMap)
+    const dependencyFiles = await fetchDependencyTypesFromCDN(dependenciesMap, this.cachedDependencyFiles)
     for (const [key, value] of Object.entries(dependencyFiles)) {
       fsMap.set(key, value.module.code)
     }
