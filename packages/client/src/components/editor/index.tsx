@@ -1,17 +1,38 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { closeBrackets } from '@codemirror/autocomplete'
 import { history } from '@codemirror/commands'
+import { javascript } from '@codemirror/lang-javascript'
 import { bracketMatching, syntaxHighlighting } from '@codemirror/language'
-import { EditorState } from '@codemirror/state'
-import { EditorView, highlightActiveLine, highlightSpecialChars, keymap } from '@codemirror/view'
-import { createSignal, onMount } from 'solid-js'
+import { EditorState, StateEffect } from '@codemirror/state'
+import {
+  EditorView,
+  highlightActiveLine,
+  highlightSpecialChars,
+  keymap,
+} from '@codemirror/view'
+import { createEffect, createSignal } from 'solid-js'
 
-import { useSyntaxHighlight } from './use-syntax-highlight'
-import { getCodeMirrorLanguage, getLanguageFromFile, getSyntaxHighlight } from './utils'
+import { useSyntaxHighlight } from '../console-feed/use-syntax-highlight'
+import {
+  getCodeMirrorLanguage,
+  getLanguageFromFile,
+  getSyntaxHighlight,
+} from '../console-feed/utils'
+import { useTsExt } from './extensions/autocompletion/use-ts-ext'
 
 import type { Extension } from '@codemirror/state'
 import type { KeyBinding } from '@codemirror/view'
-import type { Component } from 'solid-js'
+import type { Accessor, Component } from 'solid-js'
+import type { Files } from './extensions/autocompletion/tsserver.worker'
+
+const theme = EditorView.theme({
+  '.cm-content': {
+    caretColor: '#0e9',
+  },
+  '.cm-cursor': {
+    borderLeftColor: '#0e9',
+  },
+}, { dark: true })
 
 export type Decorators = Array<{
   className?: string
@@ -28,6 +49,13 @@ interface APIs {
 
 interface CodeMirrorProps {
   code: string
+  /**
+   * @description File list
+   */
+  files?: Accessor<Files>
+  /**
+   * @description Currently active file path
+   */
   filePath?: string
   fileType?: string
   onCodeUpdate?: (newCode: string) => void
@@ -68,6 +96,7 @@ export const CodeMirror: Component<CodeMirrorProps>
       code = '',
       filePath,
       fileType,
+      files,
       onCodeUpdate,
       readOnly = false,
       extensions = [],
@@ -80,6 +109,7 @@ export const CodeMirror: Component<CodeMirrorProps>
     let cmView: EditorView
     // const { theme, themeId } = useSandpackTheme()
     const [internalCode, setInternalCode] = createSignal<string>(code)
+    const { exts } = useTsExt({ initOn: 'visible', files })
 
     const languageExtension = getLanguageFromFile(
       filePath,
@@ -106,7 +136,7 @@ export const CodeMirror: Component<CodeMirrorProps>
       }
     }
 
-    onMount(() => {
+    createEffect(() => {
       if (!wrapper) {
         return
       }
@@ -178,10 +208,18 @@ export const CodeMirror: Component<CodeMirrorProps>
         // },
       ]
 
-      const extensionList = [
+      const extensionList = () => [
+        theme,
         highlightSpecialChars(),
         history(),
         closeBrackets(),
+        javascript({ typescript: true, jsx: false }),
+        exts(),
+        // autocompletion({
+        //   activateOnTyping: true,
+        //   maxRenderedOptions: 30,
+        //   // override: [completionSource],
+        // }),
 
         ...extensions,
 
@@ -199,11 +237,11 @@ export const CodeMirror: Component<CodeMirrorProps>
       ]
 
       if (readOnly) {
-        extensionList.push(EditorState.readOnly.of(true))
-        extensionList.push(EditorView.editable.of(false))
+        extensionList().push(EditorState.readOnly.of(true))
+        extensionList().push(EditorView.editable.of(false))
       } else {
-        extensionList.push(bracketMatching())
-        extensionList.push(highlightActiveLine())
+        extensionList().push(bracketMatching())
+        extensionList().push(highlightActiveLine())
       }
 
       // if (sortedDecorators) {
@@ -232,32 +270,38 @@ export const CodeMirror: Component<CodeMirrorProps>
 
       // const state = EditorState.create({ doc: code ?? '' })
       // console.log('EditorState', state, code)
-      const view = new EditorView({
-        doc: code,
-        extensions: extensionList,
-        parent: parentDiv,
-        dispatch: (tr): void => {
-          view.update([tr])
 
-          if (tr.docChanged) {
-            const newCode = tr.newDoc.sliceString(0, tr.newDoc.length)
+      if (!cmView) {
+        const view = new EditorView({
+          doc: code,
+          extensions: extensionList(),
+          parent: parentDiv,
+          dispatch: (tr): void => {
+            view.update([tr])
 
-            setInternalCode(newCode)
-            onCodeUpdate?.(newCode)
-          }
-        },
-      })
+            if (tr.docChanged) {
+              const newCode = tr.newDoc.sliceString(0, tr.newDoc.length)
 
-      view.contentDOM.setAttribute('data-gramm', 'false')
-      view.contentDOM.setAttribute('data-lt-active', 'false')
+              setInternalCode(newCode)
+              onCodeUpdate?.(newCode)
+            }
+          },
+        })
 
-      if (readOnly) {
-        view.contentDOM.classList.add('cm-readonly')
+        view.contentDOM.setAttribute('data-gramm', 'false')
+        view.contentDOM.setAttribute('data-lt-active', 'false')
+
+        if (readOnly) {
+          view.contentDOM.classList.add('cm-readonly')
+        } else {
+          view.contentDOM.setAttribute('tabIndex', '-1')
+        }
+        cmView = view
       } else {
-        view.contentDOM.setAttribute('tabIndex', '-1')
+        cmView.dispatch({
+          effects: StateEffect.reconfigure.of(extensionList()),
+        })
       }
-
-      cmView = view
     })
 
     onImperativehandle?.({

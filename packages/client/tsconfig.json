@@ -11,6 +11,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
+    "types": ["./shim.d.ts"],
     "resolveJsonModule": true,
     "allowJs": false,
     "strict": true,
@@ -22,5 +23,5 @@
     "isolatedModules": true,
     "skipLibCheck": false
   },
-  "include": ["./src", "../shared/constants"]
+  "include": ["./src", "../shared/constants", "./global.d.ts"]
 }

@@ -2,6 +2,7 @@ import { WBE_API_PATH, NODE_API_PATH, API_PARSE_IMPORTS } from 'vsit-shared/cons
 import { unStripEsmsh } from "./strip-esmsh"
 import { withQuery } from "./utils"
 import type { Pkg } from '../components/markdown'
+import { ESM_SH_ORIGIN, NPM_ORIGIN } from './constants'
 
 export const apis = {
   web: {
@@ -43,10 +44,10 @@ export const apis = {
       return data.json()
     },
     async fetchPkgReadme(packageName: string): Promise<string> {
-      const url = `https://registry.npmjs.org/${packageName}`
+      const url = `${NPM_ORIGIN}/${packageName}`
       const res = await fetch(url)
       const data = await res.json()
       return data.readme
-    }
+    },
   }
 }
