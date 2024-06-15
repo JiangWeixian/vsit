@@ -1,5 +1,0 @@
----
-"vsit": patch
----
-
-autocomplete
