@@ -1,5 +1,11 @@
 # vsit
 
+## 0.2.2
+
+### Patch Changes
+
+- 957f26c: autocomplete
+
 ## 0.2.1
 
 ### Patch Changes
